@@ -6,7 +6,7 @@ namespace FallChallenge2023
     {
         static void Main(string[] args)
         {
-            var bot = new Bots.Wood.Bot();
+            var bot = new Bots.Bronze.Bot();
 
             bot.ReadInitialize();
 

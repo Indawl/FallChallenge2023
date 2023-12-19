@@ -43,6 +43,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bots\Bronze\Actions\GameAction.cs" />
+    <Compile Include="Bots\Bronze\Actions\GameActionList.cs" />
+    <Compile Include="Bots\Bronze\Actions\GameActionMove.cs" />
+    <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
+    <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
+    <Compile Include="Bots\Bronze\Bot.cs" />
+    <Compile Include="Bots\Bronze\Drone.cs" />
+    <Compile Include="Bots\Bronze\Fish.cs" />
+    <Compile Include="Bots\Bronze\FishColor.cs" />
+    <Compile Include="Bots\Bronze\FishPropery.cs" />
+    <Compile Include="Bots\Bronze\FishType.cs" />
+    <Compile Include="Bots\Bronze\GameState.cs" />
+    <Compile Include="Bots\Bronze\RadarBlip.cs" />
+    <Compile Include="Bots\Bronze\RadarType.cs" />
     <Compile Include="Bots\Wood\Actions\GameAction.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionList.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionMove.cs" />
