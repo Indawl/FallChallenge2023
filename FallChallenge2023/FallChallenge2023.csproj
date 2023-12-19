@@ -63,5 +63,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DebugManager\DebugUtils\DebugUtils.csproj">
+      <Project>{67e68fb1-475c-4f6d-acbc-a173bcdc531d}</Project>
+      <Name>DebugUtils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DebugManager\DevLib\DevLib.csproj">
+      <Project>{7749ad82-3cb6-4f5e-bb71-e330d5453d17}</Project>
+      <Name>DevLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
