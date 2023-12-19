@@ -10,5 +10,7 @@
             Id = id;
             Type = type;
         }
+
+        public override string ToString() => string.Format("{0} {1}", Id, Type);
     }
 }
