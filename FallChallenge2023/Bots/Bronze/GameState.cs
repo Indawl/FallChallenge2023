@@ -19,6 +19,7 @@ namespace FallChallenge2023.Bots.Bronze
             { FishType.ONE_TYPE, 4 }
         };
 
+        public int Turn { get; set; }
         public int[] Score { get; } = new int[2];
         public List<int>[] Scans { get; } = new List<int>[2];
         public Dictionary<int, Drone> Drones { get; } = new Dictionary<int, Drone>();

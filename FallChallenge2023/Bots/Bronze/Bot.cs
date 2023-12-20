@@ -4,8 +4,6 @@ using FallChallenge2023.Bots.Bronze.Actions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -32,6 +30,8 @@ namespace FallChallenge2023.Bots.Bronze
 
         public IGameState ReadState()
         {
+            State.Turn++;
+
             for (int k = 0; k < 2; k++)
                 State.Score[k] = int.Parse(Console.ReadLine());
 
@@ -93,21 +93,20 @@ namespace FallChallenge2023.Bots.Bronze
                 ));
             }
 
-            SaveState(State);
+#if TEST_MODE
+            Console.Error.WriteLine(JsonSerializer.Serialize(State));
+#endif
 
             return State;
         }
-
-        private void SaveState(GameState state)
-        {
-            BinaryFormatter b = new BinaryFormatter();
-            b.Serialize(Console.OpenStandardError(), state);
-        }
-        #endregion
+#endregion
 
         public IGameAction GetAction(IGameState gameState)
         {
-            return new GameActionWait();
+            var actions = new GameActionList();
+            actions.Actions.Add(new GameActionWait());
+            actions.Actions.Add(new GameActionWait());
+            return actions;
         }
     }
 }
