@@ -76,7 +76,10 @@ namespace FallChallenge2023.Bots.Bronze
             }
 
             foreach (var fish in State.Fishes.Values)
+            {
                 fish.Lost = true;
+                fish.CalculateLocation();
+            }
 
             var fishesCount = int.Parse(Console.ReadLine());
             for (int i = 0; i < fishesCount; i++)

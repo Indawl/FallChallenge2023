@@ -39,5 +39,37 @@ namespace FallChallenge2023.Bots.Bronze
         }
 
         public override string ToString() => string.Format("[{0}] {1} {2} P{3} S{4}", Id, Color, Type, Position?.ToIntString(), Speed?.ToIntString());
+
+        public void CalculateLocation()
+        {
+            Position += Speed;
+
+            // Left Border
+            if (Position.X < 0)
+            {
+                Position = Position.HSymmetric();
+                Speed.X = -Speed.X;
+            }
+            // Right Border
+            if (Position.X > GameState.MAP_SIZE)
+            {
+                Position = Position.HSymmetric(GameState.MAP_SIZE);
+                Speed.X = -Speed.X;
+            }
+
+            var h = HABITAT[Type];
+            // Top Border
+            if (Position.Y < h.X)
+            {
+                Position = Position.VSymmetric(h.X);
+                Speed.Y = -Speed.Y;
+            }
+            // Bottom Border
+            if (Position.Y > h.Y)
+            {
+                Position = Position.VSymmetric(h.Y);
+                Speed.Y = -Speed.Y;
+            }
+        }
     }
 }
