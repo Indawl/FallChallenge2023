@@ -1,5 +1,4 @@
 ﻿using DevLib.Game;
-using DevLib.GameMath;
 using System.Collections.Generic;
 
 namespace FallChallenge2023.Bots.Bronze
@@ -8,8 +7,8 @@ namespace FallChallenge2023.Bots.Bronze
     {
         public const int FIRST_SAVE_KOEF = 2;
         public const int LAST_TURN = 200;
+        public const int MAP_SIZE = 10000;
 
-        public static Vector MAP_SIZE = new Vector(10000, 10000);
         public static Dictionary<FishType, int> REWARDS = new Dictionary<FishType, int>()
         {
             { FishType.JELLY, 1 },
@@ -20,9 +19,15 @@ namespace FallChallenge2023.Bots.Bronze
         };
 
         public int Turn { get; set; }
-        public int[] Score { get; } = new int[2];
-        public List<int>[] Scans { get; } = new List<int>[2];
-        public Dictionary<int, Drone> Drones { get; } = new Dictionary<int, Drone>();
-        public Dictionary<int, Fish> Fishes { get; } = new Dictionary<int, Fish>();
+        public int MyScore { get; set; }
+        public int EnemyScore { get; set; }
+        public List<int> MyScans { get; set; } = new List<int>();
+        public List<int> EnemyScans { get; set; } = new List<int>();
+        public Dictionary<int, Drone> Drones { get; set; } = new Dictionary<int, Drone>();
+        public Dictionary<int, Fish> Fishes { get; set; } = new Dictionary<int, Fish>();
+
+        public List<int> GetScans(int playerId) => playerId == 0 ? MyScans : EnemyScans;
+        public int GetScore(int playerId) => playerId == 0 ? MyScore : EnemyScore;
+        public int SetScore(int playerId, int score) => playerId == 0 ? MyScore = score : EnemyScore = score;
     }
 }

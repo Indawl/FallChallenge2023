@@ -7,13 +7,10 @@ namespace FallChallenge2023.Bots.Bronze.Debug
     {
         public DebugOcean() : base("Ocean")
         {
-            Position = new Rectangle(0, 0, (int)GameState.MAP_SIZE.X, (int)GameState.MAP_SIZE.Y);
+            Position = new Rectangle(0, 0, DebugRes.Ocean.Width, DebugRes.Ocean.Height);
             Visible = true;
         }
 
-        public override Bitmap GetFigure()
-        {
-            return base.GetFigure();
-        }
+        public override Bitmap GetFigure() => DebugRes.Ocean;
     }
 }

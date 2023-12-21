@@ -33,15 +33,15 @@ namespace FallChallenge2023.Bots.Bronze
             State.Turn++;
 
             for (int k = 0; k < 2; k++)
-                State.Score[k] = int.Parse(Console.ReadLine());
+                State.SetScore(k, int.Parse(Console.ReadLine()));
 
             for (int k = 0; k < 2; k++)
             {
-                State.Scans[k] = new List<int>();
+                State.GetScans(k).Clear();
 
                 var scanCount = int.Parse(Console.ReadLine());
                 for (int i = 0; i < scanCount; i++)
-                    State.Scans[k].Add(int.Parse(Console.ReadLine()));
+                    State.GetScans(k).Add(int.Parse(Console.ReadLine()));
             }
 
             for (int k = 0; k < 2; k++)
@@ -61,6 +61,7 @@ namespace FallChallenge2023.Bots.Bronze
                     drone.Emergency = int.Parse(inputs[3]) == 1;                    
                     drone.Battery = int.Parse(inputs[4]);
                     drone.Lighting = (battery - drone.Battery) == Drone.BATTERY_DRAIN;
+                    drone.LastScanCount = drone.Scans.Count;
 
                     drone.Scans = new List<int>();
                     drone.RadarBlips = new List<RadarBlip>();
@@ -73,6 +74,9 @@ namespace FallChallenge2023.Bots.Bronze
                 var inputs = Console.ReadLine().Split(' ');
                 State.Drones[int.Parse(inputs[0])].Scans.Add(int.Parse(inputs[1]));
             }
+
+            foreach (var fish in State.Fishes.Values)
+                fish.Lost = true;
 
             var fishesCount = int.Parse(Console.ReadLine());
             for (int i = 0; i < fishesCount; i++)
@@ -88,8 +92,10 @@ namespace FallChallenge2023.Bots.Bronze
             for (int i = 0; i < radarBlipCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
+                var fishId = int.Parse(inputs[1]);
+                State.Fishes[fishId].Lost = false;
                 State.Drones[int.Parse(inputs[0])].RadarBlips.Add(
-                    new RadarBlip(int.Parse(inputs[1]), (RadarType)Enum.Parse(typeof(RadarType), inputs[2])
+                    new RadarBlip(fishId, (RadarType)Enum.Parse(typeof(RadarType), inputs[2])
                 ));
             }
 

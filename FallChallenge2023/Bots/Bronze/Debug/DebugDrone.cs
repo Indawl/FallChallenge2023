@@ -1,51 +1,94 @@
 ﻿using DebugUtils.Objects;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 
 namespace FallChallenge2023.Bots.Bronze.Debug
 {
-    public class DebugFish : DebugObject
+    public class DebugDrone : DebugObject
     {
-        public static Dictionary<FishColor, Dictionary<FishType, Rectangle>> MODEL_POSITION = new Dictionary<FishColor, Dictionary<FishType, Rectangle>>()
-        {
-            { FishColor.UGLY, new Dictionary<FishType, Rectangle>() {
-                { FishType.ANGLER, new Rectangle(422, 5, 86, 71) } } },
-            { FishColor.PURPLE, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(281, 312, 49, 45) },
-                { FishType.FISH, new Rectangle(141, 203, 50, 42) },
-                { FishType.CRAB, new Rectangle(140, 0, 56, 43) } } },
-            { FishColor.YELLOW, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(281, 358, 43, 61) },
-                { FishType.FISH, new Rectangle(140, 91, 56, 44) },
-                { FishType.CRAB, new Rectangle(0, 47, 54, 46) } } },
-            { FishColor.GREEN, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(0, 0, 50, 46) },
-                { FishType.FISH, new Rectangle(141, 246, 37, 47) },
-                { FishType.CRAB, new Rectangle(337, 0, 72, 36) } } },
-            { FishColor.BLUE, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(140, 44, 52, 46) },
-                { FishType.FISH, new Rectangle(140, 136, 52, 36) },
-                { FishType.CRAB, new Rectangle(275, 108, 60, 54) } } }
+        public enum DroneType { NORMAL, DAMAGED, SCAN }
+
+        public static Dictionary<DroneType, Rectangle>[] MODEL_POSITION = new Dictionary<DroneType, Rectangle>[]
+        { new Dictionary<DroneType, Rectangle>() {
+            { DroneType.NORMAL, new Rectangle(141, 312, 139, 108) },
+            { DroneType.DAMAGED, new Rectangle(0, 312, 140, 108) },
+            { DroneType.SCAN, new Rectangle(197, 186, 139, 107) } },
+          new Dictionary<DroneType, Rectangle>() {
+            { DroneType.NORMAL, new Rectangle(0, 94, 139, 108) },
+            { DroneType.DAMAGED, new Rectangle(0, 203, 140, 108) },
+            { DroneType.SCAN, new Rectangle(197, 0, 139, 107) } }
         };
 
-        public Fish Fish { get; set; }
+        public Drone Drone { get; set; }
+        public DroneType Type { get; set; }
+        public int LightRadius { get; set; }
+        public int MonsterRadius { get; set; }
+        public int MotorRadius { get; set; }
 
-        public DebugFish(string name, Fish fish, DebugObject parent = null) : base(name, parent)
+        public DebugDrone(string name, Drone drone, DebugObject parent = null) : base(name, parent)
         {
-            Fish = fish;
+            Drone = drone;
+            Type = Drone.Emergency ? DroneType.DAMAGED : (Drone.Scanning ? DroneType.SCAN : DroneType.NORMAL);
+            LightRadius = Drone.Lighting ? Drone.LIGHT_SCAN_RADIUS : Drone.SCAN_RADIUS;
+            MonsterRadius = LightRadius + Drone.MONSTER_DETECTED_RADIUS_ADD;
 
-            var size = MODEL_POSITION[Fish.Color][Fish.Type].Size;
-            var x = (int)(parent.Position.Width * Fish.Position.X / GameState.MAP_SIZE.X);
-            var y = (int)(parent.Position.Height * Fish.Position.Y / GameState.MAP_SIZE.Y);
+            LightRadius = parent.Position.Width * LightRadius / GameState.MAP_SIZE;            
+            MonsterRadius = parent.Position.Width * MonsterRadius / GameState.MAP_SIZE;
+            MotorRadius = parent.Position.Width * Drone.MOTOR_RANGE / GameState.MAP_SIZE;
 
-            Position = new Rectangle(x - size.Width / 2, y - size.Height / 2, size.Width, size.Height);
+            var x = (int)(parent.Position.Width * Drone.Position.X / GameState.MAP_SIZE);
+            var y = (int)(parent.Position.Height * Drone.Position.Y / GameState.MAP_SIZE);
+
+            var radius = Math.Max(MonsterRadius, MotorRadius);
+
+            Position = new Rectangle(x - radius, y - radius, 2 * radius, 2 * radius);
             Visible = true;
+
+            Properties.Add("Id", Drone.Id);
+            Properties.Add("Player", Drone.PlayerId == 0 ? "Me" : "Enemy");
+            Properties.Add("Position", Drone.Position.ToIntString());
+            Properties.Add("Emergency", Drone.Emergency);
+            Properties.Add("Battery", Drone.Battery);
+            Properties.Add("ScansCount", Drone.Scans.Count);
+            Properties.Add("Scans", Drone.Scans.ToArray());
+            Properties.Add("RadarBlips", Drone.RadarBlips.ToArray());
+            Properties.Add("Lighting", Drone.Lighting);
+            Properties.Add("Scanning", Drone.Scanning);
         }
 
-        public override Bitmap GetFigure() => DebugRes.Models.Clone(MODEL_POSITION[Fish.Color][Fish.Type], DebugRes.Models.PixelFormat);
+        public override Bitmap GetFigure()
+        {
+            var modelPosition = MODEL_POSITION[Drone.PlayerId][Type];
 
-        public override Bitmap GetSelectedArea() => GetFigure();
+            var drone = new Bitmap(Position.Width, Position.Height);
+            var g = Graphics.FromImage(drone);
 
-        public override string ToString() => Fish.ToString();
+            g.FillEllipse(new SolidBrush(Color.FromArgb(50, 255, 255, 255)), Position.Width / 2 - LightRadius, Position.Height / 2 - LightRadius, 2 * LightRadius, 2 * LightRadius);
+            g.DrawEllipse(new Pen(Color.Red, 2.0f), Position.Width / 2 - MonsterRadius, Position.Height / 2 - MonsterRadius, 2 * MonsterRadius, 2 * MonsterRadius);
+            g.DrawEllipse(new Pen(Color.Blue, 2.0f), Position.Width / 2 - MotorRadius, Position.Height / 2 - MotorRadius, 2 * MotorRadius, 2 * MotorRadius);
+
+            g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat),
+                Position.Width / 2 - modelPosition.Width / 2, Position.Height / 2 - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);
+
+            g.FillEllipse(new SolidBrush(Color.Black), Position.Width / 2 - 5, Position.Height / 2 - 5, 10, 10);
+
+            return drone;
+        }
+
+        public override Bitmap GetSelectedArea()
+        {
+            var modelPosition = MODEL_POSITION[Drone.PlayerId][Type];
+
+            var drone = new Bitmap(Position.Width, Position.Height);
+            var g = Graphics.FromImage(drone);
+
+            g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat),
+                Position.Width / 2 - modelPosition.Width / 2, Position.Height / 2 - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);
+
+            return drone;
+        }
+
+        public override string ToString() => Drone.ToString();
     }
 }

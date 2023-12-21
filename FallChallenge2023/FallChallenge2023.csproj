@@ -36,6 +36,7 @@
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,6 +52,16 @@
     <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugDrone.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugScanFish.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugFish.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugOcean.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugOceanFloor.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DebugRes.resx</DependentUpon>
+    </Compile>
     <Compile Include="Bots\Bronze\Debug\GameManager.cs" />
     <Compile Include="Bots\Bronze\Drone.cs" />
     <Compile Include="Bots\Bronze\Fish.cs" />
@@ -89,9 +100,16 @@
       <Name>DevLib</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="Bots\Bronze\Debug\Games\2480179586068603400.txt" />
+    <Content Include="Bots\Bronze\Debug\Games\5448522766778675000.txt" />
+    <Content Include="Bots\Bronze\Debug\Images\Models.png" />
+    <Content Include="Bots\Bronze\Debug\Images\Ocean.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Bots\Bronze\Debug\DebugRes.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DebugRes.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

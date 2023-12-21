@@ -4,47 +4,60 @@ using System.Drawing;
 
 namespace FallChallenge2023.Bots.Bronze.Debug
 {
-    public class DebugFish : DebugObject
+    public class DebugScanFish : DebugObject
     {
+        public const int MY_OFFSET = 88;
+        public const int ENEMY_OFFSET_Y = 4;
+
         public static Dictionary<FishColor, Dictionary<FishType, Rectangle>> MODEL_POSITION = new Dictionary<FishColor, Dictionary<FishType, Rectangle>>()
         {
-            { FishColor.UGLY, new Dictionary<FishType, Rectangle>() {
-                { FishType.ANGLER, new Rectangle(422, 5, 86, 71) } } },
             { FishColor.PURPLE, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(281, 312, 49, 45) },
-                { FishType.FISH, new Rectangle(141, 203, 50, 42) },
-                { FishType.CRAB, new Rectangle(140, 0, 56, 43) } } },
+                { FishType.JELLY, new Rectangle(7, 7, 70, 70) },
+                { FishType.FISH, new Rectangle(90, 7, 70, 70) },
+                { FishType.CRAB, new Rectangle(170, 7, 70, 70) } } },
             { FishColor.YELLOW, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(281, 358, 43, 61) },
-                { FishType.FISH, new Rectangle(140, 91, 56, 44) },
-                { FishType.CRAB, new Rectangle(0, 47, 54, 46) } } },
+                { FishType.JELLY, new Rectangle(7, 85, 70, 70) },
+                { FishType.FISH, new Rectangle(90, 85, 70, 70) },
+                { FishType.CRAB, new Rectangle(170, 85, 70, 70) } } },
             { FishColor.GREEN, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(0, 0, 50, 46) },
-                { FishType.FISH, new Rectangle(141, 246, 37, 47) },
-                { FishType.CRAB, new Rectangle(337, 0, 72, 36) } } },
+                { FishType.JELLY, new Rectangle(7, 162, 70, 70) },
+                { FishType.FISH, new Rectangle(90, 162, 70, 70) },
+                { FishType.CRAB, new Rectangle(170, 162, 70, 70) } } },
             { FishColor.BLUE, new Dictionary<FishType, Rectangle>() {
-                { FishType.JELLY, new Rectangle(140, 44, 52, 46) },
-                { FishType.FISH, new Rectangle(140, 136, 52, 36) },
-                { FishType.CRAB, new Rectangle(275, 108, 60, 54) } } }
+                { FishType.JELLY, new Rectangle(7, 238, 70, 70) },
+                { FishType.FISH, new Rectangle(90, 238, 70, 70) },
+                { FishType.CRAB, new Rectangle(170, 238, 70, 70) },
+                { FishType.ONE_COLOR, new Rectangle(5, 238, 70, 70) } } }
         };
 
         public Fish Fish { get; set; }
+        public bool Saved { get; set; }
+        public bool NoFish { get; set; }
 
-        public DebugFish(string name, Fish fish, DebugObject parent = null) : base(name, parent)
+        public DebugScanFish(string name, int playerId, Fish fish, bool saved, bool noFish = false, DebugObject parent = null) : base(name, parent)
         {
             Fish = fish;
+            Saved = saved;
+            NoFish = noFish;
 
-            var size = MODEL_POSITION[Fish.Color][Fish.Type].Size;
-            var x = (int)(parent.Position.Width * Fish.Position.X / GameState.MAP_SIZE);
-            var y = (int)(parent.Position.Height * Fish.Position.Y / GameState.MAP_SIZE);
+            var pos = MODEL_POSITION[Fish.Color][Fish.Type];
 
-            Position = new Rectangle(x - size.Width / 2, y - size.Height / 2, size.Width, size.Height);
+            Position = new Rectangle(pos.X + (playerId == 0 ? MY_OFFSET : 0), pos.Y + (playerId == 0 ? 0 : ENEMY_OFFSET_Y), pos.Width, pos.Height);
             Visible = true;
         }
+        public override Bitmap GetFigure()
+        {
+            var modelPosition = DebugFish.MODEL_POSITION[Fish.Color][Fish.Type];
 
-        public override Bitmap GetFigure() => DebugRes.Models.Clone(MODEL_POSITION[Fish.Color][Fish.Type], DebugRes.Models.PixelFormat);
+            var fish = new Bitmap(Position.Width, Position.Height);
+            var g = Graphics.FromImage(fish);
 
-        public override Bitmap GetSelectedArea() => GetFigure();
+            if (!NoFish) g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
+            if (!Saved) g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(180, 150, 150, 150)), 0, 0, Position.Width, Position.Height);
+            if (Fish.Lost) g.DrawImage(DebugRes.Models.Clone(new Rectangle(197, 108, 77, 77), DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
+
+            return fish;
+        }
 
         public override string ToString() => Fish.ToString();
     }
