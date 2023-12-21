@@ -70,7 +70,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             // Fishes
             var fishes = new List<DebugFish>();
-            foreach (var fish in gameState.Fishes.Values.Where(_ => !_.Position.isZero()))
+            foreach (var fish in gameState.Fishes.Values.Where(_ => _.Position != null))
                 fishes.Add(new DebugFish(fish.ToString(), fish, oceanFloor));
             foreach (var fish in fishes)
                 oceanFloor.Childs.Add(fish);
