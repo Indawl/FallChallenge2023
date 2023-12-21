@@ -24,8 +24,8 @@ namespace FallChallenge2023.Bots.Bronze
         public bool Emergency { get; set; }
         public int Battery { get; set; } = MAX_BATTERY;
 
-        public List<int> Scans { get; set; }
-        public List<RadarBlip> RadarBlips { get; set; }
+        public List<int> Scans { get; set; } = new List<int>();
+        public List<RadarBlip> RadarBlips { get; set; } = new List<RadarBlip>();
 
         public bool Lighting { get; set; }
         public int LastScanCount { get; set; }
