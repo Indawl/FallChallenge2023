@@ -26,8 +26,8 @@ namespace FallChallenge2023.Bots.Bronze
         public FishColor Color { get; }
         public FishType Type { get; }
 
-        public Vector Position { get; set; }
-        public Vector Speed { get; set; }
+        public Vector Position { get; set; } = Vector.ZERO;
+        public Vector Speed { get; set; } = Vector.ZERO;
 
         public bool Lost { get; set; }
 
@@ -38,7 +38,7 @@ namespace FallChallenge2023.Bots.Bronze
             Type = type;
         }
 
-        public override string ToString() => string.Format("[{0}] {1} {2} P{3} S{4}", Id, Color, Type, Position?.ToIntString(), Speed?.ToIntString());
+        public override string ToString() => string.Format("[{0}] {1} {2} P{3} S{4}", Id, Color, Type, Position.ToIntString(), Speed.ToIntString());
 
         public void CalculateLocation()
         {
