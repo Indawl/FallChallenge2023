@@ -34,7 +34,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public bool Saved { get; set; }
         public bool NoFish { get; set; }
 
-        public DebugScanFish(string name, int playerId, Fish fish, bool saved, bool noFish = false, DebugObject parent = null) : base(name, parent)
+        public DebugScanFish(int playerId, Fish fish, bool saved, bool noFish, DebugObject parent) :
+            base(string.Format("{0}{1}{2}", saved ? "SAVED " : string.Empty, fish.Status == FishStatus.LOSTED ? "LOST " : string.Empty, fish), parent)
         {
             Fish = fish;
             Saved = saved;
@@ -53,12 +54,12 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             var g = Graphics.FromImage(fish);
 
             if (!NoFish) g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
-            if (!Saved) g.FillRectangle(new SolidBrush(System.Drawing.Color.FromArgb(180, 150, 150, 150)), 0, 0, Position.Width, Position.Height);
-            if (Fish.Lost) g.DrawImage(DebugRes.Models.Clone(new Rectangle(197, 108, 77, 77), DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
+            if (!Saved) g.FillRectangle(new SolidBrush(Color.FromArgb(180, 150, 150, 150)), 0, 0, Position.Width, Position.Height);
+            if (Fish.Status == FishStatus.LOSTED) g.DrawImage(DebugRes.Models.Clone(new Rectangle(197, 108, 77, 77), DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
 
             return fish;
         }
 
-        public override string ToString() => Fish.ToString();
+        public override string ToString() => Name;
     }
 }

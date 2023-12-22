@@ -1,5 +1,6 @@
 ﻿using DevLib.Game;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -8,13 +9,16 @@ namespace FallChallenge2023.Bots.Bronze
         public int Turn { get; set; }
         public int MyScore { get; set; }
         public int EnemyScore { get; set; }
-        public List<int> MyScans { get; set; } = new List<int>();
-        public List<int> EnemyScans { get; set; } = new List<int>();
-        public Dictionary<int, Drone> Drones { get; set; } = new Dictionary<int, Drone>();
-        public Dictionary<int, Fish> Fishes { get; set; } = new Dictionary<int, Fish>();
+        public List<int> MyScans { get; protected set; } = new List<int>();
+        public List<int> EnemyScans { get; protected set; } = new List<int>();
+        public List<Drone> Drones { get; protected set; } = new List<Drone>();
+        public List<Fish> Fishes { get; protected set; } = new List<Fish>();
          
         public List<int> GetScans(int playerId) => playerId == 0 ? MyScans : EnemyScans;
         public int GetScore(int playerId) => playerId == 0 ? MyScore : EnemyScore;
         public int SetScore(int playerId, int score) => playerId == 0 ? MyScore = score : EnemyScore = score;
+        public IEnumerable<Drone> GetDrones(int playerId) => Drones.Where(_ => _.PlayerId == playerId);
+        public Drone GetDrone(int id) => Drones.FirstOrDefault(_ => _.Id == id);
+        public Fish GetFish(int id) => Fishes.FirstOrDefault(_ => _.Id == id);
     }
 }

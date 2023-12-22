@@ -1,20 +1,19 @@
 ﻿using DevLib.Game;
-using DevLib.GameMath;
 
 namespace FallChallenge2023.Bots.Bronze.Actions
 {
     public class GameAction : IGameAction
     {
         public GameActionType Type { get; }
-        public int DroneId { get; }
-        public Vector Position { get; }
+        public int X { get; }
+        public int Y { get; }
         public bool Light { get; }
 
-        public GameAction(GameActionType type, int droneId = 0, bool light = false, Vector position = null)
+        public GameAction(GameActionType type, bool light = false, int x = 0, int y = 0)
         {
             Type = type;
-            DroneId = droneId;
-            Position = position;
+            X = x;
+            Y = y;
             Light = light;
         }
     }

@@ -9,21 +9,16 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public GameAction Action { get; set; }
         public Point Move { get; set; }
 
-        public DebugAction(GameAction action, DebugObject parent = null) : base(action.ToString(), parent)
+        public DebugAction(GameAction action, DebugObject parent) : base(action.ToString(), parent)
         {
             Action = action;
 
             if (Action.Type == GameActionType.MOVE)
-            {
-                var toX = (int)(Parent.Parent.Position.Width * Action.Position.X / GameState.MAP_SIZE);
-                var toY = (int)(Parent.Parent.Position.Height * Action.Position.Y / GameState.MAP_SIZE);
-                Move = new Point(toX - Parent.Position.X, toY - Parent.Position.Y);
-            }
+                Move = new Point(Parent.Position.Width * Action.X / GameState.MAP_SIZE, Parent.Position.Height * Action.Y / GameState.MAP_SIZE);
 
-            Position = new Rectangle(0, 0, Parent.Position.Width, Parent.Position.Height);
+            Position = Parent.Position;
             Visible = true;
 
-            Properties.Add("DroneId", Action.DroneId);
             Properties.Add("Action", Action.ToString());
         }
 
@@ -34,9 +29,9 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             var debugDrone = Parent as DebugDrone;
 
-            if (Action.Type == GameActionType.MOVE) g.DrawLine(new Pen(Color.Black, 2.0f), Position.Width / 2, Position.Height / 2, Move.X, Move.Y);
-            if (Action.Light) g.DrawEllipse(new Pen(Color.White, 4.0f), 
-                Position.Width / 2 - debugDrone.MaxLightRadius, Position.Height / 2 - debugDrone.MaxLightRadius,
+            if (Action.Type == GameActionType.MOVE) g.DrawLine(new Pen(Color.Black, 2.0f), debugDrone.Coord.X, debugDrone.Coord.Y, Move.X, Move.Y);
+            if (Action.Light) g.DrawEllipse(new Pen(Color.White, 4.0f),
+                debugDrone.Coord.X - debugDrone.MaxLightRadius, debugDrone.Coord.X - debugDrone.MaxLightRadius,
                 2 * debugDrone.MaxLightRadius, 2 * debugDrone.MaxLightRadius);
 
             return action;

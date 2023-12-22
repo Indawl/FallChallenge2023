@@ -33,10 +33,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
+    <Reference Include="System.Text.Json, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -68,11 +69,12 @@
     <Compile Include="Bots\Bronze\Drone.cs" />
     <Compile Include="Bots\Bronze\Fish.cs" />
     <Compile Include="Bots\Bronze\FishColor.cs" />
+    <Compile Include="Bots\Bronze\FishStatus.cs" />
     <Compile Include="Bots\Bronze\FishType.cs" />
     <Compile Include="Bots\Bronze\GameStateBase.cs" />
     <Compile Include="Bots\Bronze\GameState.cs" />
     <Compile Include="Bots\Bronze\RadarBlip.cs" />
-    <Compile Include="Bots\Bronze\RadarType.cs" />
+    <Compile Include="Bots\Bronze\BlipType.cs" />
     <Compile Include="Bots\Wood\Actions\GameAction.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionList.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionMove.cs" />

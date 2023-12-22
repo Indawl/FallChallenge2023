@@ -20,10 +20,10 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             foreach (GameAction action in (actions as GameActionList).Actions)
             {
-                var drone = gameState.Drones[action.DroneId];
-                var debugDrone = oceanFloor.Childs.First(_ => _.Name == drone.ToString());
+                //var drone = gameState.GetDrone(action.DroneId);
+                //var debugDrone = oceanFloor.Childs.Where(_ => _ is DebugDrone).First(_ => (_ as DebugDrone).Drone.Id == drone.Id);
 
-                debugDrone.Childs.Add(new DebugAction(action, debugDrone));
+                //debugDrone.Childs.Add(new DebugAction(action, debugDrone));
             }
         }
     }

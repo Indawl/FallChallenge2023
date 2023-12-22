@@ -1,6 +1,6 @@
 ﻿namespace FallChallenge2023.Bots.Bronze
 {
-    public enum RadarType
+    public enum BlipType
     {
         TL,
         TR,

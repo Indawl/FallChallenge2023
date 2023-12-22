@@ -1,6 +1,4 @@
-﻿using DevLib.GameMath;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -12,25 +10,17 @@ namespace FallChallenge2023.Bots.Bronze
         public const int MONSTER_SPEED = 270;
         public const int MONSTER_ATTACK_SPEED = 540;
         public const int MONSTER_ATTACK_RADIUS = 500;
-        public const int MIN_DISTANCE_BT_MONSTER = 600;
-        public const int MONSTER_MIN_START_Y = 5000;
-
-        public static Dictionary<FishType, Vector> HABITAT = new Dictionary<FishType, Vector>()
-        {
-            { FishType.ANGLER, new Vector(2500, 10000) },
-            { FishType.JELLY, new Vector(2500, 5000) },
-            { FishType.FISH, new Vector(5000, 7500) },
-            { FishType.CRAB, new Vector(7500, 10000) }
-        };
+        public const int MIN_DISTANCE_BT_MONSTER = 600;        
 
         public int Id { get; }
         public FishColor Color { get; }
         public FishType Type { get; }
 
-        public Vector Position { get; set; }
-        public Vector Speed { get; set; }
-
-        public bool Lost { get; set; }
+        public FishStatus Status { get; set; } = FishStatus.UNKNOWED;
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Vx { get; set; }
+        public int Vy { get; set; }        
 
         public Fish(int id, FishColor color, FishType type)
         {
@@ -39,14 +29,8 @@ namespace FallChallenge2023.Bots.Bronze
             Type = type;
         }
 
-        public override string ToString() => string.Format("[{0}] {1} {2} P{3} S{4}", Id, Color, Type, Position?.ToIntString(), Speed?.ToIntString());
+        public override string ToString() => string.Format("[{0}] {1} {2} {3} ({4}, {5}) V({6}, {7})", Id, Color, Type, Status, X, Y, Vx, Vy);
 
-        public object Clone()
-        {
-            var fish = (Fish)MemberwiseClone();
-            if (fish.Position != null ) fish.Position = new Vector(Position.X, Position.Y);
-            if (fish.Speed != null) fish.Speed = new Vector(Speed.X, Speed.Y);
-            return fish;
-        }
+        public object Clone() => MemberwiseClone();
     }
 }

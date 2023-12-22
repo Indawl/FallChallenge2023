@@ -1,10 +1,7 @@
 ﻿using DevLib.Game;
-using DevLib.GameMath;
 using FallChallenge2023.Bots.Bronze.Actions;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -23,9 +20,7 @@ namespace FallChallenge2023.Bots.Bronze
             for (int i = 0; i < creatureCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
-                var fishId = int.Parse(inputs[0]);
-
-                State.Fishes.Add(fishId, new Fish(fishId, (FishColor)int.Parse(inputs[1]), (FishType)int.Parse(inputs[2])));
+                State.Fishes.Add(new Fish(int.Parse(inputs[0]), (FishColor)int.Parse(inputs[1]), (FishType)int.Parse(inputs[2])));
             }
         }
 
@@ -39,7 +34,6 @@ namespace FallChallenge2023.Bots.Bronze
             for (int k = 0; k < 2; k++)
             {
                 State.GetScans(k).Clear();
-
                 var scanCount = int.Parse(Console.ReadLine());
                 for (int i = 0; i < scanCount; i++)
                     State.GetScans(k).Add(int.Parse(Console.ReadLine()));
@@ -51,21 +45,22 @@ namespace FallChallenge2023.Bots.Bronze
                 for (int i = 0; i < droneCount; i++)
                 {
                     var inputs = Console.ReadLine().Split(' ');
-                    var droneId = int.Parse(inputs[0]);
 
-                    if (!State.Drones.TryGetValue(droneId, out var drone))
-                        State.Drones.Add(droneId, drone = new Drone(droneId, k));
+                    var droneId = int.Parse(inputs[0]);
+                    var drone = State.GetDrone(droneId) ?? new Drone(droneId, k);
 
                     var battery = drone.Battery;
+                    var scansCount = drone.Scans.Count;
 
-                    drone.Position = new Vector(int.Parse(inputs[1]), int.Parse(inputs[2]));
+                    drone.X = int.Parse(inputs[1]);
+                    drone.Y = int.Parse(inputs[2]);
                     drone.Emergency = int.Parse(inputs[3]) == 1;                    
                     drone.Battery = int.Parse(inputs[4]);
-                    drone.Lighting = (battery - drone.Battery) == Drone.BATTERY_DRAIN;
-                    drone.LastScanCount = drone.Scans.Count;
+                    drone.Lighting = drone.Battery < battery;
+                    drone.Scanning = drone.Scans.Count > scansCount;
 
-                    drone.Scans = new List<int>();
-                    drone.RadarBlips = new List<RadarBlip>();
+                    drone.Scans.Clear();
+                    drone.RadarBlips.Clear();
     }
             }
 
@@ -73,37 +68,36 @@ namespace FallChallenge2023.Bots.Bronze
             for (int i = 0; i < droneScanCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
-                State.Drones[int.Parse(inputs[0])].Scans.Add(int.Parse(inputs[1]));
+                State.GetDrone(int.Parse(inputs[0])).Scans.Add(int.Parse(inputs[1]));
             }
 
-            foreach (var fish in State.Fishes.Values)
-                fish.Lost = true;
+            State.Fishes.ForEach(_ => _.Status = FishStatus.LOSTED);
 
             var fishesCount = int.Parse(Console.ReadLine());
             for (int i = 0; i < fishesCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
-                var fish = State.Fishes[int.Parse(inputs[0])];
+                var fish = State.GetFish(int.Parse(inputs[0]));
 
-                fish.Position = new Vector(int.Parse(inputs[1]), int.Parse(inputs[2]));
-                fish.Speed = new Vector(int.Parse(inputs[3]), int.Parse(inputs[4]));
+                fish.X = int.Parse(inputs[1]);
+                fish.Y = int.Parse(inputs[2]);
+                fish.Vx = int.Parse(inputs[3]);
+                fish.Vy = int.Parse(inputs[4]);
             }
 
             var radarBlipCount = int.Parse(Console.ReadLine());
             for (int i = 0; i < radarBlipCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
-                var fishId = int.Parse(inputs[1]);
-                State.Fishes[fishId].Lost = false;
-                State.Drones[int.Parse(inputs[0])].RadarBlips.Add(
-                    new RadarBlip(fishId, (RadarType)Enum.Parse(typeof(RadarType), inputs[2])
-                ));
+                var radarBlip = new RadarBlip(int.Parse(inputs[1]), (BlipType)Enum.Parse(typeof(BlipType), inputs[2]));
+                State.GetDrone(int.Parse(inputs[0])).RadarBlips.Add(radarBlip);
+                var fish = State.GetFish(radarBlip.FishId);
+                fish.Status = (fish.X == 0 && fish.Y == 0) ? FishStatus.UNKNOWED : FishStatus.SWIMMING;
             }
 
 #if TEST_MODE
-            Console.Error.WriteLine(JsonSerializer.Serialize(State as GameStateBase));
-#endif
-
+            Console.Error.WriteLine(JsonSerializer.Serialize<GameStateBase>(State));
+#endif            
             return State;
         }
         #endregion
@@ -111,13 +105,8 @@ namespace FallChallenge2023.Bots.Bronze
         public IGameAction GetAction(IGameState gameState)
         {
             var actions = new GameActionList();
-
-            foreach (var drone in (gameState as GameState).Drones.Values.Where(_ => _.PlayerId == 0))
-                if (actions.Actions.Count == 0)
-                    actions.Actions.Add(new GameActionMove(drone.Id, new Vector(5000, 1000), false));
-                else
-                    actions.Actions.Add(new GameActionWait(drone.Id, true));
-
+            actions.Actions.Add(new GameActionWait());
+            actions.Actions.Add(new GameActionWait());
             return actions;
         }
     }

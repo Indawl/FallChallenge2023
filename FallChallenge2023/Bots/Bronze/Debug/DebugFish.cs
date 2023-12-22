@@ -29,29 +29,27 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         };
 
         public Fish Fish { get; set; }
+        public Point Coord { get; set; }
         public Point Speed { get; set; }
 
-        public DebugFish(string name, Fish fish, DebugObject parent = null) : base(name, parent)
+        public DebugFish(Fish fish, DebugObject parent) : base(fish.ToString(), parent)
         {
             Fish = fish;
 
             var size = MODEL_POSITION[Fish.Color][Fish.Type].Size;
-            var x = (int)(parent.Position.Width * Fish.Position.X / GameState.MAP_SIZE);
-            var y = (int)(parent.Position.Height * Fish.Position.Y / GameState.MAP_SIZE);
 
-            var vX = (int)(parent.Position.Width * Fish.Speed.X / GameState.MAP_SIZE);
-            var vY = (int)(parent.Position.Height * Fish.Speed.Y / GameState.MAP_SIZE);
-            Speed = new Point(vX, vY);
+            Coord = new Point(parent.Position.Width * Fish.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Y / GameState.MAP_SIZE);
+            Speed = new Point(parent.Position.Width * Fish.Vx / GameState.MAP_SIZE, parent.Position.Height * Fish.Vy / GameState.MAP_SIZE);
 
-            Position = new Rectangle(x - size.Width / 2, y - size.Height / 2, size.Width, size.Height);
+            Position = new Rectangle(Coord.X - size.Width / 2, Coord.Y - size.Height / 2, size.Width, size.Height);
             Visible = true;
 
             Properties.Add("Id", Fish.Id);
             Properties.Add("Color", Fish.Color);
             Properties.Add("Type", Fish.Type);
-            Properties.Add("Position", Fish.Position.ToIntString());
-            Properties.Add("Speed", Fish.Speed.ToIntString());
-            Properties.Add("Lost", Fish.Lost);
+            Properties.Add("Position", new int[] { Fish.X, Fish.Y });
+            Properties.Add("Speed", new int[] { Fish.Vx, Fish.Vy });
+            Properties.Add("Status", Fish.Status);
         }
 
         public override Bitmap GetFigure()
@@ -70,8 +68,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             return fish;
         }
 
-        public override Bitmap GetSelectedArea() => GetFigure();
+        public override Rectangle? GetSelectedArea() => new Rectangle(0, 0, Position.Width, Position.Height);
 
-        public override string ToString() => Fish.ToString();
+        public override string ToString() => Name;
     }
 }

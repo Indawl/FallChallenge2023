@@ -2,7 +2,7 @@
 {
     public class GameActionWait : GameAction
     {
-        public GameActionWait(int droneId, bool light = false) : base(GameActionType.WAIT, droneId, light)
+        public GameActionWait(bool light = false) : base(GameActionType.WAIT, light)
         {
         }
 

@@ -1,20 +1,16 @@
-﻿using System;
-
-namespace FallChallenge2023.Bots.Bronze
+﻿namespace FallChallenge2023.Bots.Bronze
 {
-    public class RadarBlip : ICloneable
+    public struct RadarBlip
     {
-        public int Id { get; }
-        public RadarType Type { get; }
+        public int FishId { get; }
+        public BlipType Type { get; }
 
-        public RadarBlip(int id, RadarType type)
+        public RadarBlip(int fishId, BlipType type)
         {
-            Id = id;
+            FishId = fishId;
             Type = type;
         }
 
-        public override string ToString() => string.Format("{0} {1}", Id, Type);
-
-        public object Clone() => MemberwiseClone();
+        public override string ToString() => string.Format("{0} {1}", FishId, Type);
     }
 }
