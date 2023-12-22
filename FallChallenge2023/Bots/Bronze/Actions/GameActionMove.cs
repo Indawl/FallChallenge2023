@@ -4,7 +4,7 @@ namespace FallChallenge2023.Bots.Bronze.Actions
 {
     public class GameActionMove : GameAction
     {
-        public GameActionMove(Vector position, bool light = false) : base(GameActionType.MOVE, light, position)
+        public GameActionMove(int droneId, Vector position, bool light = false) : base(GameActionType.MOVE, droneId, light, position)
         {
         }
 

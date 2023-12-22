@@ -1,9 +1,10 @@
 ﻿using DevLib.GameMath;
+using System;
 using System.Collections.Generic;
 
 namespace FallChallenge2023.Bots.Bronze
 {
-    public class Fish
+    public class Fish : ICloneable
     {
         public const int SPEED = 200;
         public const int FRIGHTENED_SPEED = 400;
@@ -39,5 +40,13 @@ namespace FallChallenge2023.Bots.Bronze
         }
 
         public override string ToString() => string.Format("[{0}] {1} {2} P{3} S{4}", Id, Color, Type, Position?.ToIntString(), Speed?.ToIntString());
+
+        public object Clone()
+        {
+            var fish = (Fish)MemberwiseClone();
+            if (fish.Position != null ) fish.Position = new Vector(Position.X, Position.Y);
+            if (fish.Speed != null) fish.Speed = new Vector(Speed.X, Speed.Y);
+            return fish;
+        }
     }
 }

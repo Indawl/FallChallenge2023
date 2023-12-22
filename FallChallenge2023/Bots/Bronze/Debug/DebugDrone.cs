@@ -23,6 +23,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public Drone Drone { get; set; }
         public DroneType Type { get; set; }
         public int LightRadius { get; set; }
+        public int MaxLightRadius { get; set; }
         public int MonsterRadius { get; set; }
         public int MotorRadius { get; set; }
 
@@ -33,6 +34,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             LightRadius = Drone.Lighting ? Drone.LIGHT_SCAN_RADIUS : Drone.SCAN_RADIUS;
             MonsterRadius = LightRadius + Drone.MONSTER_DETECTED_RADIUS_ADD;
 
+            MaxLightRadius = parent.Position.Width * Drone.LIGHT_SCAN_RADIUS / GameState.MAP_SIZE;
             LightRadius = parent.Position.Width * LightRadius / GameState.MAP_SIZE;            
             MonsterRadius = parent.Position.Width * MonsterRadius / GameState.MAP_SIZE;
             MotorRadius = parent.Position.Width * Drone.MOTOR_RANGE / GameState.MAP_SIZE;
@@ -40,7 +42,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             var x = (int)(parent.Position.Width * Drone.Position.X / GameState.MAP_SIZE);
             var y = (int)(parent.Position.Height * Drone.Position.Y / GameState.MAP_SIZE);
 
-            var radius = Math.Max(MonsterRadius, MotorRadius);
+            var radius = parent.Position.Width * Math.Max(Drone.LIGHT_SCAN_RADIUS, LightRadius) / GameState.MAP_SIZE;
 
             Position = new Rectangle(x - radius, y - radius, 2 * radius, 2 * radius);
             Visible = true;
@@ -67,6 +69,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             g.FillEllipse(new SolidBrush(Color.FromArgb(50, 255, 255, 255)), Position.Width / 2 - LightRadius, Position.Height / 2 - LightRadius, 2 * LightRadius, 2 * LightRadius);
             g.DrawEllipse(new Pen(Color.Red, 2.0f), Position.Width / 2 - MonsterRadius, Position.Height / 2 - MonsterRadius, 2 * MonsterRadius, 2 * MonsterRadius);
             g.DrawEllipse(new Pen(Color.Blue, 2.0f), Position.Width / 2 - MotorRadius, Position.Height / 2 - MotorRadius, 2 * MotorRadius, 2 * MotorRadius);
+            g.DrawEllipse(new Pen(Color.White, 2.0f) { DashPattern = new float[] { 15.0f, 15.0f } }, Position.Width / 2 - MaxLightRadius, Position.Height / 2 - MaxLightRadius, 2 * MaxLightRadius, 2 * MaxLightRadius);
 
             g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat),
                 Position.Width / 2 - modelPosition.Width / 2, Position.Height / 2 - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);

@@ -1,6 +1,8 @@
-﻿namespace FallChallenge2023.Bots.Bronze
+﻿using System;
+
+namespace FallChallenge2023.Bots.Bronze
 {
-    public class RadarBlip
+    public class RadarBlip : ICloneable
     {
         public int Id { get; }
         public RadarType Type { get; }
@@ -12,5 +14,7 @@
         }
 
         public override string ToString() => string.Format("{0} {1}", Id, Type);
+
+        public object Clone() => MemberwiseClone();
     }
 }

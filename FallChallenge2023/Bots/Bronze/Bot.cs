@@ -4,6 +4,7 @@ using FallChallenge2023.Bots.Bronze.Actions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -100,18 +101,23 @@ namespace FallChallenge2023.Bots.Bronze
             }
 
 #if TEST_MODE
-            Console.Error.WriteLine(JsonSerializer.Serialize(State));
+            Console.Error.WriteLine(JsonSerializer.Serialize(State as GameStateBase));
 #endif
 
             return State;
         }
-#endregion
+        #endregion
 
         public IGameAction GetAction(IGameState gameState)
         {
             var actions = new GameActionList();
-            actions.Actions.Add(new GameActionWait());
-            actions.Actions.Add(new GameActionWait());
+
+            foreach (var drone in (gameState as GameState).Drones.Values.Where(_ => _.PlayerId == 0))
+                if (actions.Actions.Count == 0)
+                    actions.Actions.Add(new GameActionMove(drone.Id, new Vector(5000, 1000), false));
+                else
+                    actions.Actions.Add(new GameActionWait(drone.Id, true));
+
             return actions;
         }
     }

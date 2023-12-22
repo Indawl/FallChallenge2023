@@ -1,4 +1,5 @@
 ﻿using DebugUtils;
+using DebugUtils.Buttons;
 using DebugUtils.Objects;
 using DebugUtils.Objects.Maps;
 using DevLib.Game;
@@ -16,6 +17,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
     {
         public GameManager(DebugState state) : base(state)
         {
+            Bots.Add(new DebugBot());
+            Buttons.Add(new DebugButtonGetAction(this));
         }
 
         public static void Generate()

@@ -1,9 +1,10 @@
 ﻿using DevLib.GameMath;
+using System;
 using System.Collections.Generic;
 
 namespace FallChallenge2023.Bots.Bronze
 {
-    public class Drone
+    public class Drone : ICloneable
     {
         public const int MAX_SPEED = 600;
         public const int SINK_SPEED = 300;
@@ -39,5 +40,16 @@ namespace FallChallenge2023.Bots.Bronze
         }
 
         public override string ToString() => string.Format("[{0}] {1} Drone {2} B{3:D2} S{4:D2}{5}", Id, PlayerId == 0 ? "My" : "Enemy", Position.ToIntString(), Battery, Scans.Count, Emergency ? " Broken" : string.Empty);
+
+        public object Clone()
+        {
+            var drone = (Drone)MemberwiseClone();
+            drone.Position = new Vector(Position.X, Position.Y);
+            drone.Scans = new List<int>(Scans);
+            drone.RadarBlips = new List<RadarBlip>();
+            foreach (var radar in RadarBlips)
+                drone.RadarBlips.Add((RadarBlip)radar.Clone());
+            return drone;
+        }
     }
 }

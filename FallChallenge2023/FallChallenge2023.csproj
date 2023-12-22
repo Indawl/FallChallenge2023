@@ -52,6 +52,8 @@
     <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugBot.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugAction.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugDrone.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugScanFish.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugFish.cs" />
@@ -67,6 +69,7 @@
     <Compile Include="Bots\Bronze\Fish.cs" />
     <Compile Include="Bots\Bronze\FishColor.cs" />
     <Compile Include="Bots\Bronze\FishType.cs" />
+    <Compile Include="Bots\Bronze\GameStateBase.cs" />
     <Compile Include="Bots\Bronze\GameState.cs" />
     <Compile Include="Bots\Bronze\RadarBlip.cs" />
     <Compile Include="Bots\Bronze\RadarType.cs" />
