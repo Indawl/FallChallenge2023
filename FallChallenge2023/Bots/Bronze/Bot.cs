@@ -47,7 +47,7 @@ namespace FallChallenge2023.Bots.Bronze
                     var inputs = Console.ReadLine().Split(' ');
 
                     var droneId = int.Parse(inputs[0]);
-                    var drone = State.GetDrone(droneId) ?? new Drone(droneId, k);
+                    var drone = State.GetDrone(droneId) ?? State.GetNewDrone(droneId, k);
 
                     var battery = drone.Battery;
                     var scansCount = drone.Scans.Count;

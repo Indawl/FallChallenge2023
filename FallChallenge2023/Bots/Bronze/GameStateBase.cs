@@ -17,8 +17,15 @@ namespace FallChallenge2023.Bots.Bronze
         public List<int> GetScans(int playerId) => playerId == 0 ? MyScans : EnemyScans;
         public int GetScore(int playerId) => playerId == 0 ? MyScore : EnemyScore;
         public int SetScore(int playerId, int score) => playerId == 0 ? MyScore = score : EnemyScore = score;
+        public Fish GetFish(int id) => Fishes.FirstOrDefault(_ => _.Id == id);
         public IEnumerable<Drone> GetDrones(int playerId) => Drones.Where(_ => _.PlayerId == playerId);
         public Drone GetDrone(int id) => Drones.FirstOrDefault(_ => _.Id == id);
-        public Fish GetFish(int id) => Fishes.FirstOrDefault(_ => _.Id == id);
+        
+        public Drone GetNewDrone(int droneId, int playerId)
+        {
+            var drone = new Drone(droneId, playerId);
+            Drones.Add(drone);
+            return drone;
+        }
     }
 }

@@ -80,7 +80,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public override Rectangle? GetSelectedArea()
         {
             var modelPosition = MODEL_POSITION[Drone.PlayerId][Type];
-            return new Rectangle(Coord.X - modelPosition.Width / 2, Coord.Y - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);
+            return new Rectangle(Coord.X - modelPosition.Width / 3, Coord.Y - modelPosition.Height / 3, 2 * modelPosition.Width / 3, 2 * modelPosition.Height / 3);
         }
 
         public override string ToString() => Drone.ToString();

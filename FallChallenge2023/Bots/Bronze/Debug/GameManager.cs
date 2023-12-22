@@ -3,11 +3,11 @@ using DebugUtils.Buttons;
 using DebugUtils.Objects;
 using DebugUtils.Objects.Maps;
 using DevLib.Game;
+using Newtonsoft.Json;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Windows.Forms;
 
 namespace FallChallenge2023.Bots.Bronze.Debug
@@ -35,7 +35,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
                         {
                             if (line[0] == '{')
                             {
-                                var state = JsonSerializer.Deserialize<GameState>(line);
+                                var state = JsonConvert.DeserializeObject<GameState>(line);
                                 var debugState = new DebugState(string.Format("Turn {0}", state.Turn), state, parentState);
 
                                 if (parentState == null) rootState = debugState;
