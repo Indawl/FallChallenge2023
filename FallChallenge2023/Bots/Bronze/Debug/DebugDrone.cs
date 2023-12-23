@@ -1,4 +1,5 @@
 ﻿using DebugUtils.Objects;
+using FallChallenge2023.Bots.Bronze.GameMath;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -21,7 +22,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
         public Drone Drone { get; set; }
         public DroneType Type { get; set; }
-        public Point Coord { get; set; }
+        public Vector Coord { get; set; }
         public int LightRadius { get; set; }
         public int MaxLightRadius { get; set; }
         public int MonsterRadius { get; set; }
@@ -39,14 +40,14 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             MonsterRadius = parent.Position.Width * MonsterRadius / GameState.MAP_SIZE;
             MotorRadius = parent.Position.Width * Drone.MOTOR_RANGE / GameState.MAP_SIZE;
 
-            Coord = new Point(parent.Position.Width * Drone.X / GameState.MAP_SIZE, parent.Position.Height * Drone.Y / GameState.MAP_SIZE);
+            Coord = new Vector(parent.Position.Width * Drone.Position.X / GameState.MAP_SIZE, parent.Position.Height * Drone.Position.Y / GameState.MAP_SIZE);
 
             Position = new Rectangle(0, 0, parent.Position.Width, parent.Position.Height);
             Visible = true;
 
             Properties.Add("Id", Drone.Id);
             Properties.Add("Player", Drone.PlayerId == 0 ? "Me" : "Enemy");
-            Properties.Add("Position", new int[] { Drone.X, Drone.Y });
+            Properties.Add("Position", Drone.Position );
             Properties.Add("Emergency", Drone.Emergency);
             Properties.Add("Battery", Drone.Battery);
             Properties.Add("Lighting", Drone.Lighting);

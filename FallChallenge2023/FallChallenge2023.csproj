@@ -75,6 +75,7 @@
     <Compile Include="Bots\Bronze\FishColor.cs" />
     <Compile Include="Bots\Bronze\FishStatus.cs" />
     <Compile Include="Bots\Bronze\FishType.cs" />
+    <Compile Include="Bots\Bronze\GameMath\Vector.cs" />
     <Compile Include="Bots\Bronze\GameStateBase.cs" />
     <Compile Include="Bots\Bronze\GameState.cs" />
     <Compile Include="Bots\Bronze\RadarBlip.cs" />

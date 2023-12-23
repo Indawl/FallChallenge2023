@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FallChallenge2023.Bots.Bronze.GameMath;
+using System;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -17,10 +18,8 @@ namespace FallChallenge2023.Bots.Bronze
         public FishType Type { get; }
 
         public FishStatus Status { get; set; } = FishStatus.UNKNOWED;
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Vx { get; set; }
-        public int Vy { get; set; }        
+        public Vector Position { get; set; }
+        public Vector Speed { get; set; }
 
         public Fish(int id, FishColor color, FishType type)
         {
@@ -29,7 +28,7 @@ namespace FallChallenge2023.Bots.Bronze
             Type = type;
         }
 
-        public override string ToString() => string.Format("[{0}] {1} {2} {3} ({4}, {5}) V({6}, {7})", Id, Color, Type, Status, X, Y, Vx, Vy);
+        public override string ToString() => string.Format("[{0}] {1} {2} {3} {4} V{5})", Id, Color, Type, Status, Position, Speed);
 
         public object Clone() => MemberwiseClone();
     }

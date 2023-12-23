@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FallChallenge2023.Bots.Bronze.GameMath;
+using System;
 using System.Collections.Generic;
 
 namespace FallChallenge2023.Bots.Bronze
@@ -20,8 +21,7 @@ namespace FallChallenge2023.Bots.Bronze
         public int Id { get; }
         public int PlayerId { get; }
 
-        public int X { get; set; }
-        public int Y { get; set; }
+        public Vector Position { get; set; }
         public bool Emergency { get; set; }
         public int Battery { get; set; } = MAX_BATTERY;
         public bool Lighting { get; set; }
@@ -36,7 +36,7 @@ namespace FallChallenge2023.Bots.Bronze
             PlayerId = playerId;
         }
 
-        public override string ToString() => string.Format("[{0}] {1} Drone ({2}, {3}) B {4:D2} S {5:D2}{6}", Id, PlayerId == 0 ? "My" : "Enemy", X, Y, Battery, Scans.Count, Emergency ? " Broken" : string.Empty);
+        public override string ToString() => string.Format("[{0}] {1} Drone {2} B {3:D2} S {4:D2}{5}", Id, PlayerId == 0 ? "My" : "Enemy", Position, Battery, Scans.Count, Emergency ? " Broken" : string.Empty);
 
         public object Clone()
         {

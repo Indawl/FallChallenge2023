@@ -1,4 +1,5 @@
 ﻿using FallChallenge2023.Bots.Bronze.Actions;
+using FallChallenge2023.Bots.Bronze.GameMath;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
@@ -8,6 +9,6 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         {
         }
 
-        public override GameAction GetDecision() => new GameActionMove(Agent.Drone.X, 0);
+        public override GameAction GetDecision() => new GameActionMove(new Vector(Agent.Drone.Position.X, 0));
     }
 }

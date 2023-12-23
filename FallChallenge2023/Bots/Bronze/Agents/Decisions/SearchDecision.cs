@@ -11,12 +11,12 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 
         public override GameAction GetDecision()
         {
-            foreach (var radarBlip in Agent.Drone.RadarBlips)
-                if (!State.GetScannedFishes(Agent.Drone.PlayerId).Any(_ => _ == radarBlip.FishId))
-                    return new GameActionMove(
-                        Agent.Drone.X + Drone.MAX_SPEED * RadarBlip.GetDirectionX(radarBlip.Type), 
-                        Agent.Drone.Y + Drone.MAX_SPEED * RadarBlip.GetDirectionY(radarBlip.Type), 
-                        State.Turn % 3 == 0);
+            //foreach (var radarBlip in Agent.Drone.RadarBlips)
+            //    if (!State.GetScannedFishes(Agent.Drone.PlayerId).Any(_ => _ == radarBlip.FishId))
+            //        return new GameActionMove(
+            //            Agent.Drone.X + Drone.MAX_SPEED * RadarBlip.GetDirectionX(radarBlip.Type), 
+            //            Agent.Drone.Y + Drone.MAX_SPEED * RadarBlip.GetDirectionY(radarBlip.Type), 
+            //            State.Turn % 3 == 0);
 
             return null;
         }

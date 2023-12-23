@@ -1,4 +1,5 @@
 ﻿using DebugUtils.Objects;
+using FallChallenge2023.Bots.Bronze.GameMath;
 using System.Collections.Generic;
 using System.Drawing;
 
@@ -29,8 +30,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         };
 
         public Fish Fish { get; set; }
-        public Point Coord { get; set; }
-        public Point Speed { get; set; }
+        public Vector Coord { get; set; }
+        public Vector Speed { get; set; }
 
         public DebugFish(Fish fish, DebugObject parent) : base(fish.ToString(), parent)
         {
@@ -38,8 +39,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             var size = MODEL_POSITION[Fish.Color][Fish.Type].Size;
 
-            Coord = new Point(parent.Position.Width * Fish.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Y / GameState.MAP_SIZE);
-            Speed = new Point(parent.Position.Width * Fish.Vx / GameState.MAP_SIZE, parent.Position.Height * Fish.Vy / GameState.MAP_SIZE);
+            Coord = new Vector(parent.Position.Width * Fish.Position.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Position.Y / GameState.MAP_SIZE);
+            Speed = new Vector(parent.Position.Width * Fish.Speed.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Speed.Y / GameState.MAP_SIZE);
 
             Position = new Rectangle(Coord.X - size.Width / 2, Coord.Y - size.Height / 2, size.Width, size.Height);
             Visible = true;
@@ -47,8 +48,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             Properties.Add("Id", Fish.Id);
             Properties.Add("Color", Fish.Color);
             Properties.Add("Type", Fish.Type);
-            Properties.Add("Position", new int[] { Fish.X, Fish.Y });
-            Properties.Add("Speed", new int[] { Fish.Vx, Fish.Vy });
+            Properties.Add("Position", Fish.Position );
+            Properties.Add("Speed", Fish.Speed );
             Properties.Add("Status", Fish.Status);
         }
 

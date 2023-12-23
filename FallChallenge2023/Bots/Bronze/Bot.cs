@@ -1,6 +1,7 @@
 ﻿using DevLib.Game;
 using FallChallenge2023.Bots.Bronze.Actions;
 using FallChallenge2023.Bots.Bronze.Agents;
+using FallChallenge2023.Bots.Bronze.GameMath;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -57,8 +58,7 @@ namespace FallChallenge2023.Bots.Bronze
                     var battery = drone.Battery;
                     var scansCount = drone.Scans.Count;
 
-                    drone.X = int.Parse(inputs[1]);
-                    drone.Y = int.Parse(inputs[2]);
+                    drone.Position = new Vector(int.Parse(inputs[1]), int.Parse(inputs[2]));
                     drone.Emergency = int.Parse(inputs[3]) == 1;                    
                     drone.Battery = int.Parse(inputs[4]);
                     drone.Lighting = drone.Battery < battery;
@@ -84,10 +84,8 @@ namespace FallChallenge2023.Bots.Bronze
                 var inputs = Console.ReadLine().Split(' ');
                 var fish = State.GetFish(int.Parse(inputs[0]));
 
-                fish.X = int.Parse(inputs[1]);
-                fish.Y = int.Parse(inputs[2]);
-                fish.Vx = int.Parse(inputs[3]);
-                fish.Vy = int.Parse(inputs[4]);
+                fish.Position = new Vector(int.Parse(inputs[1]), int.Parse(inputs[2]));
+                fish.Speed = new Vector(int.Parse(inputs[3]), int.Parse(inputs[4]));
             }
 
             var radarBlipCount = int.Parse(Console.ReadLine());
@@ -97,7 +95,7 @@ namespace FallChallenge2023.Bots.Bronze
                 var radarBlip = new RadarBlip(int.Parse(inputs[1]), (BlipType)Enum.Parse(typeof(BlipType), inputs[2]));
                 State.GetDrone(int.Parse(inputs[0])).RadarBlips.Add(radarBlip);
                 var fish = State.GetFish(radarBlip.FishId);
-                fish.Status = (fish.X == 0 && fish.Y == 0) ? FishStatus.UNKNOWED : FishStatus.SWIMMING;
+                fish.Status = (fish.Position == null) ? FishStatus.UNKNOWED : FishStatus.SWIMMING;
             }
 
 #if TEST_MODE
