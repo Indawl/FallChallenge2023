@@ -51,6 +51,10 @@
     <Compile Include="Bots\Bronze\Actions\GameActionMove.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
+    <Compile Include="Bots\Bronze\Agents\Conditions\Condition.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\Decision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\SearchDecision.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugBot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugAction.cs" />
@@ -66,6 +70,7 @@
     </Compile>
     <Compile Include="Bots\Bronze\Debug\GameManager.cs" />
     <Compile Include="Bots\Bronze\Drone.cs" />
+    <Compile Include="Bots\Bronze\Agents\DroneAgent.cs" />
     <Compile Include="Bots\Bronze\Fish.cs" />
     <Compile Include="Bots\Bronze\FishColor.cs" />
     <Compile Include="Bots\Bronze\FishStatus.cs" />
@@ -106,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Bots\Bronze\Debug\Games\-8010151275687054000.txt" />
+    <Content Include="Bots\Bronze\Debug\Games\InputData.txt" />
     <Content Include="Bots\Bronze\Debug\Images\Models.png" />
     <Content Include="Bots\Bronze\Debug\Images\Ocean.png" />
   </ItemGroup>

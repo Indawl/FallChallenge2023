@@ -31,7 +31,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             if (Action.Type == GameActionType.MOVE) g.DrawLine(new Pen(Color.Black, 2.0f), debugDrone.Coord.X, debugDrone.Coord.Y, Move.X, Move.Y);
             if (Action.Light) g.DrawEllipse(new Pen(Color.White, 4.0f),
-                debugDrone.Coord.X - debugDrone.MaxLightRadius, debugDrone.Coord.X - debugDrone.MaxLightRadius,
+                debugDrone.Coord.X - debugDrone.MaxLightRadius, debugDrone.Coord.Y - debugDrone.MaxLightRadius,
                 2 * debugDrone.MaxLightRadius, 2 * debugDrone.MaxLightRadius);
 
             return action;

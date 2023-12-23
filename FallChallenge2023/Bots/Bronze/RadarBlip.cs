@@ -1,6 +1,6 @@
 ﻿namespace FallChallenge2023.Bots.Bronze
 {
-    public struct RadarBlip
+    public class RadarBlip
     {
         public int FishId { get; }
         public BlipType Type { get; }
@@ -10,6 +10,9 @@
             FishId = fishId;
             Type = type;
         }
+
+        public static int GetDirectionX(BlipType type) => (type == BlipType.BR || type == BlipType.TR) ? 1 : -1;
+        public static int GetDirectionY(BlipType type) => (type == BlipType.BL || type == BlipType.BR) ? 1 : -1;
 
         public override string ToString() => string.Format("{0} {1}", FishId, Type);
     }

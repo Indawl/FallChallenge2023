@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -26,6 +27,8 @@ namespace FallChallenge2023.Bots.Bronze
             { FishType.ONE_COLOR, 3 },
             { FishType.ONE_TYPE, 4 }
         };
+
+        public IEnumerable<int> GetScannedFishes(int playerId) => GetDrones(playerId).SelectMany(_ => _.Scans).Distinct().Union(GetScans(playerId));
 
         public object Clone()
         {

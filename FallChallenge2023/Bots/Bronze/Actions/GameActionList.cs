@@ -17,6 +17,11 @@ namespace FallChallenge2023.Bots.Bronze.Actions
             Actions.Add(action);
         }
 
+        public GameActionList(List<IGameAction> actions) : base(GameActionType.LIST)
+        {
+            Actions = actions;
+        }
+
         public override string ToString() => string.Join(Environment.NewLine, Actions);
     }
 }

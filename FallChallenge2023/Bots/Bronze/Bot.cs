@@ -1,7 +1,10 @@
 ﻿using DevLib.Game;
 using FallChallenge2023.Bots.Bronze.Actions;
+using FallChallenge2023.Bots.Bronze.Agents;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze
 {
@@ -9,9 +12,11 @@ namespace FallChallenge2023.Bots.Bronze
     {
         public Stopwatch StopWatch => new Stopwatch();
 
-        private GameState State { get; set; }
+        protected List<DroneAgent> Agents { get; } = new List<DroneAgent>();
 
         #region Read from console
+        private GameState State { get; set; }
+
         public void ReadInitialize()
         {
             State = new GameState();
@@ -104,10 +109,24 @@ namespace FallChallenge2023.Bots.Bronze
 
         public IGameAction GetAction(IGameState gameState)
         {
-            var actions = new GameActionList();
-            actions.Actions.Add(new GameActionWait());
-            actions.Actions.Add(new GameActionWait());
-            return actions;
+            var state = gameState as GameState;
+
+            // Create agents
+            CreateAgents(state);
+
+            // Determinate actions for agents
+            foreach (var agent in Agents)
+                agent.FindAction(state);
+
+            return new GameActionList(Agents.Select(_ => (IGameAction)_.Action).ToList());
+        }
+
+        private void CreateAgents(GameState state)
+        {
+            if (Agents.Any()) return;
+
+            foreach (var drone in state.GetDrones(0))
+                Agents.Add(new DroneAgent(drone));
         }
     }
 }
