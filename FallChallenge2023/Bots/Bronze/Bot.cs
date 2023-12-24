@@ -142,7 +142,7 @@ namespace FallChallenge2023.Bots.Bronze
         private void UpdateFishSpeed(GameState state, Fish fish)
         {
             var dronePositions = state.Drones
-                .Where(_ => _.Position.InRange(fish.Position, Drone.MOTOR_RANGE))
+                .Where(_ => !_.Emergency && _.Position.InRange(fish.Position, Drone.MOTOR_RANGE))
                 .Select(_ => _.Position)
                 .ToList();
             if (dronePositions.Any())
@@ -174,7 +174,7 @@ namespace FallChallenge2023.Bots.Bronze
         private void UpdateUglySpeed(GameState state, Fish fish)
         {
             var dronePositions = state.Drones
-                .Where(_ => _.Position.InRange(fish.Position, _.LightRadius))
+                .Where(_ => !_.Emergency && _.Position.InRange(fish.Position, _.LightRadius))
                 .Select(_ => _.Position)
                 .ToList();
             if (dronePositions.Any())
