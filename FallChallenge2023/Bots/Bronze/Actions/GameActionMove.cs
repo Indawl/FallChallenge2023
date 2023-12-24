@@ -8,6 +8,6 @@ namespace FallChallenge2023.Bots.Bronze.Actions
         {
         }
 
-        public override string ToString() => string.Format("MOVE {0} {1} {2}", Position.X, Position.Y, Light ? 1 : 0);
+        public override string ToString() => string.Format("MOVE {0} {1} {2} {3}", (int)Position.X, (int)Position.Y, Light ? 1 : 0, Text);
     }
 }

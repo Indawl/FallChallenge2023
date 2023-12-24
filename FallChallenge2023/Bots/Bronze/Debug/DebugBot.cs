@@ -7,11 +7,21 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 {
     public class DebugBot : Bot, IDebugBot
     {
-        public void GetDebugAction(IGameState state, DebugObject debugObject)
+        public GameManager Manager { get; }
+
+        public DebugBot(GameManager manager)
+        {
+            Manager = manager;
+        }
+
+        public void GetDebugAction(IGameState state, ref DebugObject debugObject)
         {
             var gameState = (GameState)(state as GameState).Clone();
 
             GetAction(gameState);
+
+            // Init
+            debugObject = Manager.GetObjectFromState(gameState);
 
             // Ocean
             var oceanFloor = debugObject.Childs.First(_ => _.Name == "Ocean Floor");

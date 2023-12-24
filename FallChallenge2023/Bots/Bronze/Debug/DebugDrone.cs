@@ -47,13 +47,15 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             Properties.Add("Id", Drone.Id);
             Properties.Add("Player", Drone.PlayerId == 0 ? "Me" : "Enemy");
-            Properties.Add("Position", Drone.Position );
+            Properties.Add("Position", Drone.Position.ToIntString() );
+            Properties.Add("Speed", string.Format("{0} {1}", (int)Drone.Speed.Length(), Drone.Speed.ToIntString()));
             Properties.Add("Emergency", Drone.Emergency);
             Properties.Add("Battery", Drone.Battery);
             Properties.Add("Lighting", Drone.Lighting);
             Properties.Add("Scanning", Drone.Scanning);
             Properties.Add("ScansCount", Drone.Scans.Count);
             Properties.Add("Scans", Drone.Scans.ToArray());
+            Properties.Add("NewScans", Drone.NewScans.ToArray());
             Properties.Add("RadarBlips", Drone.RadarBlips.ToArray());
             
         }
@@ -65,15 +67,15 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             var drone = new Bitmap(Position.Width, Position.Height);
             var g = Graphics.FromImage(drone);
 
-            g.FillEllipse(new SolidBrush(Color.FromArgb(50, 255, 255, 255)), Coord.X - LightRadius, Coord.Y - LightRadius, 2 * LightRadius, 2 * LightRadius);
-            g.DrawEllipse(new Pen(Color.Red, 2.0f), Coord.X - MonsterRadius, Coord.Y - MonsterRadius, 2 * MonsterRadius, 2 * MonsterRadius);
-            g.DrawEllipse(new Pen(Color.Blue, 2.0f), Coord.X - MotorRadius, Coord.Y - MotorRadius, 2 * MotorRadius, 2 * MotorRadius);
-            g.DrawEllipse(new Pen(Color.White, 2.0f) { DashPattern = new float[] { 15.0f, 15.0f } }, Coord.X - MaxLightRadius, Coord.Y - MaxLightRadius, 2 * MaxLightRadius, 2 * MaxLightRadius);
+            g.FillEllipse(new SolidBrush(Color.FromArgb(50, 255, 255, 255)), (int)Coord.X - LightRadius, (int)Coord.Y - LightRadius, 2 * LightRadius, 2 * LightRadius);
+            g.DrawEllipse(new Pen(Color.Red, 2.0f), (int)Coord.X - MonsterRadius, (int)Coord.Y - MonsterRadius, 2 * MonsterRadius, 2 * MonsterRadius);
+            g.DrawEllipse(new Pen(Color.Blue, 2.0f), (int)Coord.X - MotorRadius, (int)Coord.Y - MotorRadius, 2 * MotorRadius, 2 * MotorRadius);
+            g.DrawEllipse(new Pen(Color.White, 2.0f) { DashPattern = new float[] { 15.0f, 15.0f } }, (int)Coord.X - MaxLightRadius, (int)Coord.Y - MaxLightRadius, 2 * MaxLightRadius, 2 * MaxLightRadius);
 
             g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat),
-                Coord.X - modelPosition.Width / 2, Coord.Y - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);
+                (int)Coord.X - modelPosition.Width / 2, (int)Coord.Y - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);
 
-            g.FillEllipse(new SolidBrush(Color.Black), Coord.X - 5, Coord.Y - 5, 10, 10);
+            g.FillEllipse(new SolidBrush(Color.Black), (int)Coord.X - 5, (int)Coord.Y - 5, 10, 10);
 
             return drone;
         }
@@ -81,7 +83,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public override Rectangle? GetSelectedArea()
         {
             var modelPosition = MODEL_POSITION[Drone.PlayerId][Type];
-            return new Rectangle(Coord.X - modelPosition.Width / 3, Coord.Y - modelPosition.Height / 3, 2 * modelPosition.Width / 3, 2 * modelPosition.Height / 3);
+            return new Rectangle((int)Coord.X - modelPosition.Width / 3, (int)Coord.Y - modelPosition.Height / 3, 2 * modelPosition.Width / 3, 2 * modelPosition.Height / 3);
         }
 
         public override string ToString() => Drone.ToString();

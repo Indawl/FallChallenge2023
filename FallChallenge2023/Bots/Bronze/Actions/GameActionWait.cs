@@ -6,6 +6,6 @@
         {
         }
 
-        public override string ToString() => string.Format("WAIT {0}", Light ? 1 : 0);
+        public override string ToString() => string.Format("WAIT {0} {1}", Light ? 1 : 0, Text);
     }
 }

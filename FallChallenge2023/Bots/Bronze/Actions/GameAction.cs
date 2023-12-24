@@ -9,6 +9,8 @@ namespace FallChallenge2023.Bots.Bronze.Actions
         public Vector Position { get; }
         public bool Light { get; }
 
+        public string Text { get; set; }
+
         public GameAction(GameActionType type, bool light = false, Vector position = null)
         {
             Type = type;

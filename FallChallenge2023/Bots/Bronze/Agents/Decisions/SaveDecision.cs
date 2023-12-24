@@ -9,6 +9,6 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         {
         }
 
-        public override GameAction GetDecision() => new GameActionMove(new Vector(Agent.Drone.Position.X, 0));
+        public override GameAction GetDecision() => new GameActionMove(new Vector(Agent.Drone.Position.X, 0)) { Text = "Save" };
     }
 }

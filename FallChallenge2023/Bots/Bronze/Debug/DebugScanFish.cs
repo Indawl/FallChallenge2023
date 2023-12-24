@@ -11,7 +11,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
         public static Dictionary<FishColor, Dictionary<FishType, Rectangle>> MODEL_POSITION = new Dictionary<FishColor, Dictionary<FishType, Rectangle>>()
         {
-            { FishColor.PURPLE, new Dictionary<FishType, Rectangle>() {
+            { FishColor.PINK, new Dictionary<FishType, Rectangle>() {
                 { FishType.JELLY, new Rectangle(7, 7, 70, 70) },
                 { FishType.FISH, new Rectangle(90, 7, 70, 70) },
                 { FishType.CRAB, new Rectangle(170, 7, 70, 70) } } },
@@ -35,7 +35,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public bool NoFish { get; set; }
 
         public DebugScanFish(int playerId, Fish fish, bool saved, bool noFish, DebugObject parent) :
-            base(string.Format("{0}{1}{2}", saved ? "SAVED " : string.Empty, fish.Status == FishStatus.LOSTED ? "LOST " : string.Empty, fish), parent)
+            base(string.Format("{0}{1}", saved ? "SAVED " : string.Empty, fish), parent)
         {
             Fish = fish;
             Saved = saved;

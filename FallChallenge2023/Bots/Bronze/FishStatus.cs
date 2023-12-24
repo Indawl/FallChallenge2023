@@ -2,8 +2,8 @@
 {
     public enum FishStatus
     {
-        UNKNOWED,
-        SWIMMING,
+        VISIBLE,
+        UNVISIBLE,
         LOSTED
     }
 }

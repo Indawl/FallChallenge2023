@@ -11,7 +11,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         {
             { FishColor.UGLY, new Dictionary<FishType, Rectangle>() {
                 { FishType.ANGLER, new Rectangle(422, 5, 86, 71) } } },
-            { FishColor.PURPLE, new Dictionary<FishType, Rectangle>() {
+            { FishColor.PINK, new Dictionary<FishType, Rectangle>() {
                 { FishType.JELLY, new Rectangle(281, 312, 49, 45) },
                 { FishType.FISH, new Rectangle(141, 203, 50, 42) },
                 { FishType.CRAB, new Rectangle(140, 0, 56, 43) } } },
@@ -42,14 +42,14 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             Coord = new Vector(parent.Position.Width * Fish.Position.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Position.Y / GameState.MAP_SIZE);
             Speed = new Vector(parent.Position.Width * Fish.Speed.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Speed.Y / GameState.MAP_SIZE);
 
-            Position = new Rectangle(Coord.X - size.Width / 2, Coord.Y - size.Height / 2, size.Width, size.Height);
+            Position = new Rectangle((int)Coord.X - size.Width / 2, (int)Coord.Y - size.Height / 2, size.Width, size.Height);
             Visible = true;
 
             Properties.Add("Id", Fish.Id);
             Properties.Add("Color", Fish.Color);
             Properties.Add("Type", Fish.Type);
-            Properties.Add("Position", Fish.Position );
-            Properties.Add("Speed", Fish.Speed );
+            Properties.Add("Position", Fish.Position.ToIntString() );
+            Properties.Add("Speed", string.Format("{0} {1}", (int)Fish.Speed.Length(), Fish.Speed.ToIntString()));
             Properties.Add("Status", Fish.Status);
         }
 
@@ -64,7 +64,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
                 Position.Width / 2 - modelPosition.Width / 2, Position.Height / 2 - modelPosition.Height / 2, modelPosition.Width, modelPosition.Height);
 
             g.FillEllipse(new SolidBrush(Color.Black), Position.Width / 2 - 5, Position.Height / 2 - 5, 10, 10);
-            g.DrawLine(new Pen(Color.Black, 2.0f), Position.Width / 2, Position.Height / 2, Position.Width / 2 + Speed.X, Position.Height / 2 + Speed.Y);
+            g.DrawLine(new Pen(Color.Black, 2.0f), Position.Width / 2, Position.Height / 2, Position.Width / 2 + (int)Speed.X, Position.Height / 2 + (int)Speed.Y);
 
             return fish;
         }

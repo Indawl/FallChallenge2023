@@ -10,6 +10,8 @@ namespace FallChallenge2023.Bots.Bronze.Agents
         public Drone Drone { get; }
         public GameAction Action { get; private set; } = new GameActionWait();
 
+        public bool Lighting { get; set; } = true;
+
         private Dictionary<int, bool> CheckedConditions { get; }
 
         public DroneAgent(Drone drone)
@@ -19,13 +21,14 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 
         public void FindAction(GameState state)
         {
-            var decisions = new List<Decision>()
+            // Decided action
+            Action = GetActionFromDecision(new List<Decision>()
             {
+                //new LightDecision(this, state),
                 new SearchDecision(this, state),
                 new SaveDecision(this, state)
-            };
-
-            Action = GetActionFromDecision(decisions);
+                //new ScareDecision(this, state),
+            });
         }
 
         private GameAction GetActionFromDecision(List<Decision> decisions)

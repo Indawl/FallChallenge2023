@@ -6,6 +6,7 @@ namespace FallChallenge2023.Bots.Bronze
     public class Fish : ICloneable
     {
         public const int SPEED = 200;
+        public const int SPEED_SQR = SPEED * SPEED;
         public const int FRIGHTENED_SPEED = 400;
         public const int MIN_DISTANCE_BT_FISH = 600;        
         public const int MONSTER_SPEED = 270;
@@ -17,7 +18,7 @@ namespace FallChallenge2023.Bots.Bronze
         public FishColor Color { get; }
         public FishType Type { get; }
 
-        public FishStatus Status { get; set; } = FishStatus.UNKNOWED;
+        public FishStatus Status { get; set; } = FishStatus.UNVISIBLE;
         public Vector Position { get; set; }
         public Vector Speed { get; set; }
 
@@ -28,7 +29,7 @@ namespace FallChallenge2023.Bots.Bronze
             Type = type;
         }
 
-        public override string ToString() => string.Format("[{0}] {1} {2} {3} {4} V{5})", Id, Color, Type, Status, Position, Speed);
+        public override string ToString() => string.Format("[{0}] {1} {2} {3} {4} V{5})", Id, Color, Type, Status, Position.ToIntString(), Speed.ToIntString());
 
         public object Clone() => MemberwiseClone();
     }

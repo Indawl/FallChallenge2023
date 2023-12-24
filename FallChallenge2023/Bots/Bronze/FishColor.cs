@@ -3,7 +3,7 @@
     public enum FishColor
     {
         UGLY = -1,
-        PURPLE = 0, 
+        PINK = 0, 
         YELLOW = 1, 
         GREEN = 2,
         BLUE = 3

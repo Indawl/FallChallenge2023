@@ -16,7 +16,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
     {
         public GameManager(DebugState state) : base(state)
         {
-            Bots.Add(new DebugBot());
+            Bots.Add(new DebugBot(this));
             Buttons.Add(new DebugButtonGetAction(this));
         }
 
@@ -71,7 +71,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             rootObj.Childs.Add(oceanFloor);
 
             // Fishes
-            foreach (var fish in gameState.Fishes.Where(_ => _.Status == FishStatus.SWIMMING))
+            foreach (var fish in gameState.Fishes.Where(_ => _.Position != null && _.Status != FishStatus.LOSTED))
                 oceanFloor.Childs.Add(new DebugFish(fish, oceanFloor));
 
             // Drones
