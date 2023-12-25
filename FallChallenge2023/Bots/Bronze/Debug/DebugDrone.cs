@@ -75,7 +75,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat),
                 (int)Coord.X - modelPosition.Width / 2, (int)Coord.Y - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);
 
-            g.FillEllipse(new SolidBrush(Color.Black), (int)Coord.X - 5, (int)Coord.Y - 5, 10, 10);
+            var radiusAttack = Parent.Position.Width * Fish.MONSTER_ATTACK_RADIUS / GameState.MAP_SIZE; 
+            g.DrawEllipse(new Pen(Color.Yellow, 2.0f), (int)Coord.X - radiusAttack, (int)Coord.Y - radiusAttack, 2 * radiusAttack, 2 * radiusAttack);
 
             return drone;
         }

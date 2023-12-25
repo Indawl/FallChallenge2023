@@ -22,7 +22,7 @@ namespace FallChallenge2023.Bots.Bronze
 
         public RectangleRange GetRange(Vector position)
         {
-            double x = 0, y = 0, toX = GameState.MAP_SIZE, toY = GameState.MAP_SIZE;
+            double x = 0, y = 0, toX = GameState.MAP_SIZE - 1, toY = GameState.MAP_SIZE - 1;
 
             if (Type == BlipType.BL || Type == BlipType.TL)
             {

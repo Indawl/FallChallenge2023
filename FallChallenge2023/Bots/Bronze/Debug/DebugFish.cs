@@ -40,7 +40,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             var size = MODEL_POSITION[Fish.Color][Fish.Type].Size;
 
             Coord = new Vector(parent.Position.Width * Fish.Position.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Position.Y / GameState.MAP_SIZE);
-            Speed = new Vector(parent.Position.Width * Fish.Speed.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Speed.Y / GameState.MAP_SIZE);
+            if (fish.Speed == null) Speed = new Vector();
+            else Speed = new Vector(parent.Position.Width * Fish.Speed.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Speed.Y / GameState.MAP_SIZE);
 
             Position = new Rectangle((int)Coord.X - size.Width / 2, (int)Coord.Y - size.Height / 2, size.Width, size.Height);
             Visible = true;
@@ -48,8 +49,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             Properties.Add("Id", Fish.Id);
             Properties.Add("Color", Fish.Color);
             Properties.Add("Type", Fish.Type);
-            Properties.Add("Position", Fish.Position.ToIntString() );
-            Properties.Add("Speed", string.Format("{0} {1}", (int)Fish.Speed.Length(), Fish.Speed.ToIntString()));
+            Properties.Add("Position", Fish.Position?.ToIntString() );
+            if (Fish.Speed != null) Properties.Add("Speed", string.Format("{0} ({1})", Fish.Speed.ToIntString(), (int)Fish.Speed.Length()));
             Properties.Add("Status", Fish.Status);
         }
 

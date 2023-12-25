@@ -17,8 +17,8 @@ namespace FallChallenge2023.Bots.Bronze
         public static Dictionary<FishType, int[]> HABITAT = new Dictionary<FishType, int[]>()
         {
             { FishType.ANGLER, new int[] { 2500, 9999 } },
-            { FishType.JELLY, new int[] { 2500, 5000 } },
-            { FishType.FISH, new int[] { 5000, 7500 } },
+            { FishType.JELLY, new int[] { 2500, 4999 } },
+            { FishType.FISH, new int[] { 5000, 7499 } },
             { FishType.CRAB, new int[] { 7500, 9999 } }
         };
 

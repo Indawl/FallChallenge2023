@@ -52,7 +52,11 @@
     <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\Condition.cs" />
+    <Compile Include="Bots\Bronze\Agents\Conditions\EmergencyCondition.cs" />
+    <Compile Include="Bots\Bronze\Agents\Conditions\DiveCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\Decision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\DiveDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\EmergencyDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SearchDecision.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />

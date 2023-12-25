@@ -12,13 +12,14 @@ namespace FallChallenge2023.Bots.Bronze
         public const int MONSTER_SPEED = 270;
         public const int MONSTER_ATTACK_SPEED = 540;
         public const int MONSTER_ATTACK_RADIUS = 500;
+        public const int MONSTER_ATTACK_RADIUS_SQR = MONSTER_ATTACK_RADIUS * MONSTER_ATTACK_RADIUS;
         public const int MIN_DISTANCE_BT_MONSTER = 600;        
 
         public int Id { get; }
         public FishColor Color { get; }
         public FishType Type { get; }
 
-        public FishStatus Status { get; set; } = FishStatus.UNVISIBLE;
+        public FishStatus Status { get; set; } = FishStatus.UNKNOWED;
         public Vector Position { get; set; }
         public Vector Speed { get; set; }
 
@@ -29,7 +30,7 @@ namespace FallChallenge2023.Bots.Bronze
             Type = type;
         }
 
-        public override string ToString() => string.Format("[{0}] {1} {2} {3} {4} V{5})", Id, Color, Type, Status, Position.ToIntString(), Speed.ToIntString());
+        public override string ToString() => string.Format("[{0}] {1} {2} {3} {4} V{5}{6})", Id, Color, Type, Status, Position?.ToIntString(), Speed == null ? 0 : (int)Speed.Length(), Speed?.ToIntString());
 
         public object Clone() => MemberwiseClone();
     }

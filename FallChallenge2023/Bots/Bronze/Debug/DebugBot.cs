@@ -18,6 +18,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         {
             var gameState = (GameState)(state as GameState).Clone();
 
+            Agents.Clear();
             GetAction(gameState);
 
             // Init

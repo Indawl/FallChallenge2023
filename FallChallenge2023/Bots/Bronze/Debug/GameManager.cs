@@ -34,6 +34,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
                         while (line != null)
                         {
                             if (line[0] == '{')
+                                try
                             {
                                 var state = JsonConvert.DeserializeObject<GameState>(line);
                                 var debugState = new DebugState(string.Format("Turn {0}", state.Turn), state, parentState);
@@ -42,7 +43,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
                                 else parentState.NextMoves.Add(debugState);
 
                                 parentState = debugState;
-                            }
+                            } catch (JsonReaderException e) { break; }
 
                             line = reader.ReadLine();
                         }
