@@ -28,6 +28,7 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
         public static Vector operator +(Vector a, Vector b) => new Vector(a.X + b.X, a.Y + b.Y);
         public static Vector operator -(Vector a, Vector b) => new Vector(a.X - b.X, a.Y - b.Y);
 
+        public static double Skew(Vector a, Vector b) => a.X * b.Y - b.X * a.Y;
         public static double Dot(Vector a, Vector b) => a.X * b.X + a.Y * b.Y;
 
         public override string ToString() => string.Format("({0}, {1})", X, Y);

@@ -11,7 +11,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
     public class DroneAgent
     {
         public Drone Drone { get; }
-        public GameAction Action { get; private set; } 
+        public GameAction Action { get; private set; }
 
         public bool Lighting { get; set; } = true;
 
@@ -66,34 +66,14 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 
         public Vector GetAroundMonster(GameState state, Vector from, Vector to)
         {
-            var move = to - from;
+            foreach (var fish in state.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Status == FishStatus.VISIBLE))
+                if (CheckCollision(fish.Position, fish.Speed, from, to))
+                    to = CorrectCollisionMove(fish.Position, fish.Speed, from, to);
 
-            var found = true;
-            var checks = new HashSet<int>();
-
-            while (found)
-            {
-                found = false;
-                foreach (var fish in state.Fishes.Where(_ => !checks.Contains(_.Id) && _.Color == FishColor.UGLY && _.Status == FishStatus.VISIBLE))
-                    if (CheckColision(fish.Position, fish.Speed, from, to))
-                    {
-                        var fp = Drone.Position - fish.Position;
-                        var fs = fish.Speed - move;
-                        var tanget = Math.Asin((Fish.MONSTER_ATTACK_RADIUS + 1) / fp.Length());
-                        var fv = Math.Acos(Vector.Dot(fp, fs) / (fp.Length() * fs.Length()));//atan2(y,x)
-
-                        var sign = Math.Sign(fp.X * fs.Y - fp.Y * fs.X);
-                        move = move.Rotate(-tanget - sign * fv);
-
-                        found = true;
-                        checks.Add(fish.Id);
-                    }
-            }
-
-            return from + move;
+            return to;
         }
 
-        public bool CheckColision(Vector position, Vector speed, Vector from, Vector to)
+        public bool CheckCollision(Vector position, Vector speed, Vector from, Vector to)
         {
             if (speed.IsZero() && to.Equals(from)) return false;
 
@@ -114,5 +94,31 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 
             return true;
         }
+
+        public Vector CorrectCollisionMove(Vector position, Vector speed, Vector from, Vector to)
+        {
+            var pos = position - from;
+            var vd = to - from;
+            var vf = speed - vd;
+
+            var a = 2 * Vector.Skew(vf, pos);
+            var b = 2 * Vector.Dot(vf, pos);
+            var c = pos.LengthSqr() + vf.LengthSqr() - Fish.MONSTER_ATTACK_RADIUS_SQR;
+
+            var epsilon = Math.PI / 1800;
+            double alpha = epsilon;
+            double dt;
+
+            do
+            {
+                dt = CollisionF(a, b, c, alpha) / CollisionDF(a, b, alpha);
+                alpha -= dt;
+            } while (Math.Abs(dt) > epsilon);
+
+            return from + vd.Rotate(alpha);
+        }
+
+        public double CollisionF(double a, double b, double c, double alpha) => a * Math.Sin(alpha) + b * Math.Cos(alpha) + c;
+        public double CollisionDF(double a, double b, double alpha) => a * Math.Cos(alpha) - b * Math.Sin(alpha);
     }
 }
