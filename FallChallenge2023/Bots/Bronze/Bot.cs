@@ -87,7 +87,7 @@ namespace FallChallenge2023.Bots.Bronze
             State.Fishes.Where(_ => _.Status == FishStatus.VISIBLE).ToList().ForEach(_ => _.Status = FishStatus.UNVISIBLE);
 
             // Visible fishs
-            var lostedFishes = State.Fishes.Select(_ => _.Id).ToList();
+            var lostedFishes = State.Fishes.Where(_ => _.Status != FishStatus.LOSTED).Select(_ => _.Id).ToList();
             var fishesCount = int.Parse(Console.ReadLine());
             for (int i = 0; i < fishesCount; i++)
             {
@@ -111,7 +111,14 @@ namespace FallChallenge2023.Bots.Bronze
                 drone.RadarBlips.Add(radarBlip);
                 lostedFishes.Remove(radarBlip.FishId);
             }
-            lostedFishes.ForEach(_ => State.GetFish(_).Status = FishStatus.LOSTED);
+            lostedFishes.ForEach(_ =>
+            {
+                var fish = State.GetFish(_);
+                fish.Status = FishStatus.LOSTED;
+                fish.Position = null;
+                fish.Speed = null;
+            });
+
 #if TEST_MODE
             if (State.Turn > SERIAL_FROM_TURN)
                 Console.Error.WriteLine(JsonSerializer.Serialize<GameStateBase>(State));
@@ -119,105 +126,6 @@ namespace FallChallenge2023.Bots.Bronze
             return State;
         }
         #endregion
-
-        private void UpdateFishPositions(GameState state)
-        {
-            // New Position
-            foreach (var fish in state.Fishes.Where(_ => _.Position != null && _.Speed != null && _.Status == FishStatus.UNVISIBLE))
-                SetNextPosition(fish);
-
-            // New Speed
-            foreach (var fish in state.Fishes.Where(_ => _.Position != null && _.Speed != null && _.Status == FishStatus.UNVISIBLE))
-                if (fish.Color == FishColor.UGLY)
-                    UpdateUglySpeed(state, fish);
-                else
-                    UpdateFishSpeed(state, fish);
-        }
-
-        private void SetNextPosition(Fish fish)
-        {
-            fish.Position += fish.Speed;
-
-            // Snap positions
-            var habitat = GameState.HABITAT[fish.Type];
-            if (fish.Position.X < 0) fish.Position = new Vector(0, fish.Position.Y);
-            if (fish.Position.X > GameState.MAP_SIZE - 1) fish.Position = new Vector(GameState.MAP_SIZE - 1, fish.Position.Y);
-            if (fish.Position.Y < habitat[0]) fish.Position = new Vector(fish.Position.X, habitat[0]);
-            if (fish.Position.Y > habitat[1]) fish.Position = new Vector(fish.Position.X, habitat[1]);
-        }
-
-        private void UpdateFishSpeed(GameState state, Fish fish)
-        {
-            // Near drone
-            var dronePositions = fish.Position.GetClosest(state.Drones
-                .Where(_ => !_.Emergency && _.Position.InRange(fish.Position, Drone.MOTOR_RANGE))
-                .Select(_ => _.Position)
-                .ToList());
-            if (dronePositions.Any())
-            {
-                var position = dronePositions.Aggregate((a, b) => a + b) / dronePositions.Count;
-                fish.Speed = ((fish.Position - position).Normalize() * Fish.FRIGHTENED_SPEED).Round();
-            }
-            else
-            {
-                // Near fish
-                var fishesPositions = fish.Position.GetClosest(state.Fishes
-                    .Where(_ => _.Position != null && _ != fish && _.Color != FishColor.UGLY && _.Position.InRange(fish.Position, Fish.MIN_DISTANCE_BT_FISH))
-                    .Select(_ => _.Position)
-                    .ToList());
-                if (fishesPositions.Any())
-                {
-                    var position = fishesPositions.Aggregate((a, b) => a + b) / fishesPositions.Count;
-                    fish.Speed = (fish.Position - position).Normalize() * Fish.SPEED;
-                }
-                else fish.Speed = fish.Speed.Normalize() * Fish.SPEED;
-
-                // Border
-                var habitat = GameState.HABITAT[fish.Type];
-                var nextPosition = fish.Position + fish.Speed;
-
-                if (nextPosition.X < 0 || nextPosition.X > GameState.MAP_SIZE - 1) fish.Speed = fish.Speed.HSymmetric();
-                if (nextPosition.Y < habitat[0] || nextPosition.Y > habitat[1]) fish.Speed = fish.Speed.VSymmetric();
-
-                fish.Speed = fish.Speed.EpsilonRound().Round();
-            }
-        }
-
-        private void UpdateUglySpeed(GameState state, Fish fish)
-        {
-            // Near drone
-            var dronePositions = fish.Position.GetClosest(state.Drones
-                .Where(_ => !_.Emergency && _.Position.InRange(fish.Position, _.LightRadius))
-                .Select(_ => _.Position)
-                .ToList());
-            if (dronePositions.Any())
-            {
-                var position = dronePositions.Aggregate((a, b) => a + b) / dronePositions.Count;
-                fish.Speed = ((position - fish.Position).Normalize() * Fish.MONSTER_ATTACK_SPEED).Round();
-            }
-            else if (fish.Speed != null && !fish.Speed.IsZero())
-            {
-                fish.Speed = fish.Speed.Normalize() * Fish.MONSTER_SPEED;
-
-                var fishesPositions = fish.Position.GetClosest(state.Fishes
-                    .Where(_ => _.Position != null && _ != fish && _.Color == FishColor.UGLY && _.Position.InRange(fish.Position, Fish.MIN_DISTANCE_BT_MONSTER))
-                    .Select(_ => _.Position)
-                    .ToList());
-                if (fishesPositions.Any())
-                {
-                    var position = fishesPositions.Aggregate((a, b) => a + b) / fishesPositions.Count;
-                    fish.Speed = (fish.Position - position).Normalize() * Fish.MONSTER_SPEED;
-                }
-
-                fish.Speed = fish.Speed.Round();
-
-                var habitat = GameState.HABITAT[fish.Type];
-                var nextPosition = fish.Position + fish.Speed;
-
-                if (nextPosition.X < 0 || nextPosition.X > GameState.MAP_SIZE - 1) fish.Speed = fish.Speed.HSymmetric();
-                if (nextPosition.Y < habitat[0] || nextPosition.Y > habitat[1]) fish.Speed = fish.Speed.VSymmetric();
-            }
-        }
 
         private void FindFishPositions(GameState state)
         {
@@ -237,7 +145,7 @@ namespace FallChallenge2023.Bots.Bronze
 
             // Symmetric Fish
             var scannedFish = state.Drones.SelectMany(_ => _.NewScans).ToList();
-            foreach (var fish in state.Fishes.Where(_ => _.Position != null && _.Status != FishStatus.LOSTED && scannedFish.Contains(_.Id)))
+            foreach (var fish in state.Fishes.Where(_ => _.Position != null && scannedFish.Contains(_.Id)))
             {
                 var sFish = state.GetSymmetricFish(fish);
                 if (sFish.Position == null || sFish.Status == FishStatus.UNKNOWED)
@@ -285,10 +193,13 @@ namespace FallChallenge2023.Bots.Bronze
             var state = gameState as GameState;
 
             // Calculate new positions
-            UpdateFishPositions(state);
+            state.UpdateFishPositions(state.Fishes, _ => _.Status == FishStatus.UNVISIBLE);
 
             // Find fish's positions
             FindFishPositions(state);
+
+            // Find potencial fish positions
+            state.FindPotencialFishes();
 
             // Create agents
             CreateAgents(state);
@@ -302,10 +213,20 @@ namespace FallChallenge2023.Bots.Bronze
 
         private void CreateAgents(GameState state)
         {
-            if (Agents.Any()) return;
+            if (!Agents.Any())
+                foreach (var drone in state.GetDrones(0))
+                    Agents.Add(new DroneAgent(drone));
 
-            foreach (var drone in state.GetDrones(0))
-                Agents.Add(new DroneAgent(drone));
+            // Distribute tasks
+            var minAgent = Agents[0].Drone.Position.X <= Agents[1].Drone.Position.X ? 0 : 1;
+            var maxAgent = 1 - minAgent;
+            var center = (Agents[0].Drone.Position.X + Agents[1].Drone.Position.X) / 2;
+
+            Agents[0].Fishes = state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && _.Position.X <= center).ToList();
+            Agents[1].Fishes = state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && _.Position.X > center).ToList();
+
+            Agents[0].Uglys = state.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.X <= center).ToList();
+            Agents[1].Uglys = state.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.X > center).ToList();
         }
     }
 }

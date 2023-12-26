@@ -4,7 +4,7 @@ namespace FallChallenge2023.Bots.Wood.Actions
 {
     public class GameActionMove : GameAction
     {
-        public GameActionMove(Vector position, bool light = false) : base(GameActionType.MOVE, light, position)
+        public GameActionMove(VectorD position, bool light = false) : base(GameActionType.MOVE, light, position)
         {
         }
 

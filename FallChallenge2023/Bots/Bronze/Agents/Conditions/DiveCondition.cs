@@ -1,4 +1,6 @@
-﻿namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
+﻿using System.Linq;
+
+namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
 {
     public class DiveCondition : Condition
     {
@@ -6,8 +8,8 @@
         {
         }
 
-        public override int Id => 2;
+        public override int Id => 100;
 
-        public override bool Check() => State.Turn <= 1200;
+        public override bool Check() => State.Turn < 13 && !Agent.Uglys.Any(_ => _.Status != FishStatus.UNKNOWED);
     }
 }

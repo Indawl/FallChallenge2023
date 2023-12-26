@@ -72,7 +72,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             rootObj.Childs.Add(oceanFloor);
 
             // Fishes
-            foreach (var fish in gameState.Fishes.Where(_ => _.Position != null && _.Status != FishStatus.LOSTED))
+            foreach (var fish in gameState.Fishes.Where(_ => _.Position != null))
                 oceanFloor.Childs.Add(new DebugFish(fish, oceanFloor));
 
             // Drones

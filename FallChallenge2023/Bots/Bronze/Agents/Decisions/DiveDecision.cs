@@ -11,9 +11,11 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             Conditions.Add(new DiveCondition(agent, state));
         }
 
-        public override GameAction GetDecision() =>
-            new GameActionMove(Agent.GetAroundMonster(State,
-                Agent.Drone.Position,
-                Agent.Drone.Position + new Vector(0, 600)));
+        public override GameAction GetDecision()
+        {
+            var newPosition = Agent.Drone.Position + new Vector(0, Drone.MAX_SPEED);
+            var light = (new FishDetectedCondition(Agent, State, newPosition)).Check();
+            return new GameActionMove(newPosition, light);
+        }
     }
 }

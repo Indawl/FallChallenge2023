@@ -105,15 +105,15 @@ namespace FallChallenge2023.Bots.Wood
 
             var drone = state.Drones.Values.First(_ => _.PlayerId == 0);
             var foeDrone = state.Drones.Values.First(_ => _.PlayerId == 1);
-            var position = new Vector(drone.X, drone.Y);
-            var foePosition = new Vector(foeDrone.X, foeDrone.Y);
+            var position = new VectorD(drone.X, drone.Y);
+            var foePosition = new VectorD(foeDrone.X, foeDrone.Y);
 
             if (foePosition.Y - position.Y < 601 && position.Y <= foePosition.Y)
                 foreach (var fishId in drone.Scans)
                     if (!scaned.Any(_ => _ == fishId) && foeDrone.Scans.Any(_ => _ == fishId))
                     {
                         Console.Error.WriteLine(string.Format("{0} UP", fishId));
-                        return new GameActionMove(new Vector(position.X, 500), false);
+                        return new GameActionMove(new VectorD(position.X, 500), false);
                     }
 
             var fishes = state.Fishes.Values.ToList();
@@ -135,20 +135,20 @@ namespace FallChallenge2023.Bots.Wood
                         switch (radar.Type)
                         {
                             case RadarType.TL:
-                                return new GameActionMove(position + new Vector(-1000, -1000), light);
+                                return new GameActionMove(position + new VectorD(-1000, -1000), light);
                             case RadarType.TR:
-                                return new GameActionMove(position + new Vector(1000, -1000), light);
+                                return new GameActionMove(position + new VectorD(1000, -1000), light);
                             case RadarType.BL:
-                                return new GameActionMove(position + new Vector(-1000, 1000), light);
+                                return new GameActionMove(position + new VectorD(-1000, 1000), light);
                             case RadarType.BR:
-                                return new GameActionMove(position + new Vector(1000, 1000), light);
+                                return new GameActionMove(position + new VectorD(1000, 1000), light);
                         }
                     }
                 if (drone.Scans.Count > 0) break;
             }
 
             Console.Error.WriteLine(string.Format("NONE UP"));
-            return new GameActionMove(new Vector(position.X, 500), false);
+            return new GameActionMove(new VectorD(position.X, 500), false);
         }
     }
 }

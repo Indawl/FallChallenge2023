@@ -9,6 +9,7 @@ namespace FallChallenge2023.Bots.Bronze
     public class Drone : ICloneable
     {
         public const int MAX_SPEED = 600;
+        public const int MAX_SPEED_SQR = MAX_SPEED * MAX_SPEED;
         public const int SINK_SPEED = 300;
         public const int EMERGENCY_SPEED = 300;
         public const int SCAN_RADIUS = 800;

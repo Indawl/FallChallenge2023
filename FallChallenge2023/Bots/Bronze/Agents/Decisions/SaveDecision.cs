@@ -1,4 +1,5 @@
 ﻿using FallChallenge2023.Bots.Bronze.Actions;
+using FallChallenge2023.Bots.Bronze.Agents.Conditions;
 using FallChallenge2023.Bots.Bronze.GameMath;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
@@ -7,11 +8,14 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
     {
         public SaveDecision(DroneAgent agent, GameState state) : base(agent, state)
         {
+            Conditions.Add(new SaveCondition(agent, state));
         }
 
-        public override GameAction GetDecision() =>
-            new GameActionMove(Agent.GetAroundMonster(State,
-                Agent.Drone.Position,
-                new Vector(Agent.Drone.Position.X, 0)));
+        public override GameAction GetDecision()
+        {
+            var newPosition = State.GetAroundMonster(Agent.Drone.Position, new Vector(0, -Drone.MAX_SPEED));
+            var light = (new FishDetectedCondition(Agent, State, newPosition)).Check();
+            return new GameActionMove(newPosition, light);
+        }
     }
 }
