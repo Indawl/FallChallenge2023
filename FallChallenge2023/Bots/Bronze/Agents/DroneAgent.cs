@@ -9,7 +9,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
     public class DroneAgent
     {
         public Drone Drone { get; }
-        public List<Fish> UnscannedFishes { get; set; }        
+        public List<Fish> UnscannedFishes { get; set; } = new List<Fish>();
         public GameAction Action { get; private set; }
 
         private Dictionary<int, bool> CheckedConditions { get; } = new Dictionary<int, bool>();
