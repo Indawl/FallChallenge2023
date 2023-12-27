@@ -4,7 +4,7 @@ namespace FallChallenge2023
 {
     class Player
     {
-#if DEBUG_MANAGER1
+#if DEBUG_MANAGER
         [STAThreadAttribute]
         static void Main(string[] args)
         {
