@@ -192,7 +192,7 @@ namespace FallChallenge2023.Bots.Bronze
                 if (fishesPositions.Any())
                 {
                     var pos = fishesPositions.Aggregate((a, b) => a + b) / fishesPositions.Count;
-                    speed = (position - pos).Normalize() * Fish.MONSTER_SPEED;
+                    speed = (position - pos).Normalize() * Fish.SPEED; // Fish.MONSTER_SPEED; // repeat error from referee
                 }
 
                 speed = speed.Round();
@@ -227,12 +227,12 @@ namespace FallChallenge2023.Bots.Bronze
             else return from + speed;
         }
 
-        private bool CheckCollisionWithMonsters(IEnumerable<Fish> fishes, IEnumerable<Drone> drones, Vector from, ref Vector speed, Drone drone = null, int forMoves = 1, double epsilon = 0.1)
+        private bool CheckCollisionWithMonsters(IEnumerable<Fish> fishes, IEnumerable<Drone> drones, Vector from, ref Vector speed, Drone drone = null, int forMoves = 20, double epsilon = 0.1)
         {
             epsilon *= Math.PI / 180;
 
             var newTo = from + speed;
-            var newSpeed = speed.IsZero() ? new Vector(Drone.MAX_SPEED, 0) : speed.Normalize() * Drone.MAX_SPEED;
+            var newSpeed = speed.IsZero() ? new Vector(Drone.MAX_SPEED, 0) : speed;
 
             var alpha = 0.0;
             var wise = true;
@@ -253,7 +253,8 @@ namespace FallChallenge2023.Bots.Bronze
                             wise = !wise;
                             if (alpha > Math.PI) return true;
 
-                            newTo = SnapToDroneZone(from + newSpeed.Rotate(alpha).Round());
+                            var rSpeed = (newSpeed.Rotate(alpha).Normalize() * Drone.MAX_SPEED).Round();
+                            newTo = SnapToDroneZone(from + rSpeed);
                             collision = true;
                         }
                 }
