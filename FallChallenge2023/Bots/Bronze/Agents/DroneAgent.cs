@@ -42,9 +42,12 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 
             foreach (var decision in decisions)
             {
-                var childDecisions = CheckConditions(decision) ? decision.DecisionsOk : decision.DecisionsFail;
-                if (childDecisions.Any()) action = GetActionFromDecision(childDecisions);
-                else action = decision.GetDecision();
+                if (CheckConditions(decision))
+                    if (decision.DecisionsOk.Any()) action = GetActionFromDecision(decision.DecisionsOk);
+                    else action = decision.GetDecision();
+                else
+                    if (decision.DecisionsFail.Any()) action = GetActionFromDecision(decision.DecisionsFail);
+
                 if (action != null) break;
             }
 
