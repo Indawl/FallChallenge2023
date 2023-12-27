@@ -210,7 +210,7 @@ namespace FallChallenge2023.Bots.Bronze
         {
             var newTo = from + speed;
 
-            speed = speed.Normalize() * Drone.MAX_SPEED;
+            speed = speed.IsZero() ? new Vector(Drone.MAX_SPEED, 0) : speed.Normalize() * Drone.MAX_SPEED;
             epsilon *= Math.PI / 180;
 
             var alpha = 0.0;

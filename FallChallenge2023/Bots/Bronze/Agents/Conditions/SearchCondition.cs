@@ -10,10 +10,6 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
 
         public override int Id => 200;
 
-        public override bool Check()
-        {
-            var scannedFish = State.GetScannedFishes(Agent.Drone.PlayerId);
-            return Agent.Fishes.Any(_ => !scannedFish.Contains(_.Id));
-        }
+        public override bool Check() => Agent.UnscannedFishes.Any();
     }
 }

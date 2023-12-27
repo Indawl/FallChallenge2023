@@ -10,13 +10,16 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         protected GameState State { get; }
 
         public List<Condition> Conditions { get; } = new List<Condition>();
-        public List<Decision> Decisions { get; }
+        public List<Decision> Decisions { get; } = new List<Decision>();
 
         public Decision(DroneAgent agent, GameState state)
         {
             Agent = agent;
             State = state;
+
+            SetConditions();
         }
+        public virtual void SetConditions() { }
         public virtual GameAction GetDecision() => null;
     }
 }

@@ -7,7 +7,11 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
     {
         public EmergencyDecision(DroneAgent agent, GameState state) : base(agent, state)
         {
-            Conditions.Add(new EmergencyCondition(agent, state));
+        }
+
+        public override void SetConditions()
+        {
+            Conditions.Add(new EmergencyCondition(Agent, State));
         }
 
         public override GameAction GetDecision() => new GameActionWait() { Text = "!!!SOS!!!" };

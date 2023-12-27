@@ -33,7 +33,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
                         var line = reader.ReadLine();
                         while (line != null)
                         {
-                            if (line[0] == '{')
+                            if (line.Length > 0 && line[0] == '{')
                                 try
                             {
                                 var state = JsonConvert.DeserializeObject<GameState>(line);

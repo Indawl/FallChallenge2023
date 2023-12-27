@@ -141,6 +141,7 @@ namespace FallChallenge2023.Bots.Bronze
                         fish.Position = drone.Position + (fish.Position - drone.Position).Normalize() * drone.LightRadius;
                         fish.Speed = null;
                     }
+                    if (fish.Status == FishStatus.UNKNOWED) fish.Status = FishStatus.UNVISIBLE;
                 }
 
             // Symmetric Fish
@@ -156,6 +157,7 @@ namespace FallChallenge2023.Bots.Bronze
                         if (state.GetDrones(0).Any(_ => _.Position.InRange(fish.Position, Drone.MOTOR_RANGE))) sFish.Speed = -fish.Speed.HSymmetric().Normalize() * Fish.SPEED;
                         else sFish.Speed = fish.Speed.HSymmetric();
                     }
+                    if (sFish.Status == FishStatus.UNKNOWED) sFish.Status = FishStatus.UNVISIBLE;
                 }
             }
 
@@ -227,6 +229,11 @@ namespace FallChallenge2023.Bots.Bronze
 
             Agents[0].Uglys = state.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.X <= center).ToList();
             Agents[1].Uglys = state.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.X > center).ToList();
+
+            var scannedFish = state.GetScannedFishes(0);
+
+            for (int i = 0; i < 2; i++)
+                Agents[i].UnscannedFishes = Agents[i].Fishes.Where(_ => !scannedFish.Contains(_.Id)).ToList();
         }
     }
 }

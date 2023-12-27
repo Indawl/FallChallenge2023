@@ -8,7 +8,11 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
     {
         public DiveDecision(DroneAgent agent, GameState state) : base(agent, state)
         {
-            Conditions.Add(new DiveCondition(agent, state));
+        }
+
+        public override void SetConditions()
+        {
+            Conditions.Add(new DiveCondition(Agent, State));
         }
 
         public override GameAction GetDecision()

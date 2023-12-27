@@ -8,7 +8,11 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
     {
         public SaveDecision(DroneAgent agent, GameState state) : base(agent, state)
         {
-            Conditions.Add(new SaveCondition(agent, state));
+        }
+
+        public override void SetConditions()
+        {
+            Conditions.Add(new SaveCondition(Agent, State));
         }
 
         public override GameAction GetDecision()

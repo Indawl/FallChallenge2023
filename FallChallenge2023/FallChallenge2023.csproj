@@ -54,16 +54,17 @@
     <Compile Include="Bots\Bronze\Agents\Conditions\Condition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\EmergencyCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\DiveCondition.cs" />
+    <Compile Include="Bots\Bronze\Agents\Conditions\DiveSaveCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\SaveCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\DiveSearchCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\SearchCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\FishDetectedCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\Decision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\DiveDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\DiveSaveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\EmergencyDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\DiveSearchDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\AllSearchDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SearchDecision.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugBot.cs" />
@@ -122,7 +123,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Bots\Bronze\Games\-8010151275687054000.txt" />
+    <Content Include="Bots\Bronze\Games\7895821771939967000.txt" />
     <Content Include="Bots\Bronze\Games\InputData.txt" />
     <Content Include="Bots\Bronze\Debug\Images\Models.png" />
     <Content Include="Bots\Bronze\Debug\Images\Ocean.png" />
