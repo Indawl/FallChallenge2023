@@ -123,7 +123,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Bots\Bronze\Games\7895821771939967000.txt" />
+    <Content Include="Bots\Bronze\Games\955467451682039000.txt" />
     <Content Include="Bots\Bronze\Games\InputData.txt" />
     <Content Include="Bots\Bronze\Debug\Images\Models.png" />
     <Content Include="Bots\Bronze\Debug\Images\Ocean.png" />

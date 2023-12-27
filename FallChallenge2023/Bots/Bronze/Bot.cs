@@ -234,6 +234,24 @@ namespace FallChallenge2023.Bots.Bronze
 
             for (int i = 0; i < 2; i++)
                 Agents[i].UnscannedFishes = Agents[i].Fishes.Where(_ => !scannedFish.Contains(_.Id)).ToList();
+
+            // Temporary
+            if (!Agents[0].UnscannedFishes.Any() && Agents[1].UnscannedFishes.Any())
+            {
+                var fish = Agents[1].UnscannedFishes[0];
+                Agents[0].Fishes.Add(fish);
+                Agents[0].UnscannedFishes.Add(fish);
+                Agents[1].Fishes.Remove(fish);
+                Agents[1].UnscannedFishes.Remove(fish);
+            }
+            else if (!Agents[1].UnscannedFishes.Any() && Agents[0].UnscannedFishes.Any())
+            {
+                var fish = Agents[0].UnscannedFishes[0];
+                Agents[1].Fishes.Add(fish);
+                Agents[1].UnscannedFishes.Add(fish);
+                Agents[0].Fishes.Remove(fish);
+                Agents[0].UnscannedFishes.Remove(fish);
+            }
         }
     }
 }
