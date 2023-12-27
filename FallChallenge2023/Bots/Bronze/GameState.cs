@@ -61,7 +61,7 @@ namespace FallChallenge2023.Bots.Bronze
             return drone;
         }
 
-        public List<int> GetScannedFishes(int playerId) => GetDrones(playerId).SelectMany(_ => _.Scans).Distinct().Union(GetScans(playerId)).ToList();
+        public List<int> GetScannedFishes(int playerId) => GetDrones(playerId).SelectMany(_ => _.Scans).Distinct().Union(GetScans(playerId)).Where(_ => GetFish(_).Status != FishStatus.LOSTED).ToList();
 
         public Fish GetSymmetricFish(Fish fish)
         {
