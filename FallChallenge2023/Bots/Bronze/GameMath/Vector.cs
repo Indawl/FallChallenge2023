@@ -42,7 +42,7 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
         public double Length() => Math.Sqrt(LengthSqr());
         public double Distance(Vector other) => Math.Sqrt(DistanceSqr(other));
         public double DistanceSqr(Vector other) => (other - this).LengthSqr();
-        public Vector Round() => new Vector((int)X, (int)Y);
+        public Vector Round() => new Vector(Math.Round(X), Math.Round(Y));
         public Vector EpsilonRound() => new Vector(Math.Round(X * 10000000.0) / 10000000.0, Math.Round(Y * 10000000.0) / 10000000.0);
         public Vector Normalize()
         {

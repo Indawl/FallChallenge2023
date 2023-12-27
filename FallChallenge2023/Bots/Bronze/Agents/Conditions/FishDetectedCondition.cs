@@ -14,6 +14,6 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
 
         public override int Id => 2;
 
-        public override bool Check() => State.PotencialFishes.Any(_ => _.Status == FishStatus.UNKNOWED && _.Position.InRange(Position, Drone.LIGHT_SCAN_RADIUS));
+        public override bool Check() => State.Fishes.Any(_ => _.Status == FishStatus.UNKNOWED && _.Position.InRange(Position, Drone.LIGHT_SCAN_RADIUS));
     }
 }

@@ -201,7 +201,7 @@ namespace FallChallenge2023.Bots.Bronze
             FindFishPositions(state);
 
             // Find potencial fish positions
-            state.FindPotencialFishes();
+            //state.FindPotencialFishes();
 
             // Create agents
             CreateAgents(state);

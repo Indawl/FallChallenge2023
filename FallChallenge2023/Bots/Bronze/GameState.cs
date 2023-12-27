@@ -31,7 +31,7 @@ namespace FallChallenge2023.Bots.Bronze
             { FishType.ONE_TYPE, 4 }
         };
 
-        public List<Fish> PotencialFishes { get; set; } = new List<Fish>();
+        //public List<Fish> PotencialFishes { get; set; } = new List<Fish>();
 
         public object Clone()
         {
@@ -44,9 +44,9 @@ namespace FallChallenge2023.Bots.Bronze
             state.Fishes = new List<Fish>();
             foreach (var fish in Fishes)
                 state.Fishes.Add((Fish)fish.Clone());
-            state.PotencialFishes = new List<Fish>();
-            foreach (var fish in PotencialFishes)
-                state.PotencialFishes.Add((Fish)fish.Clone());
+            //state.PotencialFishes = new List<Fish>();
+            //foreach (var fish in PotencialFishes)
+            //    state.PotencialFishes.Add((Fish)fish.Clone());
             return state;
         }
 
@@ -256,13 +256,13 @@ namespace FallChallenge2023.Bots.Bronze
             return true;
         }
 
-        public void FindPotencialFishes()
-        {
-            PotencialFishes = new List<Fish>();
-            foreach (var fish in Fishes)
-                PotencialFishes.Add((Fish)fish.Clone());
+        //public void FindPotencialFishes()
+        //{
+        //    PotencialFishes = new List<Fish>();
+        //    foreach (var fish in Fishes)
+        //        PotencialFishes.Add((Fish)fish.Clone());
 
-            UpdateFishPositions(PotencialFishes);
-        }
+        //    UpdateFishPositions(PotencialFishes);
+        //}
     }
 }
