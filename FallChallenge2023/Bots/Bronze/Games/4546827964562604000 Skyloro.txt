@@ -1,6 +1,6 @@
 Standard Output Stream:
-MOVE 2000 6500 0 BOSLEY
-MOVE 8000 6500 0 RACHEL
+MOVE 2000 6500 0 NORAH
+MOVE 8000 6500 0 EMILY
 01
 19
 Standard Error Stream:
@@ -9,8 +9,8 @@ Standard Output Stream:
 MOVE 7999 1100 0 
 MOVE 3999 1100 0 
 Standard Output Stream:
-MOVE 2000 6500 0 BOSLEY
-MOVE 8000 6500 0 RACHEL
+MOVE 2000 6500 0 NORAH
+MOVE 8000 6500 0 EMILY
 02
 19
 Standard Error Stream:
@@ -19,8 +19,8 @@ Standard Output Stream:
 MOVE 7999 1700 1 
 MOVE 3999 1700 0 
 Standard Output Stream:
-MOVE 2000 6500 0 BOSLEY
-MOVE 8000 6500 0 RACHEL
+MOVE 2000 6500 0 NORAH
+MOVE 8000 6500 0 EMILY
 03
 19
 Standard Error Stream:
@@ -31,8 +31,8 @@ MOVE 3999 2300 0
 Game Summary:
 Indawl's drone 1 scans fish 11
 Standard Output Stream:
-MOVE 2000 6500 0 BOSLEY
-MOVE 8000 6500 0 RACHEL
+MOVE 2000 6500 0 NORAH
+MOVE 8000 6500 0 EMILY
 04
 19
 Standard Error Stream:
@@ -44,8 +44,8 @@ Game Summary:
 Indawl's drone 1 scans fish 4
 Indawl's drone 3 scans fish 10
 Standard Output Stream:
-MOVE 2000 6500 1 BOSLEY
-MOVE 8000 6500 1 RACHEL
+MOVE 2000 6500 1 NORAH
+MOVE 8000 6500 1 EMILY
 05
 19
 Standard Error Stream:
@@ -57,8 +57,8 @@ Game Summary:
 Peake's drone 0 scans 3 fish: 5,10,12
 Peake's drone 2 scans 2 fish: 11,13
 Standard Output Stream:
-MOVE 2000 6500 0 BOSLEY
-MOVE 8000 6500 0 RACHEL
+MOVE 2000 6500 0 NORAH
+MOVE 8000 6500 0 EMILY
 06
 19
 Standard Error Stream:
@@ -67,8 +67,8 @@ Standard Output Stream:
 MOVE 7999 4100 0 
 MOVE 3999 4100 0 
 Standard Output Stream:
-MOVE 2000 6500 0 BOSLEY
-MOVE 8000 6500 0 RACHEL
+MOVE 2000 6500 0 NORAH
+MOVE 8000 6500 0 EMILY
 07
 19
 Standard Error Stream:
@@ -79,8 +79,8 @@ MOVE 3999 4700 0
 Game Summary:
 Indawl's drone 1 scans 2 fish: 7,13
 Standard Output Stream:
-MOVE 2000 6500 0 BOSLEY
-MOVE 8000 6500 0 RACHEL
+MOVE 2000 6500 0 NORAH
+MOVE 8000 6500 0 EMILY
 08
 19
 Standard Error Stream:
@@ -91,8 +91,8 @@ MOVE 3999 5300 1
 Game Summary:
 Indawl's drone 3 scans 2 fish: 6,12
 Standard Output Stream:
-MOVE 2481 6500 1 BOSLEY
-MOVE 7518 6500 1 RACHEL
+MOVE 2481 6500 1 NORAH
+MOVE 7518 6500 1 EMILY
 09
 19
 Standard Error Stream:
@@ -104,8 +104,8 @@ Game Summary:
 Peake's drone 0 scans fish 6
 Peake's drone 2 scans fish 7
 Standard Output Stream:
-MOVE 2481 6500 1 BOSLEY
-MOVE 7518 6500 1 RACHEL
+MOVE 2481 6500 1 NORAH
+MOVE 7518 6500 1 EMILY
 10
 19
 Standard Error Stream:
@@ -114,8 +114,8 @@ Standard Output Stream:
 MOVE 7457 6157 1 
 MOVE 4300 6419 1 
 Standard Output Stream:
-MOVE 2135 8500 1 BOSLEY
-MOVE 7847 8500 1 RACHEL
+MOVE 2135 8500 1 NORAH
+MOVE 7847 8500 1 EMILY
 11
 19
 Standard Error Stream:
@@ -129,8 +129,8 @@ Peake's drone 2 scans fish 8
 Indawl's drone 1 does not have enough battery to activate light
 Indawl's drone 3 scans fish 13
 Standard Output Stream:
-MOVE 2358 500 1 BOSLEY
-MOVE 7605 500 1 RACHEL
+MOVE 2358 500 1 NORAH
+MOVE 7605 500 1 EMILY
 12
 19
 Standard Error Stream:
@@ -142,8 +142,8 @@ Game Summary:
 Indawl's drone 1 does not have enough battery to activate light
 Indawl's drone 3 scans 3 fish: 7,14,15
 Standard Output Stream:
-MOVE 2358 5807 0 BOSLEY
-MOVE 8200 4150 1 RACHEL
+MOVE 2358 5807 0 NORAH
+MOVE 8200 4150 1 EMILY
 13
 19
 Standard Error Stream:
@@ -155,8 +155,8 @@ Game Summary:
 Peake's drone 2 scans fish 4
 Indawl's drone 1 scans 2 fish: 8,15
 Standard Output Stream:
-MOVE 2358 5207 0 BOSLEY
-MOVE 7769 5069 0 RACHEL
+MOVE 2358 5207 0 NORAH
+MOVE 7769 5069 0 EMILY
 14
 19
 Standard Error Stream:
@@ -165,8 +165,8 @@ Standard Output Stream:
 MOVE 6537 7010 0 
 MOVE 5043 7631 0 
 Standard Output Stream:
-MOVE 2358 4607 0 BOSLEY
-MOVE 7769 4469 0 RACHEL
+MOVE 2358 4607 0 NORAH
+MOVE 7769 4469 0 EMILY
 15
 19
 Standard Error Stream:
@@ -175,8 +175,8 @@ Standard Output Stream:
 MOVE 6198 6515 0 
 MOVE 4480 7838 0 
 Standard Output Stream:
-MOVE 1779 4804 0 BOSLEY
-MOVE 7769 3869 0 RACHEL
+MOVE 1779 4804 0 NORAH
+MOVE 7769 3869 0 EMILY
 16
 19
 Standard Error Stream:
@@ -185,8 +185,8 @@ Standard Output Stream:
 MOVE 5858 6020 0 
 MOVE 3917 8045 1 
 Standard Output Stream:
-MOVE 1495 4504 0 BOSLEY
-MOVE 7769 3269 0 RACHEL
+MOVE 1495 4504 0 NORAH
+MOVE 7769 3269 0 EMILY
 17
 19
 Standard Error Stream:
@@ -197,8 +197,8 @@ MOVE 3354 8252 1
 Game Summary:
 Indawl's drone 3 does not have enough battery to activate light
 Standard Output Stream:
-MOVE 1348 4752 0 BOSLEY
-MOVE 7769 2669 0 RACHEL
+MOVE 1348 4752 0 NORAH
+MOVE 7769 2669 0 EMILY
 18
 19
 Standard Error Stream:
@@ -209,8 +209,8 @@ MOVE 2755 8219 1
 Game Summary:
 Indawl's drone 3 does not have enough battery to activate light
 Standard Output Stream:
-MOVE 1348 4152 0 BOSLEY
-MOVE 7769 2069 0 RACHEL
+MOVE 1348 4152 0 NORAH
+MOVE 7769 2069 0 EMILY
 19
 19
 Standard Error Stream:

@@ -61,7 +61,7 @@ namespace FallChallenge2023.Bots.Bronze
             return drone;
         }
 
-        public List<int> GetScannedFishes(int playerId) => GetDrones(playerId).SelectMany(_ => _.Scans).Distinct().Union(GetScans(playerId)).Where(_ => GetFish(_).Status != FishStatus.LOSTED).ToList();
+        public List<int> GetScannedFishes(int playerId) => GetDrones(playerId).SelectMany(_ => _.Scans).Distinct().Union(GetScans(playerId)).ToList();
 
         public Fish GetSymmetricFish(Fish fish)
         {
@@ -199,7 +199,7 @@ namespace FallChallenge2023.Bots.Bronze
         public bool IsFishInRange(int playerId, Vector position)
         {
             var scannedFish = GetScannedFishes(playerId).ToList();
-            return Fishes.Any(_ => !scannedFish.Contains(_.Id) && _.Position.InRange(position, Drone.LIGHT_SCAN_RADIUS));
+            return Fishes.Where(_ => _.Status != FishStatus.LOSTED).Any(_ => !scannedFish.Contains(_.Id) && _.Position.InRange(position, Drone.LIGHT_SCAN_RADIUS));
         }
 
         public Vector GetAroundMonsterTo(Vector from, Vector to, double epsilon = 0.1)
