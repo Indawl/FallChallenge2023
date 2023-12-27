@@ -4,15 +4,23 @@ using FallChallenge2023.Bots.Bronze.GameMath;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
-    public class DiveDecision : Decision
+    public class NeedDiveDecision : Decision
     {
-        public DiveDecision(DroneAgent agent, GameState state) : base(agent, state)
+        public NeedDiveDecision(DroneAgent agent, GameState state) : base(agent, state)
         {
         }
 
         public override void SetConditions()
         {
-            Conditions.Add(new DiveCondition(Agent, State));
+            Conditions.Add(new DiveSearchCondition(Agent, State));
+        }
+
+        public override void SetDecisionts()
+        {
+            DecisionsOk.Add(new DiveDecision(Agent, State));        // Dive
+            DecisionsOk.Add(new DiveSearchDecision(Agent, State));  // Search for dive scan
+
+            DecisionsFail.Add(new SearchDecision(Agent, State));    // Search for scan
         }
 
         public override GameAction GetDecision()

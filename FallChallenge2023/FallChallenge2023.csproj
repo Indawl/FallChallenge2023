@@ -54,14 +54,11 @@
     <Compile Include="Bots\Bronze\Agents\Conditions\Condition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\EmergencyCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\DiveCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\DiveSaveCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\SaveCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\DiveSearchCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\SearchCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\FishDetectedCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\Decision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\DiveDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\DiveSaveDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\NeedDiveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\EmergencyDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\DiveSearchDecision.cs" />
@@ -123,6 +120,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Bots\Bronze\Games\4546827964562604000 Skyloro.txt" />
     <Content Include="Bots\Bronze\Games\955467451682039000.txt" />
     <Content Include="Bots\Bronze\Games\InputData.txt" />
     <Content Include="Bots\Bronze\Debug\Images\Models.png" />

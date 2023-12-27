@@ -26,23 +26,23 @@ namespace FallChallenge2023.Bots.Bronze
 
             if (Type == BlipType.BL || Type == BlipType.TL)
             {
-                if (LastType == BlipType.BR || LastType == BlipType.TR) x = position.X;
+                if (LastType == BlipType.BR || LastType == BlipType.TR) y = position.Y;
                 toX = position.X;
             }
             else
             {
-                if (LastType == BlipType.BL || LastType == BlipType.TL) toX = position.X;
+                if (LastType == BlipType.BL || LastType == BlipType.TL) toY = position.Y;
                 x = position.X;
             }
 
             if (Type == BlipType.TL || Type == BlipType.TR)
             {
-                if (LastType == BlipType.BL || LastType == BlipType.BR) y = position.Y;
+                if (LastType == BlipType.BL || LastType == BlipType.BR) x = position.X;
                 toY = position.Y;
             }
             else
             {
-                if (LastType == BlipType.TL || LastType == BlipType.TR) toY = position.Y;
+                if (LastType == BlipType.TL || LastType == BlipType.TR) toX = position.X;
                 y = position.Y;
             }
 

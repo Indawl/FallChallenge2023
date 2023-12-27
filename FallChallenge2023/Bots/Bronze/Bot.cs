@@ -27,7 +27,9 @@ namespace FallChallenge2023.Bots.Bronze
             for (int i = 0; i < creatureCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
-                State.Fishes.Add(new Fish(int.Parse(inputs[0]), (FishColor)int.Parse(inputs[1]), (FishType)int.Parse(inputs[2])));
+                var fish = new Fish(int.Parse(inputs[0]), (FishColor)int.Parse(inputs[1]), (FishType)int.Parse(inputs[2]));
+                if (fish.Color == FishColor.UGLY) fish.Speed = new Vector();
+                State.Fishes.Add(fish);
             }
         }
 
@@ -154,7 +156,7 @@ namespace FallChallenge2023.Bots.Bronze
                     sFish.Position = fish.Position.HSymmetric(GameState.CENTER.X);
                     if (fish.Speed != null)
                     {
-                        if (state.GetDrones(0).Any(_ => _.Position.InRange(fish.Position, Drone.MOTOR_RANGE))) sFish.Speed = -fish.Speed.HSymmetric().Normalize() * Fish.SPEED;
+                        if (state.Drones.Any(_ => _.Position.InRange(fish.Position, Drone.MOTOR_RANGE))) sFish.Speed = -fish.Speed.HSymmetric().Normalize() * Fish.SPEED;
                         else sFish.Speed = fish.Speed.HSymmetric();
                     }
                     if (sFish.Status == FishStatus.UNKNOWED) sFish.Status = FishStatus.UNVISIBLE;
@@ -200,8 +202,9 @@ namespace FallChallenge2023.Bots.Bronze
             // Find fish's positions
             FindFishPositions(state);
 
-            // Find potencial fish positions
-            //state.FindPotencialFishes();
+            // Find unscanned enemy fishes
+            var enemyScannedFish = state.GetScannedFishes(1);
+            state.UnscannedEnemyFishes = state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && !enemyScannedFish.Contains(_.Id)).ToList();
 
             // Create agents
             CreateAgents(state);
@@ -218,38 +221,26 @@ namespace FallChallenge2023.Bots.Bronze
             if (!Agents.Any())
                 foreach (var drone in state.GetDrones(0))
                     Agents.Add(new DroneAgent(drone));
+            else
+                foreach (var agent in Agents)
+                    agent.Clear();
 
             // Distribute tasks
-            var minAgent = Agents[0].Drone.Position.X <= Agents[1].Drone.Position.X ? 0 : 1;
-            var maxAgent = 1 - minAgent;
-            var center = (Agents[0].Drone.Position.X + Agents[1].Drone.Position.X) / 2;
-
-            Agents[0].Fishes = state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && _.Position.X <= center).ToList();
-            Agents[1].Fishes = state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && _.Position.X > center).ToList();
-
-            Agents[0].Uglys = state.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.X <= center).ToList();
-            Agents[1].Uglys = state.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.X > center).ToList();
-
             var scannedFish = state.GetScannedFishes(0);
+            foreach (var fish in state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && !scannedFish.Contains(_.Id)))
+                Agents[fish.Position.X <= GameState.CENTER.X ? 0 : 1].UnscannedFishes.Add(fish);
 
-            for (int i = 0; i < 2; i++)
-                Agents[i].UnscannedFishes = Agents[i].Fishes.Where(_ => !scannedFish.Contains(_.Id)).ToList();
-
-            // Temporary
+            // Share tasks
             if (!Agents[0].UnscannedFishes.Any() && Agents[1].UnscannedFishes.Any())
             {
-                var fish = Agents[1].UnscannedFishes[0];
-                Agents[0].Fishes.Add(fish);
+                var fish = Agents[1].UnscannedFishes.OrderBy(_ => (_.Position - Agents[0].Drone.Position).LengthSqr()).First();
                 Agents[0].UnscannedFishes.Add(fish);
-                Agents[1].Fishes.Remove(fish);
                 Agents[1].UnscannedFishes.Remove(fish);
             }
             else if (!Agents[1].UnscannedFishes.Any() && Agents[0].UnscannedFishes.Any())
             {
-                var fish = Agents[0].UnscannedFishes[0];
-                Agents[1].Fishes.Add(fish);
+                var fish = Agents[0].UnscannedFishes.OrderBy(_ => (_.Position - Agents[1].Drone.Position).LengthSqr()).First();
                 Agents[1].UnscannedFishes.Add(fish);
-                Agents[0].Fishes.Remove(fish);
                 Agents[0].UnscannedFishes.Remove(fish);
             }
         }

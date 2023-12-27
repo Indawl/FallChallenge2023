@@ -19,8 +19,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         {
             var fish = Agent.UnscannedFishes.Where(_ => _.Type == FishType.CRAB).OrderBy(_ => (_.Position - Agent.Drone.Position).LengthSqr()).First();
             var newPosition = State.GetAroundMonsterTo(Agent.Drone.Position, fish.Position);
-            var light = (new FishDetectedCondition(Agent, State, newPosition)).Check();
-            return new GameActionMove(newPosition, light);
+            return new GameActionMove(newPosition, State.IsFishInRange(Agent.Drone.PlayerId, newPosition));
         }
     }
 }

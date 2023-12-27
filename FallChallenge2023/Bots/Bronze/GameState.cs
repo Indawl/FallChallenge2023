@@ -31,7 +31,7 @@ namespace FallChallenge2023.Bots.Bronze
             { FishType.ONE_TYPE, 4 }
         };
 
-        //public List<Fish> PotencialFishes { get; set; } = new List<Fish>();
+        public List<Fish> UnscannedEnemyFishes { get; set; }
 
         public object Clone()
         {
@@ -44,9 +44,6 @@ namespace FallChallenge2023.Bots.Bronze
             state.Fishes = new List<Fish>();
             foreach (var fish in Fishes)
                 state.Fishes.Add((Fish)fish.Clone());
-            //state.PotencialFishes = new List<Fish>();
-            //foreach (var fish in PotencialFishes)
-            //    state.PotencialFishes.Add((Fish)fish.Clone());
             return state;
         }
 
@@ -199,6 +196,12 @@ namespace FallChallenge2023.Bots.Bronze
             return speed;
         }
 
+        public bool IsFishInRange(int playerId, Vector position)
+        {
+            var scannedFish = GetScannedFishes(playerId).ToList();
+            return Fishes.Any(_ => !scannedFish.Contains(_.Id) && _.Position.InRange(position, Drone.LIGHT_SCAN_RADIUS));
+        }
+
         public Vector GetAroundMonsterTo(Vector from, Vector to, double epsilon = 0.1)
         {
             var speed = to - from;
@@ -220,7 +223,7 @@ namespace FallChallenge2023.Bots.Bronze
             while (collision)
             {
                 collision = false;
-                foreach (var fish in Fishes.Where(_ => _.Color == FishColor.UGLY && _.Speed != null))
+                foreach (var fish in Fishes.Where(_ => _.Color == FishColor.UGLY))
                     while (CheckCollision(fish.Position, fish.Speed, from, newTo))
                     {
                         alpha = (wise ? epsilon : 0.0) - alpha;
@@ -255,14 +258,5 @@ namespace FallChallenge2023.Bots.Bronze
 
             return true;
         }
-
-        //public void FindPotencialFishes()
-        //{
-        //    PotencialFishes = new List<Fish>();
-        //    foreach (var fish in Fishes)
-        //        PotencialFishes.Add((Fish)fish.Clone());
-
-        //    UpdateFishPositions(PotencialFishes);
-        //}
     }
 }
