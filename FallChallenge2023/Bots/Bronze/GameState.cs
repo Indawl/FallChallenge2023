@@ -230,7 +230,8 @@ namespace FallChallenge2023.Bots.Bronze
                         wise = !wise;
                         newTo = SnapToDroneZone(from + speed.Rotate(alpha)).Round();
                         collision = true;
-                        if (alpha > Math.PI) return newTo;
+                        if (alpha > Math.PI) 
+                            return newTo;
                     }
             }
 
