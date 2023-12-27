@@ -223,7 +223,7 @@ namespace FallChallenge2023.Bots.Bronze
             while (collision)
             {
                 collision = false;
-                foreach (var fish in Fishes.Where(_ => _.Color == FishColor.UGLY))
+                foreach (var fish in Fishes.Where(_ => _.Color == FishColor.UGLY && _.Speed != null))
                     while (CheckCollision(fish.Position, fish.Speed, from, newTo))
                     {
                         alpha = (wise ? epsilon : 0.0) - alpha;

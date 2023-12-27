@@ -28,7 +28,6 @@ namespace FallChallenge2023.Bots.Bronze
             {
                 var inputs = Console.ReadLine().Split(' ');
                 var fish = new Fish(int.Parse(inputs[0]), (FishColor)int.Parse(inputs[1]), (FishType)int.Parse(inputs[2]));
-                if (fish.Color == FishColor.UGLY) fish.Speed = new Vector();
                 State.Fishes.Add(fish);
             }
         }
@@ -147,7 +146,7 @@ namespace FallChallenge2023.Bots.Bronze
                 }
 
             // Symmetric Fish
-            var scannedFish = state.Drones.SelectMany(_ => _.NewScans).ToList();
+            var scannedFish = state.Drones.SelectMany(_ => _.NewScans).Union(state.Fishes.Where(_ => _.Color == FishColor.UGLY).Select(_ => _.Id)).ToList();
             foreach (var fish in state.Fishes.Where(_ => _.Position != null && scannedFish.Contains(_.Id)))
             {
                 var sFish = state.GetSymmetricFish(fish);
