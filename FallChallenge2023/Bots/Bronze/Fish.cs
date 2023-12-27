@@ -12,7 +12,7 @@ namespace FallChallenge2023.Bots.Bronze
         public const int MONSTER_SPEED = 270;
         public const int MONSTER_ATTACK_SPEED = 540;
         public const int MONSTER_ATTACK_RADIUS = 500;
-        public const int MONSTER_ATTACK_RADIUS_SQR = MONSTER_ATTACK_RADIUS * MONSTER_ATTACK_RADIUS1;
+        public const int MONSTER_ATTACK_RADIUS_SQR = MONSTER_ATTACK_RADIUS * MONSTER_ATTACK_RADIUS;
         public const int MIN_DISTANCE_BT_MONSTER = 600;        
 
         public int Id { get; }

@@ -11,7 +11,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 
         public override GameAction GetDecision()
         {
-            var newPosition = State.GetAroundMonster(Agent.Drone.Position, new Vector(0, -Drone.MAX_SPEED));
+            var newPosition = State.GetAroundMonster(Agent.Drone.Position, new Vector(0, -Drone.MAX_SPEED), Agent.Drone);
             return new GameActionMove(newPosition, State.IsFishInRange(Agent.Drone.PlayerId, newPosition));
         }
     }

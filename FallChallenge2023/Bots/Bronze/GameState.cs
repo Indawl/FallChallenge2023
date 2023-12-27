@@ -38,13 +38,25 @@ namespace FallChallenge2023.Bots.Bronze
             var state = (GameState)MemberwiseClone();
             state.MyScans = new List<int>(MyScans);
             state.EnemyScans = new List<int>(EnemyScans);
-            state.Drones = new List<Drone>();
-            foreach (var drone in Drones)
-                state.Drones.Add((Drone)drone.Clone());
-            state.Fishes = new List<Fish>();
-            foreach (var fish in Fishes)
-                state.Fishes.Add((Fish)fish.Clone());
+            state.Drones = CloneDrones(Drones);
+            state.Fishes = CloneFishes(Fishes);
             return state;
+        }
+
+        public List<Drone> CloneDrones(IEnumerable<Drone> drones)
+        {
+            var newDrones = new List<Drone>();
+            foreach (var drone in drones)
+                newDrones.Add((Drone)drone.Clone());
+            return newDrones;
+        }
+
+        public List<Fish> CloneFishes(IEnumerable<Fish> fishes)
+        {
+            var newFishes = new List<Fish>();
+            foreach (var fish in fishes)
+                newFishes.Add((Fish)fish.Clone());
+            return newFishes;
         }
 
         public List<int> GetScans(int playerId) => playerId == 0 ? MyScans : EnemyScans;
@@ -95,7 +107,7 @@ namespace FallChallenge2023.Bots.Bronze
             return newPosition;
         }
 
-        public void UpdateFishPositions(IEnumerable<Fish> fishes)
+        public void UpdateFishPositions(IEnumerable<Fish> fishes, IEnumerable<Drone> drones)
         {
             // New Position
             foreach (var fish in fishes.Where(_ => _.Position != null && _.Speed != null))
@@ -103,24 +115,24 @@ namespace FallChallenge2023.Bots.Bronze
 
             // New Speed
             foreach (var fish in fishes.Where(_ => _.Position != null && _.Speed != null))
-                fish.Speed = UpdateFishSpeed(fish);
+                fish.Speed = UpdateFishSpeed(fish, drones);
         }
 
-        public void UpdateFishPositions(IEnumerable<Fish> fishes, Func<Fish, bool> predicate)
+        public void UpdateFishPositions(IEnumerable<Fish> fishes, IEnumerable<Drone> drones, Func<Fish, bool> predicate)
         {
-            UpdateFishPositions(fishes.Where(predicate));
+            UpdateFishPositions(fishes.Where(predicate), drones);
         }
 
         private Vector GetNextPosition(FishType type, Vector position, Vector speed) => SnapToFishZone(type, position + speed);
 
-        private Vector UpdateFishSpeed(Fish fish) => fish.Color == FishColor.UGLY ?
-            UpdateUglySpeed(fish.Id, fish.Position, fish.Speed) :
-            UpdateFishSpeed(fish.Id, fish.Type, fish.Position, fish.Speed);
+        private Vector UpdateFishSpeed(Fish fish, IEnumerable<Drone> drones) => fish.Color == FishColor.UGLY ?
+            UpdateUglySpeed(fish.Id, drones, fish.Position, fish.Speed) :
+            UpdateFishSpeed(fish.Id, drones, fish.Type, fish.Position, fish.Speed);
 
-        private Vector UpdateFishSpeed(int fishId, FishType type, Vector position, Vector speed)
+        private Vector UpdateFishSpeed(int fishId, IEnumerable<Drone> drones, FishType type, Vector position, Vector speed)
         {
             // Near drone
-            var dronePositions = position.GetClosest(Drones
+            var dronePositions = position.GetClosest(drones
                 .Where(_ => !_.Emergency && _.Position.InRange(position, Drone.MOTOR_RANGE))
                 .Select(_ => _.Position)
                 .ToList());
@@ -156,10 +168,10 @@ namespace FallChallenge2023.Bots.Bronze
             return speed;
         }
 
-        private Vector UpdateUglySpeed(int fishId, Vector position, Vector speed)
+        private Vector UpdateUglySpeed(int fishId, IEnumerable<Drone> drones, Vector position, Vector speed)
         {
             // Near drone
-            var dronePositions = position.GetClosest(Drones
+            var dronePositions = position.GetClosest(drones
                 .Where(_ => !_.Emergency && _.Position.InRange(position, _.LightRadius))
                 .Select(_ => _.Position)
                 .ToList());
@@ -199,46 +211,77 @@ namespace FallChallenge2023.Bots.Bronze
         public bool IsFishInRange(int playerId, Vector position)
         {
             var scannedFish = GetScannedFishes(playerId).ToList();
-            return Fishes.Where(_ => _.Status != FishStatus.LOSTED).Any(_ => !scannedFish.Contains(_.Id) && _.Position.InRange(position, Drone.LIGHT_SCAN_RADIUS));
+            return Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY).Any(_ => !scannedFish.Contains(_.Id) && _.Position.InRange(position, Drone.SCAN_RADIUS, Drone.LIGHT_SCAN_RADIUS));
         }
 
-        public Vector GetAroundMonsterTo(Vector from, Vector to, double epsilon = 0.1)
+        public Vector GetAroundMonsterTo(Vector from, Vector to, Drone drone = null, double epsilon = 0.1)
         {
             var speed = to - from;
-            if (speed.LengthSqr() > Drone.MAX_SPEED_SQR) speed = (speed.Normalize() * Drone.MAX_SPEED).Round();
-            return GetAroundMonster(from, speed, epsilon);
+            if (speed.Length() > Drone.MAX_SPEED) speed = (speed.Normalize() * Drone.MAX_SPEED).Round();
+            return GetAroundMonster(from, speed, drone, epsilon);
         }
 
-        public Vector GetAroundMonster(Vector from, Vector speed, double epsilon = 0.1)
+        public Vector GetAroundMonster(Vector from, Vector speed, Drone drone = null, double epsilon = 0.1)
         {
-            var newTo = from + speed;
+            if (CheckCollisionWithMonsters(Fishes.Where(_ => _.Color == FishColor.UGLY && _.Speed != null), Drones, from, ref speed, drone, 1, epsilon)) return from;
+            else return from + speed;
+        }
 
-            speed = speed.IsZero() ? new Vector(Drone.MAX_SPEED, 0) : speed.Normalize() * Drone.MAX_SPEED;
+        private bool CheckCollisionWithMonsters(IEnumerable<Fish> fishes, IEnumerable<Drone> drones, Vector from, ref Vector speed, Drone drone = null, int forMoves = 1, double epsilon = 0.1)
+        {
             epsilon *= Math.PI / 180;
 
+            var newTo = from + speed;
+            var newSpeed = speed.IsZero() ? new Vector(Drone.MAX_SPEED, 0) : speed.Normalize() * Drone.MAX_SPEED;
+
             var alpha = 0.0;
-            var collision = true;
             var wise = true;
+            var collision = true;
 
             while (collision)
             {
-                collision = false;
-                foreach (var fish in Fishes.Where(_ => _.Color == FishColor.UGLY && _.Speed != null))
-                    while (CheckCollision(fish.Position, fish.Speed, from, newTo))
+                if (alpha > Math.PI) return true;
+
+                while (collision)
+                {
+                    collision = false;
+
+                    foreach (var fish in fishes)
+                        while (CheckCollision(fish.Position, fish.Speed, from, newTo))
+                        {
+                            alpha = (wise ? epsilon : 0.0) - alpha;
+                            wise = !wise;
+                            if (alpha > Math.PI) return true;
+
+                            newTo = SnapToDroneZone(from + newSpeed.Rotate(alpha).Round());
+                            collision = true;
+                        }
+                }
+                
+                // Check next turn
+                if (forMoves > 0)
+                {
+                    var nextFishes = CloneFishes(fishes);
+                    var nextDrones = CloneDrones(drones);
+                    if (drone != null) nextDrones.First(_ => _.Id == drone.Id).Position = newTo;
+                    UpdateFishPositions(nextFishes, nextDrones);
+
+                    var nextSpeed = newTo - from;
+                    if (CheckCollisionWithMonsters(nextFishes, nextDrones, newTo, ref nextSpeed, drone, forMoves - 1, 20))
                     {
                         alpha = (wise ? epsilon : 0.0) - alpha;
                         wise = !wise;
-                        newTo = SnapToDroneZone(from + speed.Rotate(alpha)).Round();
+                        newTo = SnapToDroneZone(from + newSpeed.Rotate(alpha).Round());
                         collision = true;
-                        if (alpha > Math.PI) 
-                            return newTo;
                     }
+                }
             }
 
-            return newTo;
+            speed = newTo - from;
+            return false;
         }
 
-        public static bool CheckCollision(Vector fishPostion, Vector fishSpeed, Vector droneFrom, Vector droneTo)
+        private static bool CheckCollision(Vector fishPostion, Vector fishSpeed, Vector droneFrom, Vector droneTo)
         {
             if (fishSpeed.IsZero() && droneTo.Equals(droneFrom)) return false;
 

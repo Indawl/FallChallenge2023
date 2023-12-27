@@ -196,7 +196,7 @@ namespace FallChallenge2023.Bots.Bronze
             var state = gameState as GameState;
 
             // Calculate new positions
-            state.UpdateFishPositions(state.Fishes, _ => _.Status == FishStatus.UNVISIBLE);
+            state.UpdateFishPositions(state.Fishes, state.Drones, _ => _.Status == FishStatus.UNVISIBLE);
 
             // Find fish's positions
             FindFishPositions(state);
