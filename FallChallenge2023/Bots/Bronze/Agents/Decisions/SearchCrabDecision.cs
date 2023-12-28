@@ -4,22 +4,20 @@ using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
-    public class DiveSearchDecision : Decision
+    public class SearchCrabDecision : Decision
     {
-        public DiveSearchDecision(DroneAgent agent, GameState state) : base(agent, state)
-        {
-        }
+        public SearchCrabDecision(DroneAgent agent) : base(agent) { }
 
         public override void SetConditions()
         {
-            Conditions.Add(new DiveSearchCondition(Agent, State));
+            Conditions.Add(new SearchCrabCondition(Agent));
         }
 
         public override GameAction GetDecision()
         {
             var fish = Agent.UnscannedFishes.Where(_ => _.Type == FishType.CRAB).OrderBy(_ => (_.Position - Agent.Drone.Position).LengthSqr()).First();
-            var newPosition = State.GetAroundMonsterTo(Agent.Drone.Position, fish.Position, Agent.Drone);
-            return new GameActionMove(newPosition, State.IsFishInRange(Agent.Drone.PlayerId, newPosition));
+            var newPosition = Agent.State.GetAroundMonsterTo(Agent.Drone.Position, fish.Position, Agent.Drone);
+            return new GameActionMove(newPosition, Agent.NeedLighting(newPosition)) { Text = "Hunting..." };
         }
     }
 }

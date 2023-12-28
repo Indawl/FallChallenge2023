@@ -5,12 +5,10 @@
         public virtual int Id { get; } = 0;
 
         protected DroneAgent Agent { get; }
-        protected GameState State { get; }
 
-        public Condition(DroneAgent agent, GameState state)
+        public Condition(DroneAgent agent)
         {
             Agent = agent;
-            State = state;
         }
 
         public virtual bool Check() => false;

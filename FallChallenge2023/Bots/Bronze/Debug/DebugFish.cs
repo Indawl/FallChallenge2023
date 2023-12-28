@@ -39,9 +39,9 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             var size = MODEL_POSITION[Fish.Color][Fish.Type].Size;
 
-            Coord = new Vector(parent.Position.Width * Fish.Position.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Position.Y / GameState.MAP_SIZE);
+            Coord = new Vector(parent.Position.Width * Fish.Position.X / GameProperties.MAP_SIZE, parent.Position.Height * Fish.Position.Y / GameProperties.MAP_SIZE);
             if (fish.Speed == null) Speed = new Vector();
-            else Speed = new Vector(parent.Position.Width * Fish.Speed.X / GameState.MAP_SIZE, parent.Position.Height * Fish.Speed.Y / GameState.MAP_SIZE);
+            else Speed = new Vector(parent.Position.Width * Fish.Speed.X / GameProperties.MAP_SIZE, parent.Position.Height * Fish.Speed.Y / GameProperties.MAP_SIZE);
 
             Position = new Rectangle((int)Coord.X - size.Width / 2, (int)Coord.Y - size.Height / 2, size.Width, size.Height);
             Visible = true;

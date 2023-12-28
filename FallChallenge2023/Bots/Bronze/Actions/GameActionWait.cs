@@ -2,8 +2,11 @@
 {
     public class GameActionWait : GameAction
     {
-        public GameActionWait(bool light = false) : base(GameActionType.WAIT, light)
+        public bool Light { get; }
+
+        public GameActionWait(bool light = false) : base(GameActionType.WAIT)
         {
+            Light = light;
         }
 
         public override string ToString() => string.Format("WAIT {0} {1}", Light ? 1 : 0, Text);

@@ -11,7 +11,6 @@ namespace FallChallenge2023.Bots.Bronze
 {
     public class Bot : IGameBot
     {
-        public const int SERIAL_FROM_TURN = 0;
         public Stopwatch StopWatch => new Stopwatch();
 
         protected List<DroneAgent> Agents { get; } = new List<DroneAgent>();
@@ -27,8 +26,7 @@ namespace FallChallenge2023.Bots.Bronze
             for (int i = 0; i < creatureCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
-                var fish = new Fish(int.Parse(inputs[0]), (FishColor)int.Parse(inputs[1]), (FishType)int.Parse(inputs[2]));
-                State.Fishes.Add(fish);
+                State.Fishes.Add(new Fish(int.Parse(inputs[0]), (FishColor)int.Parse(inputs[1]), (FishType)int.Parse(inputs[2])));
             }
         }
 
@@ -85,10 +83,10 @@ namespace FallChallenge2023.Bots.Bronze
             }
 
             State.Drones.ForEach(_ => _.NewScans = _.Scans.Except(_.NewScans).ToList());
-            State.Fishes.Where(_ => _.Status == FishStatus.VISIBLE).ToList().ForEach(_ => _.Status = FishStatus.UNVISIBLE);
+            State.Fishes.ForEach(_ => { if (_.Status == FishStatus.VISIBLE) _.Status = FishStatus.UNVISIBLE; });
 
             // Visible fishs
-            var lostedFishes = State.Fishes.Where(_ => _.Status != FishStatus.LOSTED).Select(_ => _.Id).ToList();
+            var lostedFishes = State.SwimmingFishes.Select(_ => _.Id).ToList();
             var fishesCount = int.Parse(Console.ReadLine());
             for (int i = 0; i < fishesCount; i++)
             {
@@ -112,6 +110,8 @@ namespace FallChallenge2023.Bots.Bronze
                 drone.RadarBlips.Add(radarBlip);
                 lostedFishes.Remove(radarBlip.FishId);
             }
+
+            // Set losted status
             lostedFishes.ForEach(_ =>
             {
                 var fish = State.GetFish(_);
@@ -121,12 +121,36 @@ namespace FallChallenge2023.Bots.Bronze
             });
 
 #if TEST_MODE
-            if (State.Turn > SERIAL_FROM_TURN)
+            if (State.Turn > GameProperties.SERIAL_FROM_TURN)
                 Console.Error.WriteLine(JsonSerializer.Serialize<GameStateBase>(State));
 #endif            
             return State;
         }
         #endregion
+
+        public IGameAction GetAction(IGameState gameState)
+        {
+            var state = gameState as GameState;
+            
+            // Init state
+            state.Initialize();
+
+            // Calculate new positions
+            state.UpdateFishPositions(_ => _.Status == FishStatus.UNVISIBLE);
+
+            // Find fish's positions
+            FindFishPositions(state);
+
+            // Create agents
+            if (!Agents.Any()) CreateAgents(state);
+            DistributeAgents(state, 0);
+
+            // Determinate actions for agents
+            foreach (var agent in Agents)
+                agent.FindAction();
+
+            return new GameActionList(Agents.Select(_ => (IGameAction)_.Action).ToList());
+        }
 
         private void FindFishPositions(GameState state)
         {
@@ -139,25 +163,27 @@ namespace FallChallenge2023.Bots.Bronze
                         fish.Position = new Vector(drone.Position);
                     else if (!fish.Position.InRange(drone.Position, drone.LightRadius)) // Wrong assume => correct it
                     {
-                        fish.Position = drone.Position + (fish.Position - drone.Position).Normalize() * drone.LightRadius;
+                        fish.Position = drone.Position + ((fish.Position - drone.Position).Normalize() * drone.LightRadius).Round();
                         fish.Speed = null;
                     }
                     if (fish.Status == FishStatus.UNKNOWED) fish.Status = FishStatus.UNVISIBLE;
                 }
 
             // Symmetric Fish
-            var scannedFish = state.Drones.SelectMany(_ => _.NewScans).Union(state.Fishes.Where(_ => _.Color == FishColor.UGLY).Select(_ => _.Id)).ToList();
-            foreach (var fish in state.Fishes.Where(_ => _.Position != null && scannedFish.Contains(_.Id)))
+            var scannedFish = state.Drones
+                .SelectMany(_ => _.NewScans)
+                .Distinct()
+                .Union(state.Fishes.Where(_ => _.Status == FishStatus.VISIBLE && _.Color == FishColor.UGLY).Select(_ => _.Id))
+                .Select(_ => state.GetFish(_))
+                .Where(_ => _.Position != null)
+                .ToList();
+            foreach (var fish in scannedFish)
             {
                 var sFish = state.GetSymmetricFish(fish);
                 if (sFish.Position == null || sFish.Status == FishStatus.UNKNOWED)
                 {
-                    sFish.Position = fish.Position.HSymmetric(GameState.CENTER.X);
-                    if (fish.Speed != null)
-                    {
-                        if (state.Drones.Any(_ => _.Position.InRange(fish.Position, Drone.MOTOR_RANGE))) sFish.Speed = -fish.Speed.HSymmetric().Normalize() * Fish.SPEED;
-                        else sFish.Speed = fish.Speed.HSymmetric();
-                    }
+                    sFish.Position = fish.Position.HSymmetric(GameProperties.CENTER.X);
+                    if (fish.Speed != null && fish.Speed.LengthSqr() < GameProperties.FISH_SPEED_SQR_DELTA) sFish.Speed = fish.Speed.HSymmetric();
                     if (sFish.Status == FishStatus.UNKNOWED) sFish.Status = FishStatus.UNVISIBLE;
                 }
             }
@@ -165,8 +191,8 @@ namespace FallChallenge2023.Bots.Bronze
             // Correct position from radar
             foreach (var fish in state.Fishes.Where(_ => _.Status == FishStatus.UNVISIBLE || _.Status == FishStatus.UNKNOWED))
             {
-                var habitat = GameState.HABITAT[fish.Type];
-                var range = new RectangleRange(0, habitat[0], GameState.MAP_SIZE - 1, habitat[1]);
+                var habitat = GameProperties.HABITAT[fish.Type];
+                var range = new RectangleRange(0, habitat[0], GameProperties.MAP_SIZE - 1, habitat[1]);
 
                 foreach (var drone in state.GetDrones(0))
                     range = range.Intersect(drone.RadarBlips.First(_ => _.FishId == fish.Id).GetRange(drone.Position));
@@ -185,62 +211,44 @@ namespace FallChallenge2023.Bots.Bronze
                     {
                         fish.Position = range.Center; // set to centre of range
                         if (fish.Position.InRange(drone.Position, drone.LightRadius)) // still in light, go to far of ligth
-                            fish.Position = drone.Position + (fish.Position - drone.Position).Normalize() * drone.LightRadius;
+                            fish.Position = drone.Position + ((fish.Position - drone.Position).Normalize() * drone.LightRadius).Round();
                         fish.Speed = null;
                     }
             }
         }
 
-        public IGameAction GetAction(IGameState gameState)
-        {
-            var state = gameState as GameState;
-
-            // Calculate new positions
-            state.UpdateFishPositions(state.Fishes, state.Drones, _ => _.Status == FishStatus.UNVISIBLE);
-
-            // Find fish's positions
-            FindFishPositions(state);
-
-            // Find unscanned enemy fishes
-            var enemyScannedFish = state.GetScannedFishes(1);
-            state.UnscannedEnemyFishes = state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && !enemyScannedFish.Contains(_.Id)).ToList();
-
-            // Create agents
-            CreateAgents(state);
-
-            // Determinate actions for agents
-            foreach (var agent in Agents)
-                agent.FindAction(state);
-
-            return new GameActionList(Agents.Select(_ => (IGameAction)_.Action).ToList());
-        }
-
         private void CreateAgents(GameState state)
         {
-            if (!Agents.Any())
-                foreach (var drone in state.GetDrones(0))
-                    Agents.Add(new DroneAgent(drone));
-            else
-                foreach (var agent in Agents)
-                    agent.Clear();
+            foreach (var drone in state.GetDrones(0))
+                Agents.Add(new DroneAgent(drone.Id));
+        }
+
+        protected void DistributeAgents(GameState state, int playerId)
+        {
+            // Defined agents
+            var agents = Agents.Where(_ => _.Drone.PlayerId == playerId).ToList();
+            agents.ForEach(_ => _.Initialize(state));
+
+            var agentId = agents[0].Drone.Position.X <= agents[1].Drone.Position.X ? 0 : 1;
+            if (agents[0].Drone.Emergency) agents[0] = agents[1];
+            else if (agents[1].Drone.Emergency) agents[1] = agents[0];
 
             // Distribute tasks
-            var scannedFish = state.GetScannedFishes(0);
-            foreach (var fish in state.Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY && !scannedFish.Contains(_.Id)))
-                Agents[fish.Position.X <= GameState.CENTER.X ? 0 : 1].UnscannedFishes.Add(fish);
+            foreach (var fish in state.UnscannedFishes[playerId])
+                agents[fish.Position.X <= GameProperties.CENTER.X ? agentId : 1 - agentId].UnscannedFishes.Add(fish);
 
             // Share tasks
-            if (!Agents[0].UnscannedFishes.Any() && Agents[1].UnscannedFishes.Any())
+            if (agents[0].UnscannedFishes.Any() && !agents[1].UnscannedFishes.Any()) ShareTasks(agents[0], agents[1]);
+            else if (agents[1].UnscannedFishes.Any() && !agents[0].UnscannedFishes.Any()) ShareTasks(agents[1], agents[0]);
+        }
+
+        private void ShareTasks(DroneAgent fromAgent, DroneAgent toAgent)
+        {
+            var fish = fromAgent.UnscannedFishes.OrderBy(_ => (_.Position - toAgent.Drone.Position).LengthSqr()).First();
+            if (fromAgent.UnscannedFishes.Count > 1 || (fish.Position - toAgent.Drone.Position).LengthSqr() < (fish.Position - fromAgent.Drone.Position).LengthSqr())
             {
-                var fish = Agents[1].UnscannedFishes.OrderBy(_ => (_.Position - Agents[0].Drone.Position).LengthSqr()).First();
-                Agents[0].UnscannedFishes.Add(fish);
-                Agents[1].UnscannedFishes.Remove(fish);
-            }
-            else if (!Agents[1].UnscannedFishes.Any() && Agents[0].UnscannedFishes.Any())
-            {
-                var fish = Agents[0].UnscannedFishes.OrderBy(_ => (_.Position - Agents[1].Drone.Position).LengthSqr()).First();
-                Agents[1].UnscannedFishes.Add(fish);
-                Agents[0].UnscannedFishes.Remove(fish);
+                toAgent.UnscannedFishes.Add(fish);
+                fromAgent.UnscannedFishes.Remove(fish);
             }
         }
     }

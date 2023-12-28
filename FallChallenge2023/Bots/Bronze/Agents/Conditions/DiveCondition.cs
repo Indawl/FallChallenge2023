@@ -4,14 +4,12 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
 {
     public class DiveCondition : Condition
     {
-        public DiveCondition(DroneAgent agent, GameState state) : base(agent, state)
-        {
-        }
+        public override int Id => GameProperties.DiveCondition;
 
-        public override int Id => 100;
+        public DiveCondition(DroneAgent agent) : base(agent) { }
 
-        public override bool Check() => State.Turn < 13 && !State.Fishes.Where(_ => 
+        public override bool Check() => Agent.State.Turn < 13 && !Agent.State.Fishes.Where(_ => 
             _.Color == FishColor.UGLY &&
-            _.Position.InRange(Agent.Drone.Position, Agent.Drone.LightRadius + Drone.MONSTER_DETECTED_RADIUS_ADD)).Any();
+            _.Position.InRange(Agent.Drone.Position, Agent.Drone.LightRadius + GameProperties.MONSTER_DETECTED_RADIUS_ADD)).Any();
     }
 }

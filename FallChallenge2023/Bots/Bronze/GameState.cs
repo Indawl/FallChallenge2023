@@ -7,31 +7,23 @@ namespace FallChallenge2023.Bots.Bronze
 {
     public class GameState : GameStateBase, ICloneable
     {
-        public const int MAP_SIZE = 10000;
-        public const int LAST_TURN = 200;
-        public const int FIRST_SAVE_KOEF = 2;
-        public const int MONSTER_MIN_START_Y = 5000;
+        public List<Fish> Monsters { get; private set; } = new List<Fish>();
+        public List<Fish>[] ScannedFishes { get; private set; } = new List<Fish>[2];
+        public List<Fish>[] UnscannedFishes { get; private set; } = new List<Fish>[2];
 
-        public static Vector CENTER = new Vector((MAP_SIZE - 1) / 2.0, (MAP_SIZE - 1) / 2.0);
+        public int Score => MyScore - EnemyScore;
+        public IEnumerable<Fish> SwimmingFishes => Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY);
 
-        public static Dictionary<FishType, int[]> HABITAT = new Dictionary<FishType, int[]>()
+        public void Initialize()
         {
-            { FishType.ANGLER, new int[] { 2500, 9999 } },
-            { FishType.JELLY, new int[] { 2500, 4999 } },
-            { FishType.FISH, new int[] { 5000, 7499 } },
-            { FishType.CRAB, new int[] { 7500, 9999 } }
-        };
+            Monsters = Fishes.Where(_ => _.Color == FishColor.UGLY).ToList();
 
-        public static Dictionary<FishType, int> REWARDS = new Dictionary<FishType, int>()
-        {
-            { FishType.JELLY, 1 },
-            { FishType.FISH, 2 },
-            { FishType.CRAB, 3 },
-            { FishType.ONE_COLOR, 3 },
-            { FishType.ONE_TYPE, 4 }
-        };
-
-        public List<Fish> UnscannedEnemyFishes { get; set; }
+            for (int i = 0; i < 2; i++)
+            {
+                ScannedFishes[i] = GetDrones(i).SelectMany(_ => _.Scans).Distinct().Union(GetScans(i)).Select(_ => GetFish(_)).ToList();
+                UnscannedFishes[i] = SwimmingFishes.Where(_ => !ScannedFishes[i].Contains(_)).ToList();
+            }
+        }
 
         public object Clone()
         {
@@ -40,6 +32,7 @@ namespace FallChallenge2023.Bots.Bronze
             state.EnemyScans = new List<int>(EnemyScans);
             state.Drones = CloneDrones(Drones);
             state.Fishes = CloneFishes(Fishes);
+            state.Initialize();
             return state;
         }
 
@@ -60,7 +53,7 @@ namespace FallChallenge2023.Bots.Bronze
         }
 
         public List<int> GetScans(int playerId) => playerId == 0 ? MyScans : EnemyScans;
-        public int GetScore(int playerId) => playerId == 0 ? MyScore : EnemyScore;
+        public int GetScore(int playerId) => playerId == 0 ? MyScore : EnemyScore;        
         public int SetScore(int playerId, int score) => playerId == 0 ? MyScore = score : EnemyScore = score;
         public Fish GetFish(int id) => Fishes.FirstOrDefault(_ => _.Id == id);
         public IEnumerable<Drone> GetDrones(int playerId) => Drones.Where(_ => _.PlayerId == playerId);
@@ -73,166 +66,33 @@ namespace FallChallenge2023.Bots.Bronze
             return drone;
         }
 
-        public List<int> GetScannedFishes(int playerId) => GetDrones(playerId).SelectMany(_ => _.Scans).Distinct().Union(GetScans(playerId)).ToList();
-
         public Fish GetSymmetricFish(Fish fish)
         {
             var offset = fish.Color == FishColor.UGLY ? 16 : 4;
             var fishId = fish.Id + ((fish.Id - offset) % 2 == 0 ? 1 : -1);
             return GetFish(fishId);
         }
+        
 
-        private Vector SnapToDroneZone(Vector position)
-        {
-            var newPosition = position;
-
-            if (position.X < 0) newPosition = new Vector(0, position.Y);
-            if (position.X > MAP_SIZE - 1) newPosition = new Vector(MAP_SIZE - 1, position.Y);
-            if (position.Y < 0) newPosition = new Vector(position.X, 0);
-            if (position.Y > MAP_SIZE - 1) newPosition = new Vector(position.X, MAP_SIZE - 1);
-
-            return newPosition;
-        }
-
-        private Vector SnapToFishZone(FishType type, Vector position)
-        {
-            var newPosition = position;
-
-            var habitat = HABITAT[type];
-            if (position.X < 0) newPosition = new Vector(0, position.Y);
-            if (position.X > MAP_SIZE - 1) newPosition = new Vector(MAP_SIZE - 1, position.Y);
-            if (position.Y < habitat[0]) newPosition = new Vector(position.X, habitat[0]);
-            if (position.Y > habitat[1]) newPosition = new Vector(position.X, habitat[1]);
-
-            return newPosition;
-        }
-
-        public void UpdateFishPositions(IEnumerable<Fish> fishes, IEnumerable<Drone> drones)
-        {
-            // New Position
-            foreach (var fish in fishes.Where(_ => _.Position != null && _.Speed != null))
-                fish.Position = GetNextPosition(fish.Type, fish.Position, fish.Speed);
-
-            // New Speed
-            foreach (var fish in fishes.Where(_ => _.Position != null && _.Speed != null))
-                fish.Speed = UpdateFishSpeed(fish, drones);
-        }
-
-        public void UpdateFishPositions(IEnumerable<Fish> fishes, IEnumerable<Drone> drones, Func<Fish, bool> predicate)
-        {
-            UpdateFishPositions(fishes.Where(predicate), drones);
-        }
-
-        private Vector GetNextPosition(FishType type, Vector position, Vector speed) => SnapToFishZone(type, position + speed);
-
-        private Vector UpdateFishSpeed(Fish fish, IEnumerable<Drone> drones) => fish.Color == FishColor.UGLY ?
-            UpdateUglySpeed(fish.Id, drones, fish.Position, fish.Speed) :
-            UpdateFishSpeed(fish.Id, drones, fish.Type, fish.Position, fish.Speed);
-
-        private Vector UpdateFishSpeed(int fishId, IEnumerable<Drone> drones, FishType type, Vector position, Vector speed)
-        {
-            // Near drone
-            var dronePositions = position.GetClosest(drones
-                .Where(_ => !_.Emergency && _.Position.InRange(position, Drone.MOTOR_RANGE))
-                .Select(_ => _.Position)
-                .ToList());
-            if (dronePositions.Any())
-            {
-                var pos = dronePositions.Aggregate((a, b) => a + b) / dronePositions.Count;
-                speed = ((position - pos).Normalize() * Fish.FRIGHTENED_SPEED).Round();
-            }
-            else
-            {
-                // Near fish
-                var fishesPositions = position.GetClosest(Fishes
-                    .Where(_ => _.Position != null && _.Speed != null && _.Id != fishId && _.Color != FishColor.UGLY && _.Position.InRange(position, Fish.MIN_DISTANCE_BT_FISH))
-                    .Select(_ => _.Position)
-                    .ToList());
-                if (fishesPositions.Any())
-                {
-                    var pos = fishesPositions.Aggregate((a, b) => a + b) / fishesPositions.Count;
-                    speed = (position - pos).Normalize() * Fish.SPEED;
-                }
-                else speed = speed.Normalize() * Fish.SPEED;
-
-                // Border
-                var nextPosition = position + speed;
-
-                var habitat = HABITAT[type];
-                if (nextPosition.X < 0 || nextPosition.X > MAP_SIZE - 1) speed = speed.HSymmetric();
-                if (nextPosition.Y < habitat[0] || nextPosition.Y > habitat[1]) speed = speed.VSymmetric();
-
-                speed = speed.EpsilonRound().Round();
-            }
-
-            return speed;
-        }
-
-        private Vector UpdateUglySpeed(int fishId, IEnumerable<Drone> drones, Vector position, Vector speed)
-        {
-            // Near drone
-            var dronePositions = position.GetClosest(drones
-                .Where(_ => !_.Emergency && _.Position.InRange(position, _.LightRadius))
-                .Select(_ => _.Position)
-                .ToList());
-            if (dronePositions.Any())
-            {
-                var pos = dronePositions.Aggregate((a, b) => a + b) / dronePositions.Count;
-                speed = ((pos - position).Normalize() * Fish.MONSTER_ATTACK_SPEED).Round();
-            }
-            else 
-            {
-                speed = speed.Normalize() * Fish.MONSTER_SPEED;
-
-                // Near other ugly
-                var fishesPositions = position.GetClosest(Fishes
-                    .Where(_ => _.Position != null && _.Speed != null && _.Id != fishId && _.Color == FishColor.UGLY && _.Position.InRange(position, Fish.MIN_DISTANCE_BT_MONSTER))
-                    .Select(_ => _.Position)
-                    .ToList());
-                if (fishesPositions.Any())
-                {
-                    var pos = fishesPositions.Aggregate((a, b) => a + b) / fishesPositions.Count;
-                    speed = (position - pos).Normalize() * Fish.SPEED; // Fish.MONSTER_SPEED; // repeat error from referee
-                }
-
-                speed = speed.Round();
-
-                // Border
-                var nextPosition = position + speed;
-
-                var habitat = HABITAT[FishType.ANGLER];
-                if (nextPosition.X < 0 || nextPosition.X > MAP_SIZE - 1) speed = speed.HSymmetric();
-                if (nextPosition.Y < habitat[0] || nextPosition.Y > habitat[1]) speed = speed.VSymmetric();
-            }
-
-            return speed;
-        }
-
-        public bool IsFishInRange(int playerId, Vector position)
-        {
-            var scannedFish = GetScannedFishes(playerId).ToList();
-            return Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY).Any(_ => !scannedFish.Contains(_.Id) && _.Position.InRange(position, Drone.SCAN_RADIUS, Drone.LIGHT_SCAN_RADIUS));
-        }
-
-        public Vector GetAroundMonsterTo(Vector from, Vector to, Drone drone = null, double epsilon = 0.1)
+        public Vector GetAroundMonsterTo(Vector from, Vector to, Drone drone = null, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANLE)
         {
             var speed = to - from;
-            if (speed.Length() > Drone.MAX_SPEED) speed = (speed.Normalize() * Drone.MAX_SPEED).Round();
+            if (speed.Length() > GameProperties.DRONE_MAX_SPEED) speed = (speed.Normalize() * GameProperties.DRONE_MAX_SPEED).Round();
             return GetAroundMonster(from, speed, drone, epsilon);
         }
 
-        public Vector GetAroundMonster(Vector from, Vector speed, Drone drone = null, double epsilon = 0.1)
+        public Vector GetAroundMonster(Vector from, Vector speed, Drone drone = null, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANLE)
         {
-            if (CheckCollisionWithMonsters(Fishes.Where(_ => _.Color == FishColor.UGLY && _.Speed != null), Drones, from, ref speed, drone, 1, epsilon)) return from;
+            if (CheckCollisionWithMonsters(Fishes.Where(_ => _.Color == FishColor.UGLY && _.Speed != null), Drones, from, ref speed, drone, GameProperties.MONSTER_TRAVERSAL_TURNS, epsilon)) return from;
             else return from + speed;
         }
 
-        private bool CheckCollisionWithMonsters(IEnumerable<Fish> fishes, IEnumerable<Drone> drones, Vector from, ref Vector speed, Drone drone = null, int forMoves = 20, double epsilon = 0.1)
+        private bool CheckCollisionWithMonsters(IEnumerable<Fish> fishes, IEnumerable<Drone> drones, Vector from, ref Vector speed, Drone drone = null, int forMoves = GameProperties.MONSTER_TRAVERSAL_TURNS, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANLE)
         {
             epsilon *= Math.PI / 180;
 
             var newTo = from + speed;
-            var newSpeed = speed.IsZero() ? new Vector(Drone.MAX_SPEED, 0) : speed;
+            var newSpeed = speed.IsZero() ? new Vector(GameProperties.DRONE_MAX_SPEED, 0) : speed;
 
             var alpha = 0.0;
             var wise = true;
@@ -253,7 +113,7 @@ namespace FallChallenge2023.Bots.Bronze
                             wise = !wise;
                             if (alpha > Math.PI) return true;
 
-                            var rSpeed = (newSpeed.Rotate(alpha).Normalize() * Drone.MAX_SPEED).Round();
+                            var rSpeed = (newSpeed.Rotate(alpha).Round().Normalize() * GameProperties.DRONE_MAX_SPEED).Round();
                             newTo = SnapToDroneZone(from + rSpeed);
                             collision = true;
                         }
@@ -268,7 +128,7 @@ namespace FallChallenge2023.Bots.Bronze
                     UpdateFishPositions(nextFishes, nextDrones);
 
                     var nextSpeed = newTo - from;
-                    if (CheckCollisionWithMonsters(nextFishes, nextDrones, newTo, ref nextSpeed, drone, forMoves - 1, 20))
+                    if (CheckCollisionWithMonsters(nextFishes, nextDrones, newTo, ref nextSpeed, drone, forMoves - 1, GameProperties.MONSTER_TRAVERSAL_ANLE_FAST))
                     {
                         alpha = (wise ? epsilon : 0.0) - alpha;
                         wise = !wise;
@@ -282,26 +142,126 @@ namespace FallChallenge2023.Bots.Bronze
             return false;
         }
 
-        private static bool CheckCollision(Vector fishPostion, Vector fishSpeed, Vector droneFrom, Vector droneTo)
+        
+
+        
+
+        private void DoScans()
         {
-            if (fishSpeed.IsZero() && droneTo.Equals(droneFrom)) return false;
+            foreach (var drone in Drones)
+            {
+                drone.NewScans.Clear();
+                foreach (var fish in Fishes.Where(_ => _.Status != FishStatus.LOSTED && !GetScans(drone.PlayerId).Contains(_.Id) && !drone.Scans.Contains(_.Id)))
+                    if (fish.Position.InRange(drone.Position, drone.LightRadius))
+                    {
+                        drone.Scans.Add(fish.Id);
+                        drone.NewScans.Add(fish.Id);
+                    }
+            }
+        }
 
-            var pos = fishPostion - droneFrom;
-            var vd = droneTo - droneFrom;
-            if (vd.Equals(fishSpeed)) return false;
+        private void CheckDrones()
+        {
+            var monsters = Fishes.Where(_ => _.Speed != null && _.Color == FishColor.UGLY).ToList();
 
-            var vf = fishSpeed - vd;
-            var a = vf.LengthSqr();
-            var b = 2.0 * Vector.Dot(pos, vf);
-            var c = pos.LengthSqr() - Fish.MONSTER_ATTACK_RADIUS_SQR;
-            var delta = b * b - 4.0 * a * c;
-            if (delta < 0.0) return false;
+            foreach (var drone in Drones)
+                foreach (var monster in monsters)
+                    if (CheckCollision(monster.Position, monster.Speed, drone.Position - drone.Speed, drone.Position))
+                    {
+                        drone.Emergency = true;
+                        drone.Lighting = false;
+                        drone.Scans.Clear();
+                        break;
+                    }
+        }
 
-            double t = (-b - Math.Sqrt(delta)) / (2.0 * a);
+        public bool IsGameOver()
+        {
+            if (Turn > 200) return true;
 
-            if (t <= 0.0 || t > 1.0) return false;
+            var fishes = Fishes.Where(_ => _.Status != FishStatus.LOSTED).ToList();
+
+            for (int i = 0; i < 2; i++)
+            {
+                var savedFishes = GetScans(i);
+                if (!fishes.All(_ => savedFishes.Contains(_.Id))) return false;
+            }
 
             return true;
+        }
+
+        private void DoSave()
+        {
+            var scannedFishes = new List<int>[2];
+            var bonusesFishes = new List<int>[2];
+            var lastOneType = new List<FishType>[2];
+            var lastOneColor = new List<FishColor>[2];
+            var oneType = new List<FishType>[2];
+            var oneColor = new List<FishColor>[2];
+
+            for (int i = 0; i < 2; i++)
+            {
+                // Get drones for save
+                var drones = GetDrones(i).Where(_ => _.Position.Y <= GameProperties.SURFACE).ToList();
+
+                // Get score for fishes
+                scannedFishes[i] = drones.SelectMany(_ => _.Scans).Distinct().ToList();
+                bonusesFishes[i] = scannedFishes[i].Except(GetScannedFishes(1 - i)).ToList();
+
+                // Set score
+                foreach (var fishId in scannedFishes[i])
+                    SetScore(i, GetScore(i) + GameProperties.REWARDS[GetFish(fishId).Type]);
+
+                foreach (var fishId in bonusesFishes[i])
+                    SetScore(i, GetScore(i) + GameProperties.REWARDS[GetFish(fishId).Type]);
+
+                // Get last one type/color we had
+                GetComboBonuses(i, out lastOneColor[i], out lastOneType[i]);
+
+                // Scan fishes
+                GetScans(i).AddRange(scannedFishes[i]);
+                drones.ForEach(_ => _.Scans.Clear());
+            }
+
+            // Get bonuses for type/color
+            for (int i = 0; i < 2; i++)
+                GetComboBonuses(i, out oneColor[i], out oneType[i]);
+
+            for (int i = 0; i < 2; i++)
+            {
+                // Get score for combo
+                var comboColor = oneColor[i].Except(lastOneColor[i]).ToList();
+                var comboBonusesColor = comboColor.Except(oneColor[1 - i]).ToList();
+
+                var comboType = oneType[i].Except(lastOneType[i]).ToList();
+                var comboTypeColor = comboType.Except(oneType[1 - i]).ToList();
+
+                // Set score for combo
+                SetScore(i, GetScore(i) + GameProperties.REWARDS[FishType.ONE_COLOR] * (comboColor.Count + comboBonusesColor.Count));
+                SetScore(i, GetScore(i) + GameProperties.REWARDS[FishType.ONE_TYPE] * (comboType.Count + comboTypeColor.Count));
+            }
+        }
+
+        private void GetComboBonuses(int playerId, out List<FishColor> oneColor, out List<FishType> oneType)
+        {
+            oneColor = new List<FishColor>();
+            oneType = new List<FishType>();
+
+            var scanFishes = GetScans(playerId).Select(_ => GetFish(_)).ToList();
+
+            foreach (var color in GameProperties.COLORS)
+            {
+                var fishes = scanFishes.Where(c => c.Color == color).ToList();
+                if (GameProperties.TYPES.All(_ => fishes.Exists(f => f.Type == _)))
+                    oneColor.Add(color);
+            }
+
+            foreach (var type in GameProperties.TYPES)
+            {
+                var fishes = scanFishes.Where(c => c.Type == type).ToList();
+                if (GameProperties.COLORS.All(_ => fishes.Exists(f => f.Color == _)))
+                    oneType.Add(type);
+            }
         }
     }
 }

@@ -8,26 +8,13 @@ namespace FallChallenge2023.Bots.Bronze
 {
     public class Drone : ICloneable
     {
-        public const int MAX_SPEED = 600;
-        public const int MAX_SPEED_SQR = MAX_SPEED * MAX_SPEED;
-        public const int SINK_SPEED = 300;
-        public const int EMERGENCY_SPEED = 300;
-        public const int SCAN_RADIUS = 800;
-        public const int LIGHT_SCAN_RADIUS = 2000;
-        public const int MONSTER_DETECTED_RADIUS_ADD = 300;
-        public const int BATTERY_DRAIN = 5;
-        public const int BATTERY_RECHARGE = 1;
-        public const int MAX_BATTERY = 30;
-        public const int SURFACE = 500;
-        public const int MOTOR_RANGE = 1400;
-
         public int Id { get; }
         public int PlayerId { get; }
 
         public Vector Position { get; set; }
         public Vector Speed { get; set; }
         public bool Emergency { get; set; }
-        public int Battery { get; set; } = MAX_BATTERY;
+        public int Battery { get; set; } = GameProperties.MAX_BATTERY;
         public bool Lighting { get; set; }
 
         public List<int> Scans { get; set; } = new List<int>();
@@ -37,7 +24,7 @@ namespace FallChallenge2023.Bots.Bronze
         [JsonIgnore]
         public bool Scanning => NewScans.Any();
         [JsonIgnore]
-        public int LightRadius => Lighting ? LIGHT_SCAN_RADIUS : SCAN_RADIUS;
+        public int LightRadius => Lighting ? GameProperties.LIGHT_SCAN_RADIUS : GameProperties.DARK_SCAN_RADIUS;
 
         public Drone(int id, int playerId)
         {
@@ -50,8 +37,8 @@ namespace FallChallenge2023.Bots.Bronze
         public object Clone()
         {
             var drone = (Drone)MemberwiseClone();
-            drone.NewScans = new List<int>(NewScans);
             drone.Scans = new List<int>(Scans);
+            drone.NewScans = new List<int>(NewScans);            
             drone.RadarBlips = new List<RadarBlip>(RadarBlips);
             return drone;
         }

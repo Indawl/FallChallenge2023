@@ -1,6 +1,7 @@
 ﻿using FallChallenge2023.Bots.Bronze.Actions;
 using FallChallenge2023.Bots.Bronze.Agents.Conditions;
 using FallChallenge2023.Bots.Bronze.Agents.Decisions;
+using FallChallenge2023.Bots.Bronze.GameMath;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,35 +9,54 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 {
     public class DroneAgent
     {
-        public Drone Drone { get; }
-        public List<Fish> UnscannedFishes { get; set; } = new List<Fish>();
-        public GameAction Action { get; private set; }
+        public int DroneId { get; }
+
+        public GameState State { get; private set; }
+        public Drone Drone { get; private set; }
+        public GameAction Action { get; protected set; }
+
+        public List<Fish> UnscannedFishes { get; } = new List<Fish>();
+        public bool EarlySave { get; set; } = false;
+
+        protected List<Decision> Decisions { get; set; }
 
         private Dictionary<int, bool> CheckedConditions { get; } = new Dictionary<int, bool>();
 
-        public DroneAgent(Drone drone)
+        public DroneAgent(int droneId)
         {
-            Drone = drone;
+            DroneId = droneId;
+
+            SetDecisions();
         }
 
-        public void Clear()
+        public void Initialize(GameState state)
         {
+            State = state;
+            Drone = state.Drones.First(_ => _.Id == DroneId);
+
+            EarlySave = false;
+
             UnscannedFishes.Clear();
             CheckedConditions.Clear();
         }
 
-        public void FindAction(GameState state)
+        protected virtual void SetDecisions()
         {
-            // Decided action
-            Action = GetActionFromDecision(new List<Decision>()
+            Decisions = new List<Decision>()
             {
-                new EmergencyDecision(this, state),     // Need repair
-                new NeedDiveDecision(this, state),      // Dive from start                
-                new SaveDecision(this, state)           // All done
-            });
+                new EmergencyDecision(this),     // Need repair
+                new EarlySaveDecision(this),     // Need early save
+                new NeedDiveDecision(this),      // Dive from start                
+                new SaveDecision(this)           // All done, go to save
+            };
         }
 
-        private GameAction GetActionFromDecision(List<Decision> decisions)
+        public void FindAction()
+        {
+            Action = GetActionFromDecision(Decisions);
+        }
+
+        protected GameAction GetActionFromDecision(List<Decision> decisions)
         {
             GameAction action = null;
 
@@ -70,5 +90,8 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 
             return result;
         }
+
+        public bool NeedLighting(Vector position) => State.UnscannedFishes[Drone.PlayerId]
+            .Any(_ => _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS));
     }
 }

@@ -6,7 +6,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 {
     public class DebugOceanFloor : DebugMapXY
     {
-        public DebugOceanFloor(DebugObject parent) : base("Ocean Floor", GameState.MAP_SIZE, GameState.MAP_SIZE, parent)
+        public DebugOceanFloor(DebugObject parent) : base("Ocean Floor", GameProperties.MAP_SIZE, GameProperties.MAP_SIZE, parent)
         {
             Position = new Rectangle(460, 40, 1000, 1000);
             Visible = true;

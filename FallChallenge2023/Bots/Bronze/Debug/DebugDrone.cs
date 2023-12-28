@@ -32,15 +32,15 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         {
             Drone = drone;
             Type = Drone.Emergency ? DroneType.DAMAGED : (Drone.Scanning ? DroneType.SCAN : DroneType.NORMAL);
-            LightRadius = Drone.Lighting ? Drone.LIGHT_SCAN_RADIUS : Drone.SCAN_RADIUS;
-            MonsterRadius = LightRadius + Drone.MONSTER_DETECTED_RADIUS_ADD;
+            LightRadius = Drone.Lighting ? GameProperties.LIGHT_SCAN_RADIUS : GameProperties.DARK_SCAN_RADIUS;
+            MonsterRadius = LightRadius + GameProperties.MONSTER_DETECTED_RADIUS_ADD;
 
-            LightRadius = parent.Position.Width * LightRadius / GameState.MAP_SIZE;
-            MaxLightRadius = parent.Position.Width * Drone.LIGHT_SCAN_RADIUS / GameState.MAP_SIZE;
-            MonsterRadius = parent.Position.Width * MonsterRadius / GameState.MAP_SIZE;
-            MotorRadius = parent.Position.Width * Drone.MOTOR_RANGE / GameState.MAP_SIZE;
+            LightRadius = parent.Position.Width * LightRadius / GameProperties.MAP_SIZE;
+            MaxLightRadius = parent.Position.Width * GameProperties.LIGHT_SCAN_RADIUS / GameProperties.MAP_SIZE;
+            MonsterRadius = parent.Position.Width * MonsterRadius / GameProperties.MAP_SIZE;
+            MotorRadius = parent.Position.Width * GameProperties.MOTOR_RANGE / GameProperties.MAP_SIZE;
 
-            Coord = new Vector(parent.Position.Width * Drone.Position.X / GameState.MAP_SIZE, parent.Position.Height * Drone.Position.Y / GameState.MAP_SIZE);
+            Coord = new Vector(parent.Position.Width * Drone.Position.X / GameProperties.MAP_SIZE, parent.Position.Height * Drone.Position.Y / GameProperties.MAP_SIZE);
 
             Position = new Rectangle(0, 0, parent.Position.Width, parent.Position.Height);
             Visible = true;
@@ -75,7 +75,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat),
                 (int)Coord.X - modelPosition.Width / 2, (int)Coord.Y - modelPosition.Height / 3, modelPosition.Width, modelPosition.Height);
 
-            var radiusAttack = Parent.Position.Width * Fish.MONSTER_ATTACK_RADIUS / GameState.MAP_SIZE; 
+            var radiusAttack = Parent.Position.Width * GameProperties.MONSTER_ATTACK_RADIUS / GameProperties.MAP_SIZE; 
             g.DrawEllipse(new Pen(Color.Yellow, 2.0f), (int)Coord.X - radiusAttack, (int)Coord.Y - radiusAttack, 2 * radiusAttack, 2 * radiusAttack);
 
             return drone;

@@ -5,14 +5,12 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
     public class SaveDecision : Decision
     {
-        public SaveDecision(DroneAgent agent, GameState state) : base(agent, state)
-        {
-        }
+        public SaveDecision(DroneAgent agent) : base(agent) { }
 
         public override GameAction GetDecision()
         {
-            var newPosition = State.GetAroundMonster(Agent.Drone.Position, new Vector(0, -Drone.MAX_SPEED), Agent.Drone);
-            return new GameActionMove(newPosition, State.IsFishInRange(Agent.Drone.PlayerId, newPosition));
+            var newPosition = Agent.State.GetAroundMonster(Agent.Drone.Position, new Vector(0, -GameProperties.DRONE_MAX_SPEED), Agent.Drone);
+            return new GameActionMove(newPosition, Agent.NeedLighting(newPosition)) { Text = "Well Done" };
         }
     }
 }

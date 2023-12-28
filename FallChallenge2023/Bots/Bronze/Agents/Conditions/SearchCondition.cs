@@ -4,11 +4,9 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
 {
     public class SearchCondition : Condition
     {
-        public SearchCondition(DroneAgent agent, GameState state) : base(agent, state)
-        {
-        }
+        public override int Id => GameProperties.SearchCondition;
 
-        public override int Id => 200;
+        public SearchCondition(DroneAgent agent) : base(agent) { }
 
         public override bool Check() => Agent.UnscannedFishes.Any();
     }
