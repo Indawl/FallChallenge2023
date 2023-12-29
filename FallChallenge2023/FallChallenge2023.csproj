@@ -69,6 +69,7 @@
     <Compile Include="Bots\Bronze\Agents\DroneSearchAgent.cs" />
     <Compile Include="Bots\Bronze\Agents\DroneSaveAgent.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />
+    <Compile Include="Bots\Bronze\Debug\DebugSimulationBot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugBot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugAction.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugDrone.cs" />
@@ -81,6 +82,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DebugRes.resx</DependentUpon>
     </Compile>
+    <Compile Include="Bots\Bronze\Debug\DebugSimulationState.cs" />
     <Compile Include="Bots\Bronze\Debug\GameManager.cs" />
     <Compile Include="Bots\Bronze\Drone.cs" />
     <Compile Include="Bots\Bronze\Agents\DroneAgent.cs" />

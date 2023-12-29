@@ -35,9 +35,7 @@ namespace FallChallenge2023.Bots.Bronze
         public const int MAX_BATTERY = 30;
         
         public const int MIN_DISTANCE_BT_FISH = 600;
-        public const int MIN_DISTANCE_BT_MONSTER = 600;
-        
-        public const int FIRST_SAVE_KOEF = 2;
+        public const int MIN_DISTANCE_BT_MONSTER = 600;        
         public const int MONSTER_MIN_START_Y = 5000;
 
         public const double MONSTER_TRAVERSAL_ANLE = 0.1;

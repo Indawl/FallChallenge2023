@@ -5,7 +5,12 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 {
     public class DroneSaveAgent : DroneAgent
     {
-        public DroneSaveAgent(GameState state, Drone drone) : base(state, drone) { }
+        public DroneSaveAgent(int droneId) : base(droneId)
+        {
+            NeedSave = true;
+        }
+
+        public override string ToString() => "DroneSaveAgent";
 
         protected override void SetDecisions()
         {

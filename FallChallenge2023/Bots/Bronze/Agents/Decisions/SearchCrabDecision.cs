@@ -16,7 +16,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         public override GameAction GetDecision()
         {
             var fish = Agent.UnscannedFishes.Where(_ => _.Type == FishType.CRAB).OrderBy(_ => (_.Position - Agent.Drone.Position).LengthSqr()).First();
-            var newPosition = Agent.State.GetAroundMonsterTo(Agent.Drone.Position, fish.Position, Agent.Drone);
+            var newPosition = GameUtils.GetAroundMonsterTo(Agent.State, Agent.Drone.Position, fish.Position, Agent.Drone.Id);
             return new GameActionMove(newPosition, Agent.NeedLighting(newPosition)) { Text = "Hunting..." };
         }
     }

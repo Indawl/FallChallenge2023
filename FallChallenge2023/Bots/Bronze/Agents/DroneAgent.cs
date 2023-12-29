@@ -16,7 +16,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
         public GameAction Action { get; protected set; }
 
         public List<Fish> UnscannedFishes { get; } = new List<Fish>();
-        public bool EarlySave { get; set; } = false;
+        public bool NeedSave { get; set; }
 
         protected List<Decision> Decisions { get; set; }
 
@@ -29,12 +29,14 @@ namespace FallChallenge2023.Bots.Bronze.Agents
             SetDecisions();
         }
 
+        public override string ToString() => "DroneAgent";
+
         public void Initialize(GameState state)
         {
             State = state;
             Drone = state.Drones.First(_ => _.Id == DroneId);
 
-            EarlySave = false;
+            NeedSave = false;
 
             UnscannedFishes.Clear();
             CheckedConditions.Clear();
@@ -92,6 +94,14 @@ namespace FallChallenge2023.Bots.Bronze.Agents
         }
 
         public bool NeedLighting(Vector position) => State.UnscannedFishes[Drone.PlayerId]
-            .Any(_ => _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS));
+            .Union(State.Fishes.Where(_ => _.Color == FishColor.UGLY))
+            .Any(_ => _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)) ||
+            !Drone.Lighting &&
+                State.GetDrones(1 - Drone.PlayerId)
+                .Where(_ => _.Lighting && _.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS)
+                                       && _.NewScans.Any(s => State.UnscannedFishes[Drone.PlayerId].Any(f => f.Id == s)) ||
+                            !_.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS) &&
+                            _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS))
+                .Any();
     }
 }

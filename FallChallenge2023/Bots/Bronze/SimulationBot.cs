@@ -1,51 +1,36 @@
-﻿using FallChallenge2023.Bots.Bronze.Actions;
-using FallChallenge2023.Bots.Bronze.Agents;
-using FallChallenge2023.Bots.Bronze.GameMath;
+﻿using FallChallenge2023.Bots.Bronze.Agents;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze
 {
     public class SimulationBot : Bot
     {
-        public SimulationBot(List<DroneAgent> agents)
+        public int Simulation(GameState state, List<DroneAgent> agents)
         {
-            foreach (var agent in agents)
-                Agents.Add(agent);
+            Agents = agents;
+
+            var referee = new GameReferee((GameState)state.Clone());
+            
+            while (!referee.IsGameOver())
+            {
+                FindActions(referee.State);                
+                referee.SetNextState(Agents);                
+            }
+            referee.Finish();
+
+            return referee.State.Score;
         }
 
-        public void UpdateDronePosition(GameState state)
+        protected void FindActions(GameState state)
         {
             // Initialize agents
+            CreateAgents(state);
             DistributeAgents(state, 0);
             DistributeAgents(state, 1);
 
             // Determinate actions for agents
             foreach (var agent in Agents)
                 agent.FindAction();
-
-            // Accept actions
-            foreach (var agent in Agents.Where(_ => !_.Drone.Emergency))
-            {
-                var oldPosition = agent.Drone.Position;
-
-                // Do action
-                if (agent.Action is GameActionMove)
-                {
-                    var action = agent.Action as GameActionMove;
-                    agent.Drone.Position = action.Position;
-                    agent.Drone.Lighting = action.Light;
-                }
-                else if (agent.Action is GameActionWait)
-                {
-                    var action = agent.Action as GameActionWait;
-                    agent.Drone.Position += new Vector(0, GameProperties.DRONE_SINK_SPEED);
-                    agent.Drone.Lighting = action.Light;
-                }
-
-                // Set speed
-                agent.Drone.Speed = agent.Drone.Position - oldPosition;
-            }
         }
     }
 }

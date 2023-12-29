@@ -43,7 +43,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
                                 else parentState.NextMoves.Add(debugState);
 
                                 parentState = debugState;
-                            } catch (JsonReaderException e) { break; }
+                            } catch (JsonReaderException) { break; }
 
                             line = reader.ReadLine();
                         }
