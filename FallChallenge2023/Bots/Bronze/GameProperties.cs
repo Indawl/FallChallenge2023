@@ -79,5 +79,6 @@ namespace FallChallenge2023.Bots.Bronze
         public const int EarlySaveCondition = 3;
         public const int SearchCrabCondition = 4;        
         public const int SearchCondition = 5;
+        public const int NeedDiveCondition = 6;
     }
 }

@@ -4,7 +4,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
 {
     public class NeedDiveCondition : Condition
     {
-        public override int Id => GameProperties.SearchCrabCondition;
+        public override int Id => GameProperties.NeedDiveCondition;
 
         public NeedDiveCondition(DroneAgent agent) : base(agent) { }
 
