@@ -132,23 +132,23 @@ namespace FallChallenge2023.Bots.Bronze
         public IGameAction GetAction(IGameState gameState)
         {
             var state = gameState as GameState;
-                        
+
             // Init state
             state.Initialize();
-            
+
             // Calculate new positions
             var referee = new GameReferee(state);
             referee.UpdateFishPositions(_ => _.Status == FishStatus.UNVISIBLE);
-            
+
             // Find fish's positions
             FindFishPositions(state);
-            
+
             // Create agents
             CreateAgents(state);
             DistributeAgents(state, 0);
-            
+
             // Calculate potencial score
-            CalculateScore(state);
+            //CalculateScore(state);
 
             // Determinate actions for agents
             foreach (var agent in Agents)
@@ -233,7 +233,7 @@ namespace FallChallenge2023.Bots.Bronze
         protected void DistributeAgents(GameState state, int playerId)
         {
             // Defined agents
-            var agents = Agents.Where(_ => _.Drone.PlayerId == playerId).ToList();            
+            var agents = Agents.Where(_ => _.Drone.PlayerId == playerId).ToList();
 
             var agentId = agents[0].Drone.Position.X <= agents[1].Drone.Position.X ? 0 : 1;
             if (agents[0].Drone.Emergency) agents[0] = agents[1];
@@ -303,6 +303,10 @@ namespace FallChallenge2023.Bots.Bronze
                 Agents.First(_ => _.DroneId == agent.DroneId).NeedSave = agent.NeedSave;
         }
 
-        protected virtual int GetSimulationScore(GameState state, List<DroneAgent> agents) => (new SimulationBot()).Simulation(state, agents);
+        protected virtual int GetSimulationScore(GameState state, List<DroneAgent> agents)
+        {
+            var bot = new SimulationBot();
+            return bot.Simulation(state, agents);
+        }
     }
 }

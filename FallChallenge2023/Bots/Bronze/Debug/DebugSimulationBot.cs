@@ -14,20 +14,18 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             Agents = agents;
 
             var referee = new GameReferee((GameState)state.Clone());
-            var sss = new System.Diagnostics.Stopwatch();
-            sss.Start();
+
             while (!referee.IsGameOver())
             {                
                 FindActions(referee.State);
                 referee.SetNextState(Agents);
-                sss.Stop();
+
                 var newDebugState = new DebugState("Turn " + referee.State.Turn, (GameState)referee.State.Clone(), debugState);
                 stepState.NextMoves.Add(newDebugState);
                 stepState = newDebugState;
-                sss.Start();
             }
             referee.Finish();
-            sss.Stop();
+
             stepState.NextMoves.Add(new DebugState("Finish", referee.State, debugState));
 
             return referee.State.Score;

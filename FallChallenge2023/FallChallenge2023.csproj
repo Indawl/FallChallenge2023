@@ -54,6 +54,7 @@
     <Compile Include="Bots\Bronze\Agents\Conditions\Condition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\EmergencyCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\DiveCondition.cs" />
+    <Compile Include="Bots\Bronze\Agents\Conditions\NeedDiveCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\SearchCrabCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\EarlySaveCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Conditions\SearchCondition.cs" />

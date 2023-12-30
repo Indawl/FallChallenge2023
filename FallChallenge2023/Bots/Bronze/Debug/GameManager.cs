@@ -56,11 +56,11 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             Environment.Exit(0);
         }
 
-        public override DebugObject GetObjectFromState(IGameState state)
+        public override DebugObject GetObjectFromState(IGameState state, DebugObject parent = null)
         {
             var gameState = state as GameState;
 
-            var rootObj = new DebugOcean();
+            var rootObj = new DebugOcean(parent);
 
             // Score
             for (int k = 0; k < 2; k++)

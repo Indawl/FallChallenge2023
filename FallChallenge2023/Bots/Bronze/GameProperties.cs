@@ -38,8 +38,8 @@ namespace FallChallenge2023.Bots.Bronze
         public const int MIN_DISTANCE_BT_MONSTER = 600;        
         public const int MONSTER_MIN_START_Y = 5000;
 
-        public const double MONSTER_TRAVERSAL_ANLE = 0.1;
-        public const double MONSTER_TRAVERSAL_ANLE_FAST = 20.0;
+        public const double MONSTER_TRAVERSAL_ANGLE = 0.1;
+        public const double MONSTER_TRAVERSAL_ANGLE_FAST = 20.0;
         public const int MONSTER_TRAVERSAL_TURNS = 5;
 
         public static Dictionary<FishType, int[]> HABITAT = new Dictionary<FishType, int[]>()

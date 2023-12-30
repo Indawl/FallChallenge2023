@@ -31,14 +31,14 @@ namespace FallChallenge2023.Bots.Bronze
             return newPosition;
         }
 
-        public static Vector GetAroundMonsterTo(GameState state, Vector from, Vector to, int? droneId = null, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANLE)
+        public static Vector GetAroundMonsterTo(GameState state, Vector from, Vector to, int? droneId = null, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANGLE)
         {
             var speed = to - from;
             if (speed.Length() > GameProperties.DRONE_MAX_SPEED) speed = (speed.Normalize() * GameProperties.DRONE_MAX_SPEED).Round();
             return GetAroundMonster(state, from, speed, droneId, epsilon);
         }
 
-        public static Vector GetAroundMonster(GameState state, Vector from, Vector speed, int? droneId = null, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANLE)
+        public static Vector GetAroundMonster(GameState state, Vector from, Vector speed, int? droneId = null, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANGLE)
         {
             if (CheckCollisionWithMonsters(state, from, ref speed, droneId, epsilon, GameProperties.MONSTER_TRAVERSAL_TURNS)) return from;
             else return from + speed;
@@ -106,7 +106,7 @@ namespace FallChallenge2023.Bots.Bronze
                     referee.UpdateFishPositions(_ => _.Color == FishColor.UGLY);
 
                     var nextSpeed = newTo - from;
-                    if (CheckCollisionWithMonsters(referee.State, newTo, ref nextSpeed, droneId, GameProperties.MONSTER_TRAVERSAL_ANLE_FAST, forMoves - 1))
+                    if (CheckCollisionWithMonsters(referee.State, newTo, ref nextSpeed, droneId, GameProperties.MONSTER_TRAVERSAL_ANGLE_FAST, forMoves - 1))
                     {
                         alpha = (wise ? epsilon : 0.0) - alpha;
                         wise = !wise;

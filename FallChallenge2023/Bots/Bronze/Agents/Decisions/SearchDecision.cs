@@ -1,6 +1,4 @@
-﻿using FallChallenge2023.Bots.Bronze.Actions;
-using FallChallenge2023.Bots.Bronze.Agents.Conditions;
-using System.Linq;
+﻿using FallChallenge2023.Bots.Bronze.Agents.Conditions;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
@@ -13,11 +11,9 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             Conditions.Add(new SearchCondition(Agent));
         }
 
-        public override GameAction GetDecision()
+        public override void SetDecisionts()
         {
-            var fish = Agent.UnscannedFishes.OrderBy(_ => (_.Position - Agent.Drone.Position).LengthSqr()).First();
-            var newPosition = GameUtils.GetAroundMonsterTo(Agent.State, Agent.Drone.Position, fish.Position, Agent.Drone.Id);
-            return new GameActionMove(newPosition, Agent.NeedLighting(newPosition)) { Text = "Searching..." };
+            DecisionsOk.Add(new SimpleSearchDecision(Agent));
         }
     }
 }

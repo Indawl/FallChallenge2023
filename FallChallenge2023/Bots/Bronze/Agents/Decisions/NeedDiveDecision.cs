@@ -8,7 +8,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 
         public override void SetConditions()
         {
-            Conditions.Add(new SearchCrabCondition(Agent));
+            Conditions.Add(new NeedDiveCondition(Agent));
         }
 
         public override void SetDecisionts()

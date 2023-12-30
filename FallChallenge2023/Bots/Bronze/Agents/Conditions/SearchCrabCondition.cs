@@ -8,6 +8,6 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Conditions
 
         public SearchCrabCondition(DroneAgent agent) : base(agent) { }
 
-        public override bool Check() => Agent.UnscannedFishes.Where(_ => _.Type == FishType.CRAB).Any();
+        public override bool Check() => Agent.UnscannedFishes.Any(_ => _.Type == FishType.CRAB);
     }
 }

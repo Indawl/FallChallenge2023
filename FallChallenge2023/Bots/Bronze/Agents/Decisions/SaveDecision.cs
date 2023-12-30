@@ -9,7 +9,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 
         public override GameAction GetDecision()
         {
-            var newPosition = GameUtils.GetAroundMonster(Agent.State, Agent.Drone.Position, new Vector(0, -GameProperties.DRONE_MAX_SPEED), Agent.Drone.Id);
+            var newPosition = GameUtils.GetAroundMonsterTo(Agent.State, Agent.Drone.Position, new Vector(Agent.Drone.Position.X, GameProperties.SURFACE), Agent.Drone.Id);
             return new GameActionMove(newPosition, Agent.NeedLighting(newPosition)) { Text = "Well Done" };
         }
     }

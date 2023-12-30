@@ -6,6 +6,9 @@
 
         public EarlySaveCondition(DroneAgent agent) : base(agent) { }
 
-        public override bool Check() => Agent.NeedSave;
+        public override bool Check()
+        {
+            return false;
+        }
     }
 }

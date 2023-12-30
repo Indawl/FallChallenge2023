@@ -230,7 +230,7 @@ namespace FallChallenge2023.Bots.Bronze
 
                 // Get score for fishes
                 scannedFishes[i] = drones.SelectMany(_ => _.Scans).Distinct().Select(_ => State.GetFish(_)).ToList();
-                bonusesFishes[i] = scannedFishes[i].Except(State.ScannedFishes[1 - i]).ToList();//error only enemy scans+dronsurface scan
+                bonusesFishes[i] = scannedFishes[i].Except(State.ScannedFishes[1 - i]).ToList();//error only enemy scans+dronsurface scan 
 
                 // Set score
                 foreach (var fish in scannedFishes[i])

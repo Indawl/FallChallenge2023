@@ -21,13 +21,17 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         {
             var gameState = (GameState)(state as GameState).Clone();
 
+            // Init
             Agents.Clear();
-            SimulationCount = 0;
-            SimulationObject = new DebugObject("Simulations");
 
+            // Simulation init
+            SimulationCount = 0;
+            SimulationObject = new DebugObject("Simulations", debugObject);
+
+            // Get actions
             GetAction(gameState);
 
-            // Init
+            // State
             debugObject = Manager.GetObjectFromState(gameState);
 
             // Ocean
@@ -41,7 +45,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             }
 
             // Simulation
-             debugObject.Childs.Add(SimulationObject);
+            debugObject.Childs.Add(SimulationObject);
         }
 
         protected override int GetSimulationScore(GameState state, List<Agents.DroneAgent> agents)

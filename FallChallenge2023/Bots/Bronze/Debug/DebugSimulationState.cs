@@ -14,7 +14,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
         public void GetDetails()
         {
-            (new GameManager(this)).Show();
+            var manager = new GameManager(this);
+            manager.Show();
         }
 
         public override string ToString() => string.Join("; ", Agents);
