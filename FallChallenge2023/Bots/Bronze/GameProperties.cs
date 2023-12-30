@@ -74,11 +74,10 @@ namespace FallChallenge2023.Bots.Bronze
             FishColor.BLUE
         };
 
-        public const int EmergencyCondition = 1;
-        public const int DiveCondition = 2;
-        public const int EarlySaveCondition = 3;
-        public const int SearchCrabCondition = 4;        
-        public const int SearchCondition = 5;
-        public const int NeedDiveCondition = 6;
+        public const int DiveDecision = 1;
+        public const int EmergencyDecision = 2;
+        public const int SaveDecision = 3;
+        public const int SearchDecision = 4; 
+        public const int KickAwayDecision = 5; 
     }
 }

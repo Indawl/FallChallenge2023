@@ -1,5 +1,4 @@
 ﻿using FallChallenge2023.Bots.Bronze.Actions;
-using FallChallenge2023.Bots.Bronze.Agents.Conditions;
 using FallChallenge2023.Bots.Bronze.Agents.Decisions;
 using FallChallenge2023.Bots.Bronze.GameMath;
 using System.Collections.Generic;
@@ -16,40 +15,39 @@ namespace FallChallenge2023.Bots.Bronze.Agents
         public GameAction Action { get; protected set; }
 
         public List<Fish> UnscannedFishes { get; } = new List<Fish>();
-        public bool NeedSave { get; set; }
+        public DroneAgentGoal Goal { get; set; }
+        public int LessX { get; set; }
 
-        protected List<Decision> Decisions { get; set; }
-
-        private Dictionary<int, bool> CheckedConditions { get; } = new Dictionary<int, bool>();
+        private List<Decision> Decisions { get; set; }        
 
         public DroneAgent(int droneId)
         {
             DroneId = droneId;
 
+            LessX = 1;
             SetDecisions();
         }
-
-        public override string ToString() => "DroneAgent";
 
         public void Initialize(GameState state)
         {
             State = state;
             Drone = state.Drones.First(_ => _.Id == DroneId);
 
-            NeedSave = false;
-
             UnscannedFishes.Clear();
-            CheckedConditions.Clear();
         }
 
         protected virtual void SetDecisions()
         {
             Decisions = new List<Decision>()
             {
-                new EmergencyDecision(this),     // Need repair
-                new EarlySaveDecision(this),     // Need early save     
-                new NeedDiveDecision(this),      // Dive from start                
-                new SaveDecision(this)           // All done, go to save
+                new EmergencyDecision(this),
+                //new EarlySaveDecision(this),
+                new KickAwayDecision(this),
+                new DiveDecision(this),    
+                //new SearchDecision(this, new List<FishType>() { FishType.CRAB }),
+                //new SaveDecision(this, new List<FishType>() { FishType.CRAB }),
+                new SearchDecision(this),
+                new SaveDecision(this)
             };
         }
 
@@ -58,50 +56,58 @@ namespace FallChallenge2023.Bots.Bronze.Agents
             Action = GetActionFromDecision(Decisions);
         }
 
-        protected GameAction GetActionFromDecision(List<Decision> decisions)
+        private GameAction GetActionFromDecision(List<Decision> decisions)
         {
             GameAction action = null;
 
+            // Check goal
+            if (Goal != null)
+            {
+                var decision = decisions.First(_ => _.Id == Goal.DecisionId);
+                if (decision.CheckGoal(Goal)) Goal = null;
+                else action = decision.GetAction();
+            }
+
+            // Do decision
             foreach (var decision in decisions)
             {
-                if (CheckConditions(decision))
-                    if (decision.DecisionsOk.Any()) action = GetActionFromDecision(decision.DecisionsOk);
-                    else action = decision.GetDecision();
-                else
-                    if (decision.DecisionsFail.Any()) action = GetActionFromDecision(decision.DecisionsFail);
-
+                if (decision.Check()) action = decision.GetAction();
                 if (action != null) break;
             }
 
             return action;
         }
 
-        private bool CheckConditions(Decision decision)
+        public bool NeedLighting(Vector position)
         {
-            foreach (var condition in decision.Conditions)
-                if (!CheckCondition(condition))
-                    return false;
+            var light = false;
 
-            return true;
-        }
+            // Unscanned fishes close
+            if (State.UnscannedFishes[Drone.PlayerId].Any(_ => _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
+                return true;
 
-        public bool CheckCondition(Condition condition)
-        {
-            if (!CheckedConditions.TryGetValue(condition.Id, out var result))
-                CheckedConditions.Add(condition.Id, result = condition.Check());
+            var enemyDrones = State.GetDrones(1 - Drone.PlayerId);
 
-            return result;
-        }
-
-        public bool NeedLighting(Vector position) => State.UnscannedFishes[Drone.PlayerId]
-            .Union(State.Fishes.Where(_ => _.Color == FishColor.UGLY))
-            .Any(_ => _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)) ||
-            !Drone.Lighting &&
-                State.GetDrones(1 - Drone.PlayerId)
+            // Enemy with light close and have new scans
+            if (!Drone.Lighting && enemyDrones
                 .Where(_ => _.Lighting && _.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS)
-                                       && _.NewScans.Any(s => State.UnscannedFishes[Drone.PlayerId].Any(f => f.Id == s)) ||
-                            !_.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS) &&
+                                       && _.NewScans.Any(s => State.UnscannedFishes[Drone.PlayerId].Any(f => f.Id == s)))
+                .Any())
+                return true;
+
+            // May he go away from monster
+            if (!Drone.Lighting && enemyDrones
+                .Where(_ => !_.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS) &&
                             _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS))
-                .Any();
+                .Any())
+                return true;
+
+            // Incite monster to enemy
+            foreach (var fish in State.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
+                if (enemyDrones.Any(_ => GameUtils.CheckCollision(fish.Position, fish.Speed, _.Position, _.Position + _.Speed, true)))
+                    return true;
+
+            return light;
+        }
     }
 }

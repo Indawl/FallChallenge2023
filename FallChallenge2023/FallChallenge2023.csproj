@@ -51,26 +51,14 @@
     <Compile Include="Bots\Bronze\Actions\GameActionMove.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\Condition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\EmergencyCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\DiveCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\NeedDiveCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\SearchCrabCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\EarlySaveCondition.cs" />
-    <Compile Include="Bots\Bronze\Agents\Conditions\SearchCondition.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\Decision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\DiveDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\NeedDiveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\EmergencyDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\EarlySaveDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\KickAwayDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\SearchCrabDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SearchDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\SimpleSearchDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\DroneSearchAgent.cs" />
-    <Compile Include="Bots\Bronze\Agents\DroneSaveAgent.cs" />
+    <Compile Include="Bots\Bronze\Agents\DroneAgentGoal.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />
-    <Compile Include="Bots\Bronze\Debug\DebugSimulationBot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugBot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugAction.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugDrone.cs" />
@@ -83,7 +71,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DebugRes.resx</DependentUpon>
     </Compile>
-    <Compile Include="Bots\Bronze\Debug\DebugSimulationState.cs" />
     <Compile Include="Bots\Bronze\Debug\GameManager.cs" />
     <Compile Include="Bots\Bronze\Drone.cs" />
     <Compile Include="Bots\Bronze\Agents\DroneAgent.cs" />
@@ -100,7 +87,6 @@
     <Compile Include="Bots\Bronze\GameUtils.cs" />
     <Compile Include="Bots\Bronze\RadarBlip.cs" />
     <Compile Include="Bots\Bronze\BlipType.cs" />
-    <Compile Include="Bots\Bronze\SimulationBot.cs" />
     <Compile Include="Bots\Wood\Actions\GameAction.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionList.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionMove.cs" />

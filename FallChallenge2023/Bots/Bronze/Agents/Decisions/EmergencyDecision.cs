@@ -1,17 +1,15 @@
 ﻿using FallChallenge2023.Bots.Bronze.Actions;
-using FallChallenge2023.Bots.Bronze.Agents.Conditions;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
     public class EmergencyDecision : Decision
     {
+        public override int Id => GameProperties.EmergencyDecision;
+
         public EmergencyDecision(DroneAgent agent) : base(agent) { }
 
-        public override void SetConditions()
-        {
-            Conditions.Add(new EmergencyCondition(Agent));
-        }
+        public override bool Check() => Agent.Drone.Emergency;
 
-        public override GameAction GetDecision() => new GameActionWait() { Text = "SOS" };
+        public override GameAction GetAction() => new GameActionWait() { Text = "SOS" };
     }
 }

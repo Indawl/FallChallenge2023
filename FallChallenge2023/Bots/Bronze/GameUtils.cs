@@ -44,7 +44,7 @@ namespace FallChallenge2023.Bots.Bronze
             else return from + speed;
         }
 
-        public static bool CheckCollision(Vector fishPostion, Vector fishSpeed, Vector droneFrom, Vector droneTo)
+        public static bool CheckCollision(Vector fishPostion, Vector fishSpeed, Vector droneFrom, Vector droneTo, bool anytime = false)
         {
             if (fishSpeed.IsZero() && droneTo.Equals(droneFrom)) return false;
 
@@ -61,7 +61,7 @@ namespace FallChallenge2023.Bots.Bronze
 
             double t = (-b - Math.Sqrt(delta)) / (2.0 * a);
 
-            if (t <= 0.0 || t > 1.0) return false;
+            if (t <= 0.0 || !anytime && t > 1.0) return false;
 
             return true;
         }

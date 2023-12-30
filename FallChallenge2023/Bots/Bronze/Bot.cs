@@ -14,7 +14,6 @@ namespace FallChallenge2023.Bots.Bronze
         public Stopwatch StopWatch => new Stopwatch();
 
         public List<DroneAgent> Agents { get; protected set; } = new List<DroneAgent>();
-        protected SimulationBot SimulationBot { get; set; }
 
         #region Read from console
         private GameState State { get; set; }
@@ -236,8 +235,10 @@ namespace FallChallenge2023.Bots.Bronze
             var agents = Agents.Where(_ => _.Drone.PlayerId == playerId).ToList();
 
             var agentId = agents[0].Drone.Position.X <= agents[1].Drone.Position.X ? 0 : 1;
-            if (agents[0].Drone.Emergency) agents[0] = agents[1];
-            else if (agents[1].Drone.Emergency) agents[1] = agents[0];
+            agents[agentId].LessX = -1;
+
+            if (agents[0].Drone.Emergency || agents[0].Goal != null) agents[0] = agents[1];
+            else if (agents[1].Drone.Emergency || agents[1].Goal != null) agents[1] = agents[0];
 
             // Distribute tasks
             foreach (var fish in state.UnscannedFishes[playerId])
@@ -256,57 +257,6 @@ namespace FallChallenge2023.Bots.Bronze
                 toAgent.UnscannedFishes.Add(fish);
                 fromAgent.UnscannedFishes.Remove(fish);
             }
-        }
-
-        private void CalculateScore(GameState state)
-        {
-            var myDrones = state.GetDrones(0).ToList();
-            var enemyDrones = state.GetDrones(1).ToList();
-
-            var myAgentsVariation = new DroneAgent[][]
-            {
-                new DroneAgent[] { new DroneAgent(myDrones[0].Id), new DroneSaveAgent(myDrones[0].Id) },
-                new DroneAgent[] { new DroneAgent(myDrones[1].Id), new DroneSaveAgent(myDrones[1].Id) }
-            };
-            var enemyAgentsVariation = new DroneAgent[][]
-            {
-                new DroneAgent[] { new DroneSearchAgent(enemyDrones[0].Id), new DroneSaveAgent(enemyDrones[0].Id) },
-                new DroneAgent[] { new DroneSearchAgent(enemyDrones[1].Id), new DroneSaveAgent(enemyDrones[1].Id) }
-            };
-
-            var myAgentsGroup = new List<DroneAgent[]>();
-            var enemyAgentsGroup = new List<DroneAgent[]>();
-
-            for (int i = 0; i < myAgentsVariation[0].Length; i++)
-                for (int j = 0; j < myAgentsVariation[1].Length; j++)
-                    myAgentsGroup.Add(new DroneAgent[] { myAgentsVariation[0][i], myAgentsVariation[1][j] });
-
-            for (int i = 0; i < enemyAgentsVariation[0].Length; i++)
-                for (int j = 0; j < enemyAgentsVariation[1].Length; j++)
-                    enemyAgentsGroup.Add(new DroneAgent[] { enemyAgentsVariation[0][i], enemyAgentsVariation[1][j] });
-
-            var maxScore = int.MinValue;
-            List<DroneAgent> agents = null;
-
-            foreach (var myAgents in myAgentsGroup)
-                foreach (var enemyAgents in enemyAgentsGroup)
-                {
-                    var score = GetSimulationScore(state, myAgents.Union(enemyAgents).ToList());
-                    if (score > maxScore)
-                    {
-                        maxScore = score;
-                        agents = myAgents.ToList();
-                    }
-                }
-
-            foreach (var agent in agents)
-                Agents.First(_ => _.DroneId == agent.DroneId).NeedSave = agent.NeedSave;
-        }
-
-        protected virtual int GetSimulationScore(GameState state, List<DroneAgent> agents)
-        {
-            var bot = new SimulationBot();
-            return bot.Simulation(state, agents);
         }
     }
 }
