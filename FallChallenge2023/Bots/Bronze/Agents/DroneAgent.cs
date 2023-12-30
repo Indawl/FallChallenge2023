@@ -41,14 +41,10 @@ namespace FallChallenge2023.Bots.Bronze.Agents
             Decisions = new List<Decision>()
             {
                 new EmergencyDecision(this),
-                //new EarlySaveDecision(this),
+                new EarlySaveDecision(this),
                 new KickAwayDecision(this),
-                new DiveDecision(this),    
-                //new SearchDecision(this, new List<FishType>() { FishType.CRAB }),
-                //new SaveDecision(this, new List<FishType>() { FishType.CRAB }),
                 new SearchDecision(this),
-                new SaveDecision(this),
-                new WellDoneDecision(this)
+                new SaveDecision(this)
             };
         }
 
@@ -64,7 +60,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
             // Check goal
             if (Goal != null)
             {
-                var decision = decisions.First(_ => _.Id == Goal.DecisionId);
+                var decision = decisions.First(_ => _.Type == Goal.Type);
                 if (decision.CheckGoal(Goal)) Goal = null;
                 else action = decision.GetAction();
             }
@@ -96,7 +92,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
                 .Any())
                 return true;
 
-            // May he go away from monster
+            // Maybe he go away from monster
             if (!Drone.Lighting && enemyDrones
                 .Where(_ => !_.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS) &&
                             _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS))

@@ -1,12 +1,14 @@
-﻿namespace FallChallenge2023.Bots.Bronze.Agents
+﻿using FallChallenge2023.Bots.Bronze.Agents.Decisions;
+
+namespace FallChallenge2023.Bots.Bronze.Agents
 {
     public class DroneAgentGoal
     {
-        public int DecisionId { get; }
+        public DecisionType Type { get; }
 
-        public DroneAgentGoal(int decisionId)
+        public DroneAgentGoal(DecisionType type)
         {
-            DecisionId = decisionId;
+            Type = type;
         }
     }
 }

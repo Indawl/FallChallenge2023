@@ -4,7 +4,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
     public class EmergencyDecision : Decision
     {
-        public override int Id => GameProperties.EmergencyDecision;
+        public override DecisionType Type => DecisionType.EmergencyDecision;
 
         public EmergencyDecision(DroneAgent agent) : base(agent) { }
 

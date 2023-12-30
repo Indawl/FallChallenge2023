@@ -52,10 +52,10 @@
     <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\Decision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\DiveDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\DecisionType.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\EmergencyDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\KickAwayDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\WellDoneDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\EarlySaveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SearchDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\DroneAgentGoal.cs" />

@@ -4,7 +4,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
     public class Decision
     {
-        public virtual int Id { get; } = 0;
+        public virtual DecisionType Type => DecisionType.Decision;
         protected DroneAgent Agent { get; }
 
         public Decision(DroneAgent agent)

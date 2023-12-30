@@ -38,8 +38,8 @@ namespace FallChallenge2023.Bots.Bronze
         public const int MIN_DISTANCE_BT_MONSTER = 600;        
         public const int MONSTER_MIN_START_Y = 5000;
 
-        public const double MONSTER_TRAVERSAL_ANGLE = 0.1;
-        public const double MONSTER_TRAVERSAL_ANGLE_FAST = 20.0;
+        public const double MONSTER_TRAVERSAL_ANGLE = 1.0;
+        public const double MONSTER_TRAVERSAL_ANGLE_FAST = 15.0;
         public const int MONSTER_TRAVERSAL_TURNS = 5;
 
         public static Dictionary<FishType, int[]> HABITAT = new Dictionary<FishType, int[]>()
@@ -73,12 +73,5 @@ namespace FallChallenge2023.Bots.Bronze
             FishColor.GREEN,
             FishColor.BLUE
         };
-
-        public const int DiveDecision = 1;
-        public const int EmergencyDecision = 2;
-        public const int SaveDecision = 3;
-        public const int SearchDecision = 4; 
-        public const int KickAwayDecision = 5; 
-        public const int WellDoneDecision = 6; 
     }
 }

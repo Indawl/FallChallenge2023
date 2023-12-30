@@ -146,9 +146,6 @@ namespace FallChallenge2023.Bots.Bronze
             CreateAgents(state);
             DistributeAgents(state, 0);
 
-            // Calculate potencial score
-            //CalculateScore(state);
-
             // Determinate actions for agents
             foreach (var agent in Agents)
                 agent.FindAction();

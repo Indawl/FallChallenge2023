@@ -10,10 +10,12 @@ namespace FallChallenge2023.Bots.Bronze
         public List<Fish>[] UnscannedFishes { get; private set; } = new List<Fish>[2];
 
         public int Score => MyScore - EnemyScore;
-        public IEnumerable<Fish> SwimmingFishes => Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY);
+        public List<Fish> SwimmingFishes => Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY).ToList();
 
         public void Initialize()
         {
+            ScannedFishes = new List<Fish>[2];
+            UnscannedFishes = new List<Fish>[2];
             for (int i = 0; i < 2; i++)
             {
                 ScannedFishes[i] = GetDrones(i).SelectMany(_ => _.Scans).Distinct().Union(GetScans(i)).Select(_ => GetFish(_)).ToList();
@@ -31,7 +33,7 @@ namespace FallChallenge2023.Bots.Bronze
                 state.Drones.Add((Drone)drone.Clone());
             state.Fishes = new List<Fish>();
             foreach (var fish in Fishes)
-                state.Fishes.Add((Fish)fish.Clone());
+                state.Fishes.Add((Fish)fish.Clone());            
             state.Initialize();
             return state;
         }
@@ -41,7 +43,7 @@ namespace FallChallenge2023.Bots.Bronze
         public int SetScore(int playerId, int score) => playerId == 0 ? MyScore = score : EnemyScore = score;
         public int AddScore(int playerId, int score) => playerId == 0 ? MyScore += score : EnemyScore += score;
         public Fish GetFish(int id) => Fishes.FirstOrDefault(_ => _.Id == id);
-        public IEnumerable<Drone> GetDrones(int playerId) => Drones.Where(_ => _.PlayerId == playerId);
+        public List<Drone> GetDrones(int playerId) => Drones.Where(_ => _.PlayerId == playerId).ToList();
         public Drone GetDrone(int id) => Drones.FirstOrDefault(_ => _.Id == id);
 
         public Drone GetNewDrone(int droneId, int playerId)
