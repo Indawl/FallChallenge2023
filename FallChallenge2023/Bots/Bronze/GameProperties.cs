@@ -79,5 +79,6 @@ namespace FallChallenge2023.Bots.Bronze
         public const int SaveDecision = 3;
         public const int SearchDecision = 4; 
         public const int KickAwayDecision = 5; 
+        public const int WellDoneDecision = 6; 
     }
 }

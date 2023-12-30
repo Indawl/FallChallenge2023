@@ -55,6 +55,7 @@
     <Compile Include="Bots\Bronze\Agents\Decisions\DiveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\EmergencyDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\KickAwayDecision.cs" />
+    <Compile Include="Bots\Bronze\Agents\Decisions\WellDoneDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\SearchDecision.cs" />
     <Compile Include="Bots\Bronze\Agents\DroneAgentGoal.cs" />

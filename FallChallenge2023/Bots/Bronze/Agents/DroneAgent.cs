@@ -47,7 +47,8 @@ namespace FallChallenge2023.Bots.Bronze.Agents
                 //new SearchDecision(this, new List<FishType>() { FishType.CRAB }),
                 //new SaveDecision(this, new List<FishType>() { FishType.CRAB }),
                 new SearchDecision(this),
-                new SaveDecision(this)
+                new SaveDecision(this),
+                new WellDoneDecision(this)
             };
         }
 
@@ -103,7 +104,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
                 return true;
 
             // Incite monster to enemy
-            foreach (var fish in State.Fishes.Where(_ => _.Color == FishColor.UGLY && _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
+            foreach (var fish in State.Fishes.Where(_ => _.Speed != null && _.Color == FishColor.UGLY && _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
                 if (enemyDrones.Any(_ => GameUtils.CheckCollision(fish.Position, fish.Speed, _.Position, _.Position + _.Speed, true)))
                     return true;
 
