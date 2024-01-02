@@ -7,7 +7,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
     public class KickAwayDecision : Decision
     {
-        public override DecisionType Type => DecisionType.KickAwayDecision;
+        public override DecisionType Type => DecisionType.KickAwayDecision; 
 
         private List<Fish> Fishes { get; set; }
 

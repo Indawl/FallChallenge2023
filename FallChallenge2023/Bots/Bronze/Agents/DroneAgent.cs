@@ -103,7 +103,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
             foreach (var fish in State.Fishes.Where(_ => _.Speed != null && _.Color == FishColor.UGLY && _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
                 if (enemyDrones.Any(_ => GameUtils.CheckCollision(fish.Position, fish.Speed, _.Position, _.Position + _.Speed, true)))
                     return true;
-
+             
             return light;
         }
     }

@@ -28,7 +28,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             var anotherDroneSave = GetDroneBonuses(bonusesFishes, myDrones.Where(_=>_.Id != Agent.Drone.Id).ToList(), enemyDrones);
 
             var limit = (minScore + bonuses) / 2;
-            if (anotherDroneSave >= limit) return false;
+            if (anotherDroneSave >= limit) return false;//i tot i tot??
             if (bothDroneSave >= limit || thisDroneSave >= limit) return true;
             return false;
         }
