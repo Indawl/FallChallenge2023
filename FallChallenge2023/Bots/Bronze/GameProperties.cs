@@ -25,12 +25,9 @@ namespace FallChallenge2023.Bots.Bronze
 
         public const int DELTA_RADIUS = 3;
         public const int DARK_SCAN_RADIUS = 800;
-        public const int DARK_SCAN_RADIUS_SQR = DARK_SCAN_RADIUS * DARK_SCAN_RADIUS;
         public const int LIGHT_SCAN_RADIUS = 2000;
-        public const int LIGHT_SCAN_RADIUS_SQR = LIGHT_SCAN_RADIUS * LIGHT_SCAN_RADIUS;
         public const int MONSTER_DETECTED_RADIUS_ADD = 300;
         public const int MOTOR_RANGE = 1400;
-        public const int MOTOR_RANGE_SQR = MOTOR_RANGE * MOTOR_RANGE;
 
         public const int BATTERY_DRAIN = 5;
         public const int BATTERY_RECHARGE = 1;

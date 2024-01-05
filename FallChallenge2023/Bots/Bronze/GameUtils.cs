@@ -55,7 +55,7 @@ namespace FallChallenge2023.Bots.Bronze
             var vf = fishSpeed - vd;
             var a = vf.LengthSqr();
             var b = 2.0 * Vector.Dot(pos, vf);
-            var c = pos.LengthSqr() - GameProperties.MONSTER_ATTACK_RADIUS_SQR;
+            var c = pos.LengthSqr() - GameProperties.MONSTER_ATTACK_RADIUS * GameProperties.MONSTER_ATTACK_RADIUS;
             var delta = b * b - 4.0 * a * c;
             if (delta < 0.0) return false;
 
@@ -67,7 +67,7 @@ namespace FallChallenge2023.Bots.Bronze
         }
 
         private static bool CheckCollisionWithMonsters(GameState state, Vector from, ref Vector speed, int? droneId = null, double epsilon = 0.1, int forMoves = 0)
-        {
+        {////
             epsilon *= Math.PI / 180;
 
             var newTo = from + speed;
@@ -103,7 +103,7 @@ namespace FallChallenge2023.Bots.Bronze
                 {
                     var referee = new GameReferee((GameState)state.Clone());
                     if (droneId != null) referee.State.Drones.First(_ => _.Id == droneId.Value).Position = newTo;
-                    referee.UpdateFishPositions(_ => _.Color == FishColor.UGLY);
+                    referee.UpdateFishs(_ => _.Color == FishColor.UGLY);
 
                     var nextSpeed = newTo - from;
                     if (CheckCollisionWithMonsters(referee.State, newTo, ref nextSpeed, droneId, GameProperties.MONSTER_TRAVERSAL_ANGLE_FAST, forMoves - 1))

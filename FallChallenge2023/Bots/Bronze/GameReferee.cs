@@ -14,30 +14,44 @@ namespace FallChallenge2023.Bots.Bronze
             State = state;
         }
 
-        public void UpdateFishPositions()
+        public void UpdateFishs(bool losted = false)
         {
-            UpdateFishPositions(State.SwimmingFishes);
+            UpdateFishs(State.SwimmingFishes, losted);
         }
 
-        public void UpdateFishPositions(Func<Fish, bool> predicate)
+        public void UpdateFishs(Func<Fish, bool> predicate, bool losted = false)
         {
-            UpdateFishPositions(State.SwimmingFishes.Where(predicate));
+            UpdateFishs(State.SwimmingFishes.Where(predicate), losted);
         }
 
-        private void UpdateFishPositions(IEnumerable<Fish> fishes)
+        private void UpdateFishs(IEnumerable<Fish> fishes, bool losted = false)
         {
             // New Position
-            foreach (var fish in fishes.Where(_ => _.Position != null && _.Speed != null))
-                fish.Position = GetNextPosition(fish.Type, fish.Position, fish.Speed);
+            UpdatePositions(fishes, losted);
 
             // New Speed
-            foreach (var fish in fishes.Where(_ => _.Position != null && _.Speed != null))
+            UpdateSpeeds(fishes);
+        }
+
+        private void UpdatePositions(IEnumerable<Fish> fishes, bool losted = false)
+        {
+            foreach (var fish in fishes.Where(_ => _.Speed != null).ToList())
+            {
+                fish.Position = fish.Position + fish.Speed;
+
+                if (losted && fish.Type != FishType.ANGLER && (fish.Position.X < 0 || fish.Position.X > GameProperties.MAP_SIZE - 1))
+                    State.FishLosted(fish);
+                else fish.Position = GameUtils.SnapToFishZone(fish.Type, fish.Position);
+            }
+        }
+
+        private void UpdateSpeeds(IEnumerable<Fish> fishes)
+        {
+            foreach (var fish in fishes.Where(_ => _.Speed != null))
                 fish.Speed = GetFishSpeed(fish);
         }
 
-        private Vector GetNextPosition(FishType type, Vector position, Vector speed) => GameUtils.SnapToFishZone(type, position + speed);
-
-        private Vector GetFishSpeed(Fish fish) => fish.Color == FishColor.UGLY ?
+        private Vector GetFishSpeed(Fish fish) => fish.Type == FishType.ANGLER ?
             GetUglySpeed(fish.Id, fish.Position, fish.Speed) :
             GetFishSpeed(fish.Id, fish.Type, fish.Position, fish.Speed);
 
@@ -45,8 +59,8 @@ namespace FallChallenge2023.Bots.Bronze
         {
             // Near drone
             var dronePositions = position.GetClosest(State.Drones
-                .Where(_ => !_.Emergency && _.Position.InRange(position, GameProperties.MOTOR_RANGE))
-                .Select(_ => _.Position)
+                .Where(drone => !drone.Emergency && drone.Position.InRange(position, GameProperties.MOTOR_RANGE))
+                .Select(drone => drone.Position)
                 .ToList());
             if (dronePositions.Any())
             {
@@ -57,8 +71,8 @@ namespace FallChallenge2023.Bots.Bronze
             {
                 // Near fish
                 var fishesPositions = position.GetClosest(State.Fishes
-                    .Where(_ => _.Position != null && _.Speed != null && _.Id != fishId && _.Color != FishColor.UGLY && _.Position.InRange(position, GameProperties.MIN_DISTANCE_BT_FISH))
-                    .Select(_ => _.Position)
+                    .Where(fish => fish.Speed != null && fish.Id != fishId && fish.Position.InRange(position, GameProperties.MIN_DISTANCE_BT_FISH))
+                    .Select(fish => fish.Position)
                     .ToList());
                 if (fishesPositions.Any())
                 {
@@ -84,8 +98,8 @@ namespace FallChallenge2023.Bots.Bronze
         {
             // Near drone
             var dronePositions = position.GetClosest(State.Drones
-                .Where(_ => !_.Emergency && _.Position.InRange(position, _.LightRadius))
-                .Select(_ => _.Position)
+                .Where(drone => !drone.Emergency && drone.Position.InRange(position, drone.LightRadius))
+                .Select(drone => drone.Position)
                 .ToList());
             if (dronePositions.Any())
             {
@@ -98,9 +112,9 @@ namespace FallChallenge2023.Bots.Bronze
                     speed = (speed.Normalize() * GameProperties.MONSTER_SPEED).Round();
 
                 // Near other ugly
-                var fishesPositions = position.GetClosest(State.Fishes
-                    .Where(_ => _.Position != null && _.Speed != null && _.Id != fishId && _.Color == FishColor.UGLY && _.Position.InRange(position, GameProperties.MIN_DISTANCE_BT_MONSTER))
-                    .Select(_ => _.Position)
+                var fishesPositions = position.GetClosest(State.Monsters
+                    .Where(fish => fish.Speed != null && fish.Id != fishId && fish.Position.InRange(position, GameProperties.MIN_DISTANCE_BT_MONSTER))
+                    .Select(fish => fish.Position)
                     .ToList());
                 if (fishesPositions.Any())
                 {

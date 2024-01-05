@@ -31,6 +31,8 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
             var toX = (int)Math.Min(To.X, range.To.X);
             var toY = (int)Math.Min(To.Y, range.To.Y);
 
+            if (x > toX || y > toY) return range;
+
             return new RectangleRange(x, y, toX, toY);
         }
 

@@ -54,9 +54,9 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
         public Vector Rotate(double angle) => new Vector(
             X * Math.Cos(angle) - Y * Math.Sin(angle), 
             X * Math.Sin(angle) + Y * Math.Cos(angle));
-        public bool InRange(int radiusSqr) => LengthSqr() <= radiusSqr;
-        public bool InRange(Vector coord, int radiusSqr) => (coord - this).InRange(radiusSqr);
-        
+        public bool InRange(int radius) => LengthSqr() <= radius * radius;
+        public bool InRange(Vector coord, int radius) => (coord - this).InRange(radius);
+
         public List<Vector> GetClosest(List<Vector> coords)
         {
             var closest = new List<Vector>();
