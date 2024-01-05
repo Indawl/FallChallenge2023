@@ -3,10 +3,10 @@
     public enum DecisionType
     {
         Decision,
-        EmergencyDecision,
         EarlySaveDecision,
+        EmergencyDecision,        
         KickAwayDecision,
-        SearchDecision,
-        SaveDecision
+        SaveDecision,
+        SearchDecision
     }
 }

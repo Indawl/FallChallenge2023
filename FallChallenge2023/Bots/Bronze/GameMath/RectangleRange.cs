@@ -36,21 +36,20 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
             return new RectangleRange(x, y, toX, toY);
         }
 
-        public Vector Intersect(Vector from, Vector to)
+        public Vector Intersect(Vector a, Vector b)
         {
-            var dir = from - to;
-            if (dir.IsZero()) return new Vector(to);
+            var dir = a - b;
 
-            double x, y;
-            if (Math.Abs(dir.X) > Math.Abs(dir.Y))
+            if (dir.X == 0) return new Vector(b.X, dir.Y < 0 ? From.Y : To.Y);
+            if (dir.Y == 0) return new Vector(dir.X < 0 ? From.X : To.X, b.Y);
+
+            var x = dir.X < 0 ? From.X : To.X;
+            var y = dir.Y / dir.X * (x - b.X) + b.Y;
+
+            if (y < From.Y || y > To.Y)
             {
-                x = dir.X > 0 ? To.X : From.X;
-                y = Math.Round(to.Y + dir.Y / dir.X * (x - to.X));
-            }
-            else
-            {
-                y = dir.Y > 0 ? To.Y : From.Y;
-                x = Math.Round(to.X + dir.X / dir.Y * (y - to.Y));
+                y = dir.Y < 0 ? From.Y : To.Y;
+                x = dir.X / dir.Y * (y - b.Y) + b.X;
             }
 
             return new Vector(x, y);
@@ -90,6 +89,13 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
 
             return new RectangleRange(x, y, toX, toY);
         }
+
+        public RectangleRange Scale(double scaleX, double scaleY)
+        {
+            var scale = new Vector(scaleX, scaleY);
+            return new RectangleRange(From - scale, To + scale);
+        }
+        public RectangleRange Scale(double scale) => Scale(scale, scale);
 
         public override string ToString() => string.Format("{0} {1}", From, To);
     }

@@ -11,6 +11,22 @@ namespace FallChallenge2023.Bots.Bronze
         public IEnumerable<Drone> Drones => MyDrones.Union(EnemyDrones);
         public IEnumerable<Fish> SwimmingFishes => Fishes.Union(Monsters);
 
+        #region Buffer
+        private HashSet<int>[] _scannedFish;
+        private HashSet<int>[] _unscannedFish;
+
+        public void RefreshBuffer()
+        {
+            _scannedFish = new HashSet<int>[2];
+            _unscannedFish = new HashSet<int>[2];
+        }
+        #endregion
+
+        public GameState()
+        {
+            RefreshBuffer();
+        }
+
         public object Clone()
         {
             var state = (GameState)MemberwiseClone();
@@ -23,6 +39,8 @@ namespace FallChallenge2023.Bots.Bronze
             state.Monsters = CloneFishes(Monsters);
             state.LostedFishes = CloneFishes(LostedFishes);
             state.VisibleFishes = new HashSet<int>(VisibleFishes);
+
+            state.RefreshBuffer();
             return state;
         }
         public List<Drone> CloneDrones(List<Drone> drones)
@@ -53,6 +71,15 @@ namespace FallChallenge2023.Bots.Bronze
         public Fish GetSwimmingFish(int fishId) => SwimmingFishes.FirstOrDefault(fish => fish.Id == fishId);
         public int GetSymmetricFishId(int fishId) => fishId + (fishId % 2 == 0 ? 1 : -1);
         public Fish GetSymmetricFish(Fish fish) => GetSwimmingFish(GetSymmetricFishId(fish.Id));
+        public HashSet<int> GetScannedFish(int playerId) => _scannedFish[playerId] 
+                                                         ?? (_scannedFish[playerId] = GetDrones(playerId)
+                                                            .SelectMany(drone => drone.Scans)
+                                                            .Distinct()
+                                                            .Union(GetScans(playerId)).ToHashSet());
+        public HashSet<int> GetUnscannedFish(int playerId) => _unscannedFish[playerId]
+                                                           ?? (_unscannedFish[playerId] = SwimmingFishes
+                                                            .Select(fish => fish.Id)
+                                                            .Except(GetScannedFish(playerId)).ToHashSet());
 
         public Drone GetNewDrone(int playerId, int droneId)
         {

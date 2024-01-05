@@ -28,6 +28,11 @@ namespace FallChallenge2023.Bots.Bronze
             GetUglySpeed(fish.Id, fish.Position, fish.Speed) :
             GetFishSpeed(fish.Id, fish.Type, fish.Position, fish.Speed);
 
+        public void UpdatePositions(bool losted = false)
+        {
+            UpdatePositions(State.SwimmingFishes, losted);
+        }
+
         private void UpdateFishs(IEnumerable<Fish> fishes, bool losted = false)
         {
             // New Position

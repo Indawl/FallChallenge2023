@@ -14,9 +14,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
         public Drone Drone { get; private set; }
         public GameAction Action { get; protected set; }
 
-        public List<Fish> UnscannedFishes { get; } = new List<Fish>();
         public DroneAgentGoal Goal { get; set; }
-        public int LessX { get; set; }
 
         private List<Decision> Decisions { get; set; }        
 
@@ -24,7 +22,6 @@ namespace FallChallenge2023.Bots.Bronze.Agents
         {
             DroneId = droneId;
 
-            LessX = 1;
             SetDecisions();
         }
 
@@ -32,8 +29,6 @@ namespace FallChallenge2023.Bots.Bronze.Agents
         {
             State = state;
             Drone = state.Drones.First(_ => _.Id == DroneId);
-
-            UnscannedFishes.Clear();
         }
 
         protected virtual void SetDecisions()
@@ -80,7 +75,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents
             var light = false;
 
             // Unscanned fishes close
-            if (State.UnscannedFishes[Drone.PlayerId].Any(_ => _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
+            if (State.GetUnscannedFish(Drone.PlayerId).Any(_ => State.GetFish(_).Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
                 return true;
 
             var enemyDrones = State.GetDrones(1 - Drone.PlayerId);

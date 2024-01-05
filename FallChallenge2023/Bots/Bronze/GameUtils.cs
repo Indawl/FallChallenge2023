@@ -44,18 +44,17 @@ namespace FallChallenge2023.Bots.Bronze
             else return from + speed;
         }
 
-        public static bool CheckCollision(Vector fishPostion, Vector fishSpeed, Vector droneFrom, Vector droneTo, bool anytime = false)
+        public static bool CheckCollision(Vector fishPosition, Vector fishSpeed, Vector droneFrom, Vector droneTo, bool anytime = false)
         {
-            if (fishSpeed.IsZero() && droneTo.Equals(droneFrom)) return false;
+            var droneSpeed = droneTo - droneFrom;
+            if (droneSpeed.Equals(fishSpeed)) return false;
 
-            var pos = fishPostion - droneFrom;
-            var vd = droneTo - droneFrom;
-            if (vd.Equals(fishSpeed)) return false;
+            var relativeFishPosition = fishPosition - droneFrom;
+            var relativeFishSpeed = fishSpeed - droneSpeed;
 
-            var vf = fishSpeed - vd;
-            var a = vf.LengthSqr();
-            var b = 2.0 * Vector.Dot(pos, vf);
-            var c = pos.LengthSqr() - GameProperties.MONSTER_ATTACK_RADIUS * GameProperties.MONSTER_ATTACK_RADIUS;
+            var a = relativeFishSpeed.LengthSqr();
+            var b = 2.0 * Vector.Dot(relativeFishPosition, relativeFishSpeed);
+            var c = relativeFishPosition.LengthSqr() - GameProperties.MONSTER_ATTACK_RADIUS * GameProperties.MONSTER_ATTACK_RADIUS;
             var delta = b * b - 4.0 * a * c;
             if (delta < 0.0) return false;
 
@@ -67,7 +66,7 @@ namespace FallChallenge2023.Bots.Bronze
         }
 
         private static bool CheckCollisionWithMonsters(GameState state, Vector from, ref Vector speed, int? droneId = null, double epsilon = 0.1, int forMoves = 0)
-        {////
+        {
             epsilon *= Math.PI / 180;
 
             var newTo = from + speed;
