@@ -24,6 +24,10 @@ namespace FallChallenge2023.Bots.Bronze
             UpdateFishs(State.SwimmingFishes.Where(predicate), losted);
         }
 
+        public Vector GetFishSpeed(Fish fish) => fish.Type == FishType.ANGLER ?
+            GetUglySpeed(fish.Id, fish.Position, fish.Speed) :
+            GetFishSpeed(fish.Id, fish.Type, fish.Position, fish.Speed);
+
         private void UpdateFishs(IEnumerable<Fish> fishes, bool losted = false)
         {
             // New Position
@@ -50,10 +54,6 @@ namespace FallChallenge2023.Bots.Bronze
             foreach (var fish in fishes.Where(_ => _.Speed != null))
                 fish.Speed = GetFishSpeed(fish);
         }
-
-        private Vector GetFishSpeed(Fish fish) => fish.Type == FishType.ANGLER ?
-            GetUglySpeed(fish.Id, fish.Position, fish.Speed) :
-            GetFishSpeed(fish.Id, fish.Type, fish.Position, fish.Speed);
 
         private Vector GetFishSpeed(int fishId, FishType type, Vector position, Vector speed)
         {

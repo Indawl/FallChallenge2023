@@ -138,6 +138,10 @@ namespace FallChallenge2023.Bots.Bronze
             // Correct fish positions
             CorrectFishPositions(state);
 
+            // Update fish position and speed
+            var referee = new GameReferee(state);
+            referee.UpdateFishs();//update speed for non visible
+
             // Initialize agents
             InitializeAgents(state);
 
@@ -145,9 +149,7 @@ namespace FallChallenge2023.Bots.Bronze
             foreach (var agent in Agents)
                 agent.FindAction();
 
-            // Update fish position and speed
-            var referee = new GameReferee(state);
-            referee.UpdateFishs(false);
+            // update position
 
             return new GameActionList(Agents.Select(_ => (IGameAction)_.Action).ToList());
         }
@@ -203,9 +205,33 @@ namespace FallChallenge2023.Bots.Bronze
 
         private void CorrectFishPositions(GameState state)
         {
+            var referee = new GameReferee(state);
+
+            // Symmetric Fish
+            foreach (var fish in state.VisibleFishes.Select(_ => state.GetFish(_)))
+            {
+                var sFish = state.GetSymmetricFish(fish);
+                if (sFish != null && sFish.Speed == null)
+                {
+                    sFish.Location = fish.Location.HSymmetric(GameProperties.CENTER.X);
+                    sFish.Position = fish.Position.HSymmetric(GameProperties.CENTER.X);
+                    // Check if we have fluence
+                    if (State.Drones.Where(drone => !drone.Emergency && fish.Position.InRange(drone.Position,
+                                                        fish.Type == FishType.ANGLER ? drone.LightRadius : GameProperties.MOTOR_RANGE))
+                                    .Select(drone => drone.Position).Any())
+                    {
+                        sFish.Speed = new Vector();
+                        sFish.Speed = referee.GetFishSpeed(sFish);
+                        if (sFish.Speed.IsZero()) sFish = null;
+                    }
+                    else sFish.Speed = fish.Speed.HSymmetric();
+                }
+            }
+
             // From Enemy Scans
             foreach (var drone in state.EnemyDrones)
-                foreach (var fish in drone.NewScans.Where(_ => !state.VisibleFishes.Contains(_)).Select(fishId => state.GetFish(fishId)))
+                foreach (var fish in drone.NewScans .Where(_ => !state.VisibleFishes.Contains(_))
+                                                    .Select(fishId => state.GetFish(fishId)))
                 {
                     // Undefined fish or position not for scan
                     if (fish.Speed == null || !fish.Position.InRange(drone.Position, drone.LightRadius))
@@ -224,17 +250,8 @@ namespace FallChallenge2023.Bots.Bronze
                     }
                 }
 
-            // Symmetric Fish
-            foreach (var fish in state.VisibleFishes.Select(_ => state.GetFish(_)))
-            {
-                var sFish = state.GetSymmetricFish(fish);
-                if (sFish != null && sFish.Speed == null)
-                {
-                    sFish.Location = fish.Location.HSymmetric(GameProperties.CENTER.X);
-                    sFish.Position = fish.Position.HSymmetric(GameProperties.CENTER.X);
-                    sFish.Speed = fish.Speed.HSymmetric();
-                }
-            }
+            // Update location
+            UpdateLocation(state);
 
             // Correct position from radar
             foreach (var fish in state.SwimmingFishes.Where(_ => !state.VisibleFishes.Contains(_.Id)))
@@ -245,9 +262,12 @@ namespace FallChallenge2023.Bots.Bronze
                 foreach (var drone in state.MyDrones)
                     range = range.Intersect(drone.RadarBlips.First(_ => _.FishId == fish.Id).GetRange(drone.Position));
 
+                // Decrease location
+                fish.Location = fish.Location.Intersect(range);
+
+                // If fish position in wrong range
                 if (!range.InRange(fish.Position))
-                {
-                    fish.Location = fish.Location.Intersect(range);
+                {   
                     fish.Position = fish.Location.Intersect(fish.Position, fish.Location.Center);
                     fish.Speed = null;
                 }
@@ -259,7 +279,6 @@ namespace FallChallenge2023.Bots.Bronze
                     .ToList();
                 if (dronePositions.Any())
                 {
-                    fish.Location = fish.Location.Intersect(range);
                     fish.Position = dronePositions[0];
 
                     var direction = fish.Location.Center - fish.Position;
@@ -277,6 +296,18 @@ namespace FallChallenge2023.Bots.Bronze
                     fish.Location = fish.Location.Increase(fish.Position);
                     fish.Speed = null;
                 }
+            }
+        }
+
+        private void UpdateLocation(GameState state)
+        {
+            foreach (var fish in state.SwimmingFishes)
+            {
+                var habitat = GameProperties.HABITAT[fish.Type];
+                var range = new RectangleRange(0, habitat[0], GameProperties.MAP_SIZE - 1, habitat[1]);
+
+                var speed = fish.Type == FishType.ANGLER ? GameProperties.MONSTER_SPEED : GameProperties.FISH_SPEED;
+                fish.Location = fish.Location.Scale(speed).Intersect(range);
             }
         }
 
