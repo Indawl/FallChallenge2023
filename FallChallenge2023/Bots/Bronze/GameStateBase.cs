@@ -8,9 +8,13 @@ namespace FallChallenge2023.Bots.Bronze
         public int Turn { get; set; }
         public int MyScore { get; set; }
         public int EnemyScore { get; set; }
-        public List<int> MyScans { get; protected set; } = new List<int>();
-        public List<int> EnemyScans { get; protected set; } = new List<int>();
-        public List<Drone> Drones { get; protected set; } = new List<Drone>();
-        public List<Fish> Fishes { get; protected set; } = new List<Fish>();        
+        public HashSet<int> MyScans { get; protected set; } = new HashSet<int>();
+        public HashSet<int> EnemyScans { get; protected set; } = new HashSet<int>();
+        public List<Drone> MyDrones { get; protected set; } = new List<Drone>();
+        public List<Drone> EnemyDrones { get; protected set; } = new List<Drone>();
+        public List<Fish> Fishes { get; protected set; } = new List<Fish>();
+        public List<Fish> Monsters { get; protected set; } = new List<Fish>();
+        public List<Fish> LostedFishes { get; protected set; } = new List<Fish>();
+        public HashSet<int> VisibleFishes { get; protected set; } = new HashSet<int>();
     }
 }

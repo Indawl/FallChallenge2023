@@ -6,58 +6,65 @@ namespace FallChallenge2023.Bots.Bronze
 {
     public class GameState : GameStateBase, ICloneable
     {
-        public List<Fish>[] ScannedFishes { get; private set; } = new List<Fish>[2];
-        public List<Fish>[] UnscannedFishes { get; private set; } = new List<Fish>[2];
-
+        public GameState Parent { get; private set; }
         public int Score => MyScore - EnemyScore;
-        public List<Fish> SwimmingFishes => Fishes.Where(_ => _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY).ToList();
-
-        public void Initialize()
-        {
-            ScannedFishes = new List<Fish>[2];
-            UnscannedFishes = new List<Fish>[2];
-            for (int i = 0; i < 2; i++)
-            {
-                ScannedFishes[i] = GetDrones(i).SelectMany(_ => _.Scans).Distinct().Union(GetScans(i)).Select(_ => GetFish(_)).ToList();
-                UnscannedFishes[i] = SwimmingFishes.Where(_ => !ScannedFishes[i].Contains(_)).ToList();
-            }
-        }
+        public IEnumerable<Drone> Drones => MyDrones.Union(EnemyDrones);
+        public IEnumerable<Fish> SwimmingFishes => Fishes.Union(Monsters);
 
         public object Clone()
         {
             var state = (GameState)MemberwiseClone();
-            state.MyScans = new List<int>(MyScans);
-            state.EnemyScans = new List<int>(EnemyScans);
-            state.Drones = new List<Drone>();
-            foreach (var drone in Drones)
-                state.Drones.Add((Drone)drone.Clone());
-            state.Fishes = new List<Fish>();
-            foreach (var fish in Fishes)
-                state.Fishes.Add((Fish)fish.Clone());            
-            state.Initialize();
+            state.Parent = this;
+            state.MyScans = new HashSet<int>(MyScans);
+            state.EnemyScans = new HashSet<int>(EnemyScans);
+            state.MyDrones = CloneDrones(MyDrones);
+            state.EnemyDrones = CloneDrones(EnemyDrones);
+            state.Fishes = CloneFishes(Fishes);
+            state.Monsters = CloneFishes(Monsters);
+            state.LostedFishes = CloneFishes(LostedFishes);
+            state.VisibleFishes = new HashSet<int>(VisibleFishes);
             return state;
         }
+        public List<Drone> CloneDrones(List<Drone> drones)
+        {
+            var newDrones = new List<Drone>();
+            foreach (var drone in drones)
+                newDrones.Add((Drone)drone.Clone());
+            return newDrones;
+        }
+        public List<Fish> CloneFishes(List<Fish> fishes)
+        {
+            var newFishes = new List<Fish>();
+            foreach (var fish in fishes)
+                newFishes.Add((Fish)fish.Clone());
+            return newFishes;
+        }
 
-        public List<int> GetScans(int playerId) => playerId == 0 ? MyScans : EnemyScans;
         public int GetScore(int playerId) => playerId == 0 ? MyScore : EnemyScore;
         public int SetScore(int playerId, int score) => playerId == 0 ? MyScore = score : EnemyScore = score;
         public int AddScore(int playerId, int score) => playerId == 0 ? MyScore += score : EnemyScore += score;
-        public Fish GetFish(int id) => Fishes.FirstOrDefault(_ => _.Id == id);
-        public List<Drone> GetDrones(int playerId) => Drones.Where(_ => _.PlayerId == playerId).ToList();
-        public Drone GetDrone(int id) => Drones.FirstOrDefault(_ => _.Id == id);
+        public HashSet<int> GetScans(int playerId) => playerId == 0 ? MyScans : EnemyScans;
+        public List<Drone> GetDrones(int playerId) => playerId == 0 ? MyDrones : EnemyDrones;
+        public Drone GetDrone(int playerId, int id) => GetDrones(playerId).FirstOrDefault(drone => drone.Id == id);
+        public Drone GetDrone(int droneId) => Drones.FirstOrDefault(drone => drone.Id == droneId);
+        public Fish GetFish(int fishId) => Fishes.FirstOrDefault(fish => fish.Id == fishId);
+        public Fish GetLostedFish(int fishId) => LostedFishes.FirstOrDefault(fish => fish.Id == fishId);
+        public Fish GetMonster(int fishId) => Monsters.FirstOrDefault(fish => fish.Id == fishId);
+        public Fish GetSwimmingFish(int fishId) => SwimmingFishes.FirstOrDefault(fish => fish.Id == fishId);
+        public int GetSymmetricFishId(int fishId) => fishId + (fishId % 2 == 0 ? 1 : -1);
+        public Fish GetSymmetricFish(Fish fish) => GetSwimmingFish(GetSymmetricFishId(fish.Id));
 
-        public Drone GetNewDrone(int droneId, int playerId)
+        public Drone GetNewDrone(int playerId, int droneId)
         {
             var drone = new Drone(droneId, playerId);
-            Drones.Add(drone);
+            GetDrones(playerId).Add(drone);
             return drone;
         }
 
-        public Fish GetSymmetricFish(Fish fish)
+        public void FishLosted(Fish fish)
         {
-            var offset = fish.Color == FishColor.UGLY ? 16 : 4;
-            var fishId = fish.Id + ((fish.Id - offset) % 2 == 0 ? 1 : -1);
-            return GetFish(fishId);
+            LostedFishes.Add(fish);
+            Fishes.Remove(fish);
         }
     }
 }

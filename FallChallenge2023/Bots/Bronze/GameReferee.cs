@@ -16,12 +16,12 @@ namespace FallChallenge2023.Bots.Bronze
 
         public void UpdateFishPositions()
         {
-            UpdateFishPositions(State.Fishes);
+            UpdateFishPositions(State.SwimmingFishes);
         }
 
         public void UpdateFishPositions(Func<Fish, bool> predicate)
         {
-            UpdateFishPositions(State.Fishes.Where(predicate));
+            UpdateFishPositions(State.SwimmingFishes.Where(predicate));
         }
 
         private void UpdateFishPositions(IEnumerable<Fish> fishes)

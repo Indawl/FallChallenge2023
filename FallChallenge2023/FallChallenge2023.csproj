@@ -77,7 +77,6 @@
     <Compile Include="Bots\Bronze\Agents\DroneAgent.cs" />
     <Compile Include="Bots\Bronze\Fish.cs" />
     <Compile Include="Bots\Bronze\FishColor.cs" />
-    <Compile Include="Bots\Bronze\FishStatus.cs" />
     <Compile Include="Bots\Bronze\FishType.cs" />
     <Compile Include="Bots\Bronze\GameMath\RectangleRange.cs" />
     <Compile Include="Bots\Bronze\GameMath\Vector.cs" />

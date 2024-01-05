@@ -35,7 +35,7 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
         public string ToIntString() => string.Format("({0}, {1})", (int)X, (int)Y);
 
         public bool IsZero() => X == 0 && Y == 0;
-        public bool Equals(Vector other) => X == other.X && Y == other.Y;
+        public bool Equals(Vector other) => (int)X == (int)other.X && (int)Y == (int)other.Y;
         public Vector HSymmetric(double x = 0) => new Vector(2 * x - X, Y);
         public Vector VSymmetric(double y = 0) => new Vector(X, 2 * y - Y);
         public double LengthSqr() => X * X + Y * Y;
@@ -50,14 +50,13 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
             if (length == 0) return new Vector();
             return this / length;
         }
+        public Vector Cross(double d = 1.0) => new Vector(-d * Y, d * X);
         public Vector Rotate(double angle) => new Vector(
             X * Math.Cos(angle) - Y * Math.Sin(angle), 
             X * Math.Sin(angle) + Y * Math.Cos(angle));
-        public bool InRange(int radius) => LengthSqr() <= radius * radius;
-        public bool InRange(Vector coord, int radius) => (coord - this).InRange(radius);
-        public bool InRange(Vector coord, int inRadius, int outRadius) => (coord - this).InRange(outRadius) && !(coord - this).InRange(inRadius);
-        public bool InRange(RectangleRange range) => X >= range.X && X <= range.ToX && Y >= range.Y && Y <= range.ToY;
-
+        public bool InRange(int radiusSqr) => LengthSqr() <= radiusSqr;
+        public bool InRange(Vector coord, int radiusSqr) => (coord - this).InRange(radiusSqr);
+        
         public List<Vector> GetClosest(List<Vector> coords)
         {
             var closest = new List<Vector>();

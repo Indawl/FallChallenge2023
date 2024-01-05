@@ -9,19 +9,20 @@ namespace FallChallenge2023.Bots.Bronze
         public FishColor Color { get; }
         public FishType Type { get; }
 
-        public FishStatus Status { get; set; } = FishStatus.UNKNOWED;
         public Vector Position { get; set; }
         public Vector Speed { get; set; }
 
-        public Fish(int id, FishColor color, FishType type)
+        public RectangleRange Location { get; set; }
+             
+        public Fish(int id, FishColor color = FishColor.UGLY, FishType type = FishType.ANGLER)
         {
             Id = id;
             Color = color;
             Type = type;
         }
 
-        public override string ToString() => string.Format("[{0}] {1} {2} {3} {4} V{5}{6})", Id, Color, Type, Status, Position?.ToIntString(), Speed == null ? 0 : (int)Speed.Length(), Speed?.ToIntString());
+        public override string ToString() => string.Format("[{0}] {1} {2} {3} V {4} {5}", Id, Color, Type, Position?.ToIntString(), Speed == null ? 0 : (int)Speed.Length(), Speed?.ToIntString());
 
-        public object Clone() => MemberwiseClone();
+        public virtual object Clone() => MemberwiseClone();
     }
 }
