@@ -6,8 +6,8 @@ namespace FallChallenge2023.Bots.Bronze
     public class GameStateBase : IGameState
     {
         public int Turn { get; set; }
-        public int MyScore { get; set; }
-        public int EnemyScore { get; set; }
+        public int MyScore { get; protected set; }
+        public int EnemyScore { get; protected set; }
         public HashSet<int> MyScans { get; protected set; } = new HashSet<int>();
         public HashSet<int> EnemyScans { get; protected set; } = new HashSet<int>();
         public List<Drone> MyDrones { get; protected set; } = new List<Drone>();

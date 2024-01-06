@@ -33,29 +33,25 @@ namespace FallChallenge2023.Bots.Bronze
             state.Parent = this;
             state.MyScans = new HashSet<int>(MyScans);
             state.EnemyScans = new HashSet<int>(EnemyScans);
-            state.MyDrones = CloneDrones(MyDrones);
-            state.EnemyDrones = CloneDrones(EnemyDrones);
-            state.Fishes = CloneFishes(Fishes);
-            state.Monsters = CloneFishes(Monsters);
-            state.LostedFishes = CloneFishes(LostedFishes);
+            CloneDrones(MyDrones, state.MyDrones = new List<Drone>());
+            CloneDrones(EnemyDrones, state.EnemyDrones = new List<Drone>());
+            CloneFishes(Fishes, state.Fishes = new List<Fish>());
+            CloneFishes(Monsters, state.Monsters = new List<Fish>());
+            CloneFishes(LostedFishes, state.LostedFishes = new List<Fish>());
             state.VisibleFishes = new HashSet<int>(VisibleFishes);
 
             state.RefreshBuffer();
             return state;
         }
-        public List<Drone> CloneDrones(List<Drone> drones)
+        public static void CloneDrones(List<Drone> source, List<Drone> dest)
         {
-            var newDrones = new List<Drone>();
-            foreach (var drone in drones)
-                newDrones.Add((Drone)drone.Clone());
-            return newDrones;
+            foreach (var drone in source)
+                dest.Add((Drone)drone.Clone());
         }
-        public List<Fish> CloneFishes(List<Fish> fishes)
+        public static void CloneFishes(List<Fish> source, List<Fish> dest)
         {
-            var newFishes = new List<Fish>();
-            foreach (var fish in fishes)
-                newFishes.Add((Fish)fish.Clone());
-            return newFishes;
+            foreach (var fish in source)
+                dest.Add((Fish)fish.Clone());
         }
 
         public int GetScore(int playerId) => playerId == 0 ? MyScore : EnemyScore;

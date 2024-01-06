@@ -21,7 +21,7 @@ namespace FallChallenge2023.Bots.Bronze
         public HashSet<int> NewScans { get; set; } = new HashSet<int>();
         public List<RadarBlip> RadarBlips { get; set; } = new List<RadarBlip>();
 
-        public Drone(int id, int playerId)
+        public Drone(int id = 0, int playerId = 0)
         {
             Id = id;
             PlayerId = playerId;
