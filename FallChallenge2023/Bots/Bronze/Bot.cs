@@ -38,6 +38,8 @@ namespace FallChallenge2023.Bots.Bronze
 
         public IGameState ReadState()
         {
+            StopWatch.Restart();
+
             // Read new state
             State = (GameState)State.Clone();
             State.Turn++;
@@ -127,6 +129,8 @@ namespace FallChallenge2023.Bots.Bronze
             if (State.Turn > GameProperties.SERIAL_FROM_TURN)
                 Console.Error.WriteLine(JsonSerializer.Serialize<GameStateBase>(State));
 #endif            
+            StopWatch.Stop();
+
             return State;
         }
         #endregion
@@ -134,6 +138,8 @@ namespace FallChallenge2023.Bots.Bronze
         public IGameAction GetAction(IGameState gameState)
         {
             var state = gameState as GameState;
+
+            StopWatch.Start();
 
             // Correct fish positions
             CorrectFishPositions(state);
@@ -148,6 +154,8 @@ namespace FallChallenge2023.Bots.Bronze
             // Determinate actions for agents
             foreach (var agent in Agents)
                 agent.FindAction();
+
+            StopWatch.Stop();
 
             return new GameActionList(Agents.Select(_ => (IGameAction)_.Action).ToList());
         }

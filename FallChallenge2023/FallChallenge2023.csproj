@@ -87,6 +87,9 @@
     <Compile Include="Bots\Bronze\GameUtils.cs" />
     <Compile Include="Bots\Bronze\RadarBlip.cs" />
     <Compile Include="Bots\Bronze\BlipType.cs" />
+    <Compile Include="Bots\Bronze\Simulations\MinMax.cs" />
+    <Compile Include="Bots\Bronze\Simulations\MinMaxDetail.cs" />
+    <Compile Include="Bots\Bronze\Simulations\MinMaxVariant.cs" />
     <Compile Include="Bots\Wood\Actions\GameAction.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionList.cs" />
     <Compile Include="Bots\Wood\Actions\GameActionMove.cs" />

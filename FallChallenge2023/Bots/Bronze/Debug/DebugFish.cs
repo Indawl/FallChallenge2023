@@ -2,6 +2,7 @@
 using FallChallenge2023.Bots.Bronze.GameMath;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace FallChallenge2023.Bots.Bronze.Debug
 {
@@ -32,6 +33,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public Fish Fish { get; set; }
         public Vector Coord { get; set; }
         public Vector Speed { get; set; }
+        public Rectangle Location { get; set; }
 
         public DebugFish(Fish fish, DebugObject parent) : base(fish.ToString(), parent)
         {
@@ -44,6 +46,11 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             else Speed = new Vector(parent.Position.Width * Fish.Speed.X / GameProperties.MAP_SIZE, parent.Position.Height * Fish.Speed.Y / GameProperties.MAP_SIZE);
 
             Position = new Rectangle((int)Coord.X - size.Width / 2, (int)Coord.Y - size.Height / 2, size.Width, size.Height);
+            Location = new Rectangle((int)(parent.Position.Width * Fish.Location.From.X / GameProperties.MAP_SIZE),
+                                     (int)(parent.Position.Height * Fish.Location.From.Y / GameProperties.MAP_SIZE),
+                                     (int)(parent.Position.Width * Fish.Location.To.X / GameProperties.MAP_SIZE),
+                                     (int)(parent.Position.Height * Fish.Location.To.Y / GameProperties.MAP_SIZE));
+            Location = new Rectangle(Location.X, Location.Y, Location.Width - Location.X, Location.Height - Location.Y);
             Visible = true;
 
             Properties.Add("Id", Fish.Id);
@@ -51,7 +58,6 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             Properties.Add("Type", Fish.Type);
             Properties.Add("Position", Fish.Position?.ToIntString() );
             if (Fish.Speed != null) Properties.Add("Speed", string.Format("{0} ({1})", Fish.Speed.ToIntString(), (int)Fish.Speed.Length()));
-            Properties.Add("Status", Fish.Status);
         }
 
         public override Bitmap GetFigure()
@@ -60,6 +66,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             var fish = new Bitmap(Position.Width, Position.Height);
             var g = Graphics.FromImage(fish);
+
+            g.FillRectangle(new HatchBrush(HatchStyle.Cross, Color.FromArgb(50, 50, 50, 255), Color.FromArgb(50, 200, 200, 200)), Location);
 
             g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat),
                 Position.Width / 2 - modelPosition.Width / 2, Position.Height / 2 - modelPosition.Height / 2, modelPosition.Width, modelPosition.Height);

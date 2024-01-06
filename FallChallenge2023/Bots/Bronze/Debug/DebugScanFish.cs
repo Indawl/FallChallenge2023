@@ -33,13 +33,15 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public Fish Fish { get; set; }
         public bool Saved { get; set; }
         public bool NoFish { get; set; }
+        public bool Losted { get; set; }
 
-        public DebugScanFish(int playerId, Fish fish, bool saved, bool noFish, DebugObject parent) :
+        public DebugScanFish(int playerId, Fish fish, bool saved, bool noFish, bool losted, DebugObject parent) :
             base(string.Format("{0}{1}", saved ? "SAVED " : string.Empty, fish), parent)
         {
             Fish = fish;
             Saved = saved;
             NoFish = noFish;
+            Losted = losted;
 
             var pos = MODEL_POSITION[Fish.Color][Fish.Type];
 
@@ -55,7 +57,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
 
             if (!NoFish) g.DrawImage(DebugRes.Models.Clone(modelPosition, DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
             if (!Saved) g.FillRectangle(new SolidBrush(Color.FromArgb(180, 150, 150, 150)), 0, 0, Position.Width, Position.Height);
-            if (Fish.Status == FishStatus.LOSTED) g.DrawImage(DebugRes.Models.Clone(new Rectangle(197, 108, 77, 77), DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
+            if (Losted) g.DrawImage(DebugRes.Models.Clone(new Rectangle(197, 108, 77, 77), DebugRes.Models.PixelFormat), 0, 0, Position.Width, Position.Height);
 
             return fish;
         }

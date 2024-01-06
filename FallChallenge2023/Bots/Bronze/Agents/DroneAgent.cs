@@ -72,34 +72,35 @@ namespace FallChallenge2023.Bots.Bronze.Agents
 
         public bool NeedLighting(Vector position)
         {
-            var light = false;
+            return false;
+            //var light = false;
 
-            // Unscanned fishes close
-            if (State.GetUnscannedFish(Drone.PlayerId).Any(_ => State.GetFish(_).Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
-                return true;
+            //// Unscanned fishes close
+            //if (State.GetUnscannedFish(Drone.PlayerId).Any(_ => State.GetFish(_).Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
+            //    return true;
 
-            var enemyDrones = State.GetDrones(1 - Drone.PlayerId);
+            //var enemyDrones = State.GetDrones(1 - Drone.PlayerId);
 
-            // Enemy with light close and have new scans
-            if (!Drone.Lighting && enemyDrones
-                .Where(_ => _.Lighting && _.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS)
-                                       && _.NewScans.Any(s => State.UnscannedFishes[Drone.PlayerId].Any(f => f.Id == s)))
-                .Any())
-                return true;
+            //// Enemy with light close and have new scans
+            //if (!Drone.Lighting && enemyDrones
+            //    .Where(_ => _.Lighting && _.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS)
+            //                           && _.NewScans.Any(s => State.UnscannedFishes[Drone.PlayerId].Any(f => f.Id == s)))
+            //    .Any())
+            //    return true;
 
-            // Maybe he go away from monster
-            if (!Drone.Lighting && enemyDrones
-                .Where(_ => !_.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS) &&
-                            _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS))
-                .Any())
-                return true;
+            //// Maybe he go away from monster
+            //if (!Drone.Lighting && enemyDrones
+            //    .Where(_ => !_.Position.InRange(Drone.Position, GameProperties.DARK_SCAN_RADIUS) &&
+            //                _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS))
+            //    .Any())
+            //    return true;
 
-            // Incite monster to enemy
-            foreach (var fish in State.Fishes.Where(_ => _.Speed != null && _.Color == FishColor.UGLY && _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
-                if (enemyDrones.Any(_ => GameUtils.CheckCollision(fish.Position, fish.Speed, _.Position, _.Position + _.Speed, true)))
-                    return true;
+            //// Incite monster to enemy
+            //foreach (var fish in State.Fishes.Where(_ => _.Speed != null && _.Color == FishColor.UGLY && _.Position.InRange(position, GameProperties.DARK_SCAN_RADIUS, GameProperties.LIGHT_SCAN_RADIUS)))
+            //    if (enemyDrones.Any(_ => GameUtils.CheckCollision(fish.Position, fish.Speed, _.Position, _.Position + _.Speed, true)))
+            //        return true;
              
-            return light;
+            //return light;
         }
     }
 }

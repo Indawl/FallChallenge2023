@@ -2,6 +2,7 @@
 using FallChallenge2023.Bots.Bronze.GameMath;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze.Debug
 {
@@ -31,7 +32,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         public DebugDrone(Drone drone, DebugObject parent) : base(drone.ToString(), parent)
         {
             Drone = drone;
-            Type = Drone.Emergency ? DroneType.DAMAGED : (Drone.Scanning ? DroneType.SCAN : DroneType.NORMAL);
+            Type = Drone.Emergency ? DroneType.DAMAGED : (Drone.NewScans.Any() ? DroneType.SCAN : DroneType.NORMAL);
             LightRadius = Drone.Lighting ? GameProperties.LIGHT_SCAN_RADIUS : GameProperties.DARK_SCAN_RADIUS;
             MonsterRadius = LightRadius + GameProperties.MONSTER_DETECTED_RADIUS_ADD;
 
@@ -52,7 +53,8 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             Properties.Add("Emergency", Drone.Emergency);
             Properties.Add("Battery", Drone.Battery);
             Properties.Add("Lighting", Drone.Lighting);
-            Properties.Add("Scanning", Drone.Scanning);
+            Properties.Add("MotorOn", Drone.MotorOn);
+            Properties.Add("Scanning", Drone.NewScans.Any());
             Properties.Add("ScansCount", Drone.Scans.Count);
             Properties.Add("Scans", Drone.Scans.ToArray());
             Properties.Add("NewScans", Drone.NewScans.ToArray());

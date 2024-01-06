@@ -50,6 +50,7 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
             if (length == 0) return new Vector();
             return this / length;
         }
+        public double Angle() => Math.Atan2(Y, X);
         public Vector Cross(double d = 1.0) => new Vector(-d * Y, d * X);
         public Vector Rotate(double angle) => new Vector(
             X * Math.Cos(angle) - Y * Math.Sin(angle), 

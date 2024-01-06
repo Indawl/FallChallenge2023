@@ -72,7 +72,7 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             rootObj.Childs.Add(oceanFloor);
 
             // Fishes
-            foreach (var fish in gameState.Fishes.Where(_ => _.Position != null))
+            foreach (var fish in gameState.SwimmingFishes.Where(_ => _.Position != null))
                 oceanFloor.Childs.Add(new DebugFish(fish, oceanFloor));
 
             // Drones
@@ -90,19 +90,27 @@ namespace FallChallenge2023.Bots.Bronze.Debug
             {
                 rootObj.Childs.Add(scans[k]);
                 foreach (var fishId in gameState.GetScans(k))
-                    scans[k].Childs.Add(new DebugScanFish(k, gameState.GetFish(fishId), true, false, scans[k]));
+                {
+                    var fish = gameState.GetFish(fishId);
+                    if (fish == null) scans[k].Childs.Add(new DebugScanFish(k, gameState.GetLostedFish(fishId), true, false, true, scans[k]));
+                    else scans[k].Childs.Add(new DebugScanFish(k, fish, true, false, false, scans[k]));
+                }
             }
 
             // Dron scans
             foreach (var drone in gameState.Drones)
                 foreach (var fishId in drone.Scans.Where(_ => !gameState.GetScans(drone.PlayerId).Any(__ => __ == _)))
-                    scans[drone.PlayerId].Childs.Add(new DebugScanFish(drone.PlayerId, gameState.GetFish(fishId), false, false, scans[drone.PlayerId]));
+                {
+                    var fish = gameState.GetFish(fishId);
+                    if (fish == null) scans[drone.PlayerId].Childs.Add(new DebugScanFish(drone.PlayerId, gameState.GetLostedFish(fishId), false, false, true, scans[drone.PlayerId]));
+                    else scans[drone.PlayerId].Childs.Add(new DebugScanFish(drone.PlayerId, fish, false, false, false, scans[drone.PlayerId]));
+                }
 
             // Losted fish
             for (int k = 0; k < 2; k++)
-                foreach (var fish in gameState.Fishes.Where(_ => _.Status == FishStatus.LOSTED))
+                foreach (var fish in gameState.LostedFishes)
                     if (!scans[k].Childs.Any(_ => (_ as DebugScanFish).Fish.Id == fish.Id))
-                        scans[k].Childs.Add(new DebugScanFish(k, fish, true, true, scans[k]));
+                        scans[k].Childs.Add(new DebugScanFish(k, fish, true, true, true, scans[k]));
 
             return rootObj;
         }

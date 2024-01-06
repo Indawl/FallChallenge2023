@@ -117,23 +117,23 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         private int GetMinScore(int playerId, List<Drone> myDrones, List<Drone> enemyDrones)
         {
             var score = Agent.State.GetScore(playerId);
-            var comboFishes = Agent.State.GetScans(playerId).Select(_ => Agent.State.GetFish(_)).ToList();
-            var bonusesComboFishes = new List<Fish>(comboFishes);
+            //var comboFishes = Agent.State.GetScans(playerId).Select(_ => Agent.State.GetFish(_)).ToList();
+            //var bonusesComboFishes = new List<Fish>(comboFishes);
 
-            foreach (var fish in Agent.State.Fishes
-                .Where(_ => myDrones.Any(s => s.Scans.Contains(_.Id))
-                         || (!Agent.State.GetScans(playerId).Contains(_.Id) && _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY)))
-            {
-                score += GameProperties.REWARDS[fish.Type];
-                comboFishes.Add(fish);
-                if (fish.Status == FishStatus.LOSTED && !enemyDrones.Any(_ => _.Scans.Contains(fish.Id)))
-                {
-                    score += GameProperties.REWARDS[fish.Type];
-                    bonusesComboFishes.Add(fish);
-                }
-            }
+            //foreach (var fish in Agent.State.Fishes
+            //    .Where(_ => myDrones.Any(s => s.Scans.Contains(_.Id))
+            //             || (!Agent.State.GetScans(playerId).Contains(_.Id) && _.Status != FishStatus.LOSTED && _.Color != FishColor.UGLY)))
+            //{
+            //    score += GameProperties.REWARDS[fish.Type];
+            //    comboFishes.Add(fish);
+            //    if (fish.Status == FishStatus.LOSTED && !enemyDrones.Any(_ => _.Scans.Contains(fish.Id)))
+            //    {
+            //        score += GameProperties.REWARDS[fish.Type];
+            //        bonusesComboFishes.Add(fish);
+            //    }
+            //}
 
-            score += GetComboBonuses(comboFishes, bonusesComboFishes);
+            //score += GetComboBonuses(comboFishes, bonusesComboFishes);
 
             return score;
         }
