@@ -301,7 +301,7 @@ namespace FallChallenge2023.Bots.Bronze
                         var radiusSqr1 = drones[1].LightRadius * drones[1].LightRadius / offsetLengthSqr;
 
                         var project = (radiusSqr0 - radiusSqr1) / 2.0 + 0.5;
-                        var cross = Math.Sqrt(radiusSqr0 - project * project);
+                        var cross = Math.Sqrt(radiusSqr0 - project * project) + GameProperties.DELTA_RADIUS;
 
                         fish.Position = offsetPosition * project;
                         direction = cross * offsetPosition.Cross();
