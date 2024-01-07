@@ -137,6 +137,8 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
         {
             var decisions = new List<Decision[]>();
 
+            decisions.Add(new Decision[] { new SaveDecision(), new SaveDecision() });
+
             return decisions.ToArray();
         }
     }

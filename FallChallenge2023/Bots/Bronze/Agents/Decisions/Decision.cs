@@ -15,5 +15,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         public abstract bool Finished(GameState state);
 
         protected abstract GameAction CalculateAction(GameState state);
+
+        protected bool NeedLight(GameState state) => false;
     }
 }

@@ -31,14 +31,14 @@ namespace FallChallenge2023.Bots.Bronze
             return newPosition;
         }
 
-        public static Vector GetAroundMonsterTo(GameState state, Vector from, Vector to, int forMoves = GameProperties.MONSTER_TRAVERSAL_TURNS, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANGLE)
+        public static Vector GetAroundMonsterTo(GameState state, Vector from, Vector to, bool turbo = false, int forMoves = GameProperties.MONSTER_TRAVERSAL_TURNS, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANGLE)
         {
-            CheckCollisionWithMonsters(state, from, to, out var speed, forMoves, epsilon);
+            CheckCollisionWithMonsters(state, from, to, out var speed, turbo, forMoves, epsilon);
             return from + speed;
         }
 
         public static Vector GetAroundMonster(GameState state, Vector from, Vector speed, int forMoves = GameProperties.MONSTER_TRAVERSAL_TURNS, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANGLE)
-            =>  GetAroundMonsterTo(state, from, from + speed, forMoves, epsilon);
+            =>  GetAroundMonsterTo(state, from, from + speed, false, forMoves, epsilon);
 
         public static bool CheckCollision(Vector fishPosition, Vector fishSpeed, Vector droneFrom, Vector droneTo, bool anytime = false)
         {
@@ -61,10 +61,12 @@ namespace FallChallenge2023.Bots.Bronze
             return true;
         }
 
-        private static bool CheckCollisionWithMonsters(GameState state, Vector from, Vector moveTo, out Vector speed, int forMoves = 0, double epsilon = 0.1)
+        private static bool CheckCollisionWithMonsters(GameState state, Vector from, Vector moveTo, out Vector speed, bool turbo = false, int forMoves = 0, double epsilon = 0.1)
         {
             epsilon *= Math.PI / 180;
-            speed = ((moveTo - from).Normalize() * GameProperties.DRONE_MAX_SPEED).Round();
+            speed = moveTo - from;
+            if (turbo || speed.LengthSqr() > GameProperties.DRONE_MAX_SPEED * GameProperties.DRONE_MAX_SPEED)
+                speed = (speed.Normalize() * GameProperties.DRONE_MAX_SPEED).Round();
 
             var newSpeed = from.Equals(moveTo) ? ((GameProperties.CENTER - from).Normalize() * GameProperties.DRONE_MAX_SPEED).Round() : moveTo - from;
             var newTo = from + speed;
@@ -88,11 +90,12 @@ namespace FallChallenge2023.Bots.Bronze
                             wise = !wise;                            
                             collision = true;
 
-                            speed = (newSpeed.Rotate(alpha).Round().Normalize() * GameProperties.DRONE_MAX_SPEED).Round();
-                            newTo = SnapToDroneZone(from + speed);
-                            speed = newTo - from;
+                            var rSpeed = (newSpeed.Rotate(alpha).Round().Normalize() * GameProperties.DRONE_MAX_SPEED).Round();
+                            newTo = SnapToDroneZone(from + rSpeed);                            
                         }
                 }
+
+                speed = newTo - from;
 
                 // Check next turn
                 if (forMoves > 0)
@@ -102,7 +105,7 @@ namespace FallChallenge2023.Bots.Bronze
                     referee.State.MyDrones.Add(new Drone() { Position = newTo });
                     referee.UpdateFishs();
 
-                    if (CheckCollisionWithMonsters(referee.State, newTo, moveTo, out var nextSpeed, forMoves - 1, GameProperties.MONSTER_TRAVERSAL_ANGLE_FAST))
+                    if (CheckCollisionWithMonsters(referee.State, newTo, moveTo, out var nextSpeed, true, forMoves - 1, GameProperties.MONSTER_TRAVERSAL_ANGLE_FAST))
                     {
                         alpha = (wise ? epsilon : 0.0) - alpha;
                         if (alpha > Math.PI) return true;

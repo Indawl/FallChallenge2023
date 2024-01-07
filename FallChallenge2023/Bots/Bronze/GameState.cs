@@ -73,6 +73,8 @@ namespace FallChallenge2023.Bots.Bronze
         public Fish GetAnyFish(int fishId) => Fishes.Union(LostedFishes).Union(Monsters).FirstOrDefault(fish => fish.Id == fishId);
         public int GetSymmetricFishId(int fishId) => fishId + (fishId % 2 == 0 ? 1 : -1);
         public Fish GetSymmetricFish(Fish fish) => GetSwimmingFish(GetSymmetricFishId(fish.Id));
+        public int GetSymmetricDroneId(int droneId) => 2 * (droneId % 2 + 1) - droneId;
+        public Drone GetSymmetricDroneId(Drone drone) => GetDrone(GetSymmetricDroneId(drone.Id));
         public HashSet<int> GetScannedFish(int playerId) => _scannedFish[playerId] 
                                                          ?? (_scannedFish[playerId] = GetDrones(playerId)
                                                             .SelectMany(drone => drone.Scans)
