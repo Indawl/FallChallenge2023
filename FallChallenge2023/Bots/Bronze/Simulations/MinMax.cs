@@ -31,7 +31,6 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
             Referee.State = state = (GameState)state.Clone();
             foreach (var fish in Referee.State.SwimmingFishes.Where(_ => _.Speed == null))
                 fish.Speed = new Vector();
-            Referee.RemoveLostedFish();
 
             // Simulate
             try
@@ -137,6 +136,9 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
         private Decision[][] GetDecisions(GameState state, int playerId)
         {
             var decisions = new List<Decision[]>();
+
+            var fishes = state.GetUnscannedFish(playerId).Union(state.GetUnscannedFish(1 - playerId)).ToList();
+            fishes.Sort((a, b)=>state.GetRewards(b).CompareTo(state.GetRewards(a)));
 
             decisions.Add(new Decision[] { new SaveDecision(), new SaveDecision() });
 

@@ -1,29 +1,21 @@
 ﻿using FallChallenge2023.Bots.Bronze.Actions;
 using FallChallenge2023.Bots.Bronze.GameMath;
 using System;
-using System.Collections.Generic;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
     public class SearchDecision : Decision
     {
         public int FishId { get; }
-        public List<int> Fishs { get; }
+        public int? NextFishId { get; }
 
-        public SearchDecision(int droneId, int fishId, List<int> fishs) : base(droneId)
+        public SearchDecision(int droneId, int fishId, int? nextFishId) : base(droneId)
         {
             FishId = fishId;
-            Fishs = fishs;
+            NextFishId = nextFishId;
         }
 
-        public override bool Finished(GameState state)
-        {
-            var drone = state.GetDrone(DroneId);
-            if (!state.GetUnscannedFish(drone.PlayerId).Contains(FishId)) return true;
-
-            Fishs.RemoveAll(fishId => !state.GetUnscannedFish(drone.PlayerId).Contains(fishId));
-            return false;
-        }
+        public override bool Finished(GameState state) => !state.GetUnscannedFish(state.GetDrone(DroneId).PlayerId).Contains(FishId);
 
         protected override GameAction CalculateAction(GameState state)
         {
@@ -32,12 +24,12 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             var fish = state.GetFish(FishId);
             var fishPosition = fish.Position;
 
-            var turbo = fish.Speed == null || fish.Speed.IsZero();
+            var turbo = fish.Speed.IsZero();
             if (!turbo)
             {
                 fishPosition += fish.Speed;
 
-                if (Fishs.Count > 1)
+                if (NextFishId.HasValue)
                 {
                     var distSqr = fishPosition.DistanceSqr(drone.Position);
                     if (distSqr < (GameProperties.LIGHT_SCAN_RADIUS + GameProperties.DRONE_MAX_SPEED) * (GameProperties.LIGHT_SCAN_RADIUS + GameProperties.DRONE_MAX_SPEED))
@@ -48,7 +40,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
                         var toCent = dist * Math.Sqrt(cent);
                         var toCross = toCent.Cross() * Math.Sqrt(radf - cent);
 
-                        var nextDist = state.GetFish(Fishs[1]).Position - fishPosition;
+                        var nextDist = state.GetFish(NextFishId.Value).Position - fishPosition;
                         if (Vector.Skew(toCross, nextDist - toCent) < 0)
                         {
                             var nextPos = nextDist.Normalize() * GameProperties.LIGHT_SCAN_RADIUS;
@@ -58,7 +50,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
                         }
                         else
                         {
-                            nextDist = state.GetFish(Fishs[1]).Position - drone.Position;
+                            nextDist = state.GetFish(NextFishId.Value).Position - drone.Position;
                             var nextPos = nextDist.Normalize() * GameProperties.DRONE_MAX_SPEED;
                             if (!nextPos.InRange(fishPosition, GameProperties.LIGHT_SCAN_RADIUS))
                                 fishPosition += toCent + toCross * Math.Sign(Vector.Skew(dist, nextDist));
@@ -69,7 +61,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             }
 
             var newPosition = GameUtils.GetAroundMonsterTo(state, drone.Position, fishPosition, turbo);
-            return new GameActionMove(newPosition, NeedLight(state));
+            return new GameActionMove(newPosition, NeedLight(state, drone, newPosition));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
         {
             var drone = state.GetDrone(DroneId);
             var newPosition = GameUtils.GetAroundMonster(state, drone.Position, new Vector(0, -GameProperties.DRONE_MAX_SPEED));
-            return new GameActionMove(newPosition, NeedLight(state));
+            return new GameActionMove(newPosition, NeedLight(state, drone, newPosition));
         }
     }
 }

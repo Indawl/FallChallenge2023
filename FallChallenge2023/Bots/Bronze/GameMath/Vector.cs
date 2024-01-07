@@ -61,7 +61,13 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
             X * Math.Cos(angle) - Y * Math.Sin(angle), 
             X * Math.Sin(angle) + Y * Math.Cos(angle));
         public bool InRange(int radius) => LengthSqr() <= radius * radius;
+        public bool InRange(int radiusIn, int radiusOut)
+        {
+            var length = LengthSqr();
+            return length > radiusIn * radiusIn && length <= radiusOut * radiusOut;
+        }
         public bool InRange(Vector coord, int radius) => (coord - this).InRange(radius);
+        public bool InRange(Vector coord, int radiusIn, int radiusOut) => (coord - this).InRange(radiusIn, radiusOut);
 
         public List<Vector> GetClosest(List<Vector> coords)
         {

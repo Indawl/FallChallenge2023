@@ -38,6 +38,11 @@ namespace FallChallenge2023.Bots.Bronze
             UpdatePositions(State.SwimmingFishes);
         }
 
+        public void UpdatePositions(Func<Fish, bool> predicate)
+        {
+            UpdatePositions(State.SwimmingFishes.Where(predicate));
+        }
+
         private void UpdateFishs(IEnumerable<Fish> fishes)
         {
             // New Position
@@ -63,9 +68,14 @@ namespace FallChallenge2023.Bots.Bronze
                 }
         }
 
-        private void UpdateSpeeds()
+        public void UpdateSpeeds()
         {
             UpdateSpeeds(State.SwimmingFishes);
+        }
+
+        public void UpdateSpeeds(Func<Fish, bool> predicate)
+        {
+            UpdateSpeeds(State.SwimmingFishes.Where(predicate));
         }
 
         private void UpdateSpeeds(IEnumerable<Fish> fishes)
@@ -209,9 +219,9 @@ namespace FallChallenge2023.Bots.Bronze
                 var fishes = allScans.Where(fish => fish.Color == color).ToList();
                 if (GameProperties.TYPES.All(type => fishes.Exists(fish => fish.Type == type)))
                 {
-                    score += GameProperties.REWARDS[FishType.ONE_COLOR];
+                    score += GameProperties.REWARDS_COLOR;
                     if (bonus != null && bonus.Any(fishId => state.GetAnyFish(fishId).Color == color))
-                        score += GameProperties.REWARDS[FishType.ONE_COLOR];
+                        score += GameProperties.REWARDS_COLOR;
                 }
             }
 
@@ -220,9 +230,9 @@ namespace FallChallenge2023.Bots.Bronze
                 var fishes = allScans.Where(fish => fish.Type == type).ToList();
                 if (GameProperties.COLORS.All(color => fishes.Exists(fish => fish.Color == color)))
                 {
-                    score += GameProperties.REWARDS[FishType.ONE_TYPE];
+                    score += GameProperties.REWARDS_TYPE;
                     if (bonus != null && bonus.Any(fishId => state.GetAnyFish(fishId).Type == type))
-                        score += GameProperties.REWARDS[FishType.ONE_TYPE];
+                        score += GameProperties.REWARDS_TYPE;
                 }
             }
 
@@ -258,12 +268,12 @@ namespace FallChallenge2023.Bots.Bronze
                 if (TimeOutTime > 0 && StopWatch.ElapsedMilliseconds > TimeOutTime)
                     throw new TimeoutException();
 
-                // Update state
+                // Update state                
+                RemoveLostedFish();
                 UpdatePositions();
                 DoScans();
                 DoReports();
                 UpdateSpeeds();
-                RemoveLostedFish();
 
                 State.RefreshBuffer();
                 State.Turn++;
@@ -272,7 +282,7 @@ namespace FallChallenge2023.Bots.Bronze
             return State;
         }
 
-        private void UpdateDrone(int droneId, GameAction action)
+        public void UpdateDrone(int droneId, GameAction action)
         {
             var drone = State.GetDrone(droneId);
             drone.NewScans.Clear();
@@ -317,7 +327,7 @@ namespace FallChallenge2023.Bots.Bronze
             }
         }
 
-        private void DoScans()
+        public void DoScans()
         {
             foreach (var drone in State.Drones.Where(_ => !_.Emergency))
                 foreach (var fish in State.Fishes.Where(_ => !drone.Scans.Contains(_.Id) && !State.GetScans(drone.PlayerId).Contains(_.Id)

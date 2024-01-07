@@ -1,5 +1,7 @@
-﻿using FallChallenge2023.Bots.Bronze.GameMath;
+﻿using FallChallenge2023.Bots.Bronze.Agents.Decisions;
+using FallChallenge2023.Bots.Bronze.GameMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze
@@ -125,21 +127,34 @@ namespace FallChallenge2023.Bots.Bronze
             return false;
         }
 
-        public static int GetDistance(GameState state, Vector from, Vector to)
+        public static int GetDistanceDroneId(GameState state, List<Decision> decisions)
         {
-            var drone = new Drone() { Position = from };
             var referee = new GameReferee(new GameState());
+            GameState.CloneFishes(state.Fishes, referee.State.Fishes);
             GameState.CloneFishes(state.Monsters, referee.State.Monsters);
-            referee.State.MyDrones.Add(drone);
-
-            int distance;
-            for (distance = 0; !to.Equals(drone.Position) && distance < 30; distance++)
+            foreach (var decision in decisions)
             {
-                drone.Position = GetAroundMonsterTo(state, from, to, 0);
-                referee.UpdateFishs();
+                var drone = state.GetDrone(decision.DroneId);
+                referee.State.GetDrones(drone.PlayerId).Add((Drone)drone.Clone());
             }
 
-            return distance;
+            for (int distance = 0; distance < 30; distance++)
+            {
+                foreach (var decision in decisions)
+                    if (decision.Finished(referee.State)) return decision.DroneId;
+
+                // Do now
+                foreach (var decision in decisions)
+                    referee.UpdateDrone(decision.DroneId, decision.GetAction(referee.State));
+
+                // Update state                
+                referee.RemoveLostedFish();
+                referee.UpdatePositions();
+                referee.DoScans();
+                referee.UpdateSpeeds();
+            }
+
+            return -1;
         }
 
         public static int GetDistance(GameState state, Vector from, int top = GameProperties.SURFACE)

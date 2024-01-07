@@ -21,7 +21,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             var fish = state.GetFish(FishId);
             
             var fishPosition = fish.Position;
-            if (fish.Speed != null) fishPosition += fish.Speed;
+            fishPosition += fish.Speed;
 
             var fromDirectionY = (drone.Position.Y < fishPosition.Y - GameProperties.MOTOR_RANGE) ? - 1 
                                : (drone.Position.Y > fishPosition.Y + GameProperties.MOTOR_RANGE) ? 1 : 0;
@@ -41,13 +41,13 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 
                 var dir = fishPosition - drone.Position;
                 var distSqr = dir.LengthSqr();
-                if (fromDirectionY < 0 && drone.Position.X > fishPosition.X - fromDirectionX * GameProperties.MOTOR_RANGE / 2 
-                                       && drone.Position.X < fishPosition.X
-                                       && distSqr < GameProperties.DRONE_SINK_SPEED * GameProperties.DRONE_SINK_SPEED / 9)
-                {
-                    if (!GameUtils.CheckCollisionWithMonsters(state, drone.Position, new Vector(drone.Position.X, drone.Position.Y + GameProperties.DRONE_SINK_SPEED), out var speed))
-                        return new GameActionWait(NeedLight(state));
-                }
+                //if (fromDirectionY < 0 && drone.Position.X > fishPosition.X - fromDirectionX * GameProperties.MOTOR_RANGE / 2 
+                //                       && drone.Position.X < fishPosition.X
+                //                       && distSqr < GameProperties.DRONE_SINK_SPEED * GameProperties.DRONE_SINK_SPEED / 9)
+                //{
+                //    if (!GameUtils.CheckCollisionWithMonsters(state, drone.Position, new Vector(drone.Position.X, drone.Position.Y + GameProperties.DRONE_SINK_SPEED), out var speed))
+                //        return new GameActionWait(NeedLight(state));
+                //}
                 if (distSqr < GameProperties.DRONE_MAX_SPEED * GameProperties.DRONE_MAX_SPEED)
                 {
                     var x = fromDirectionX * Math.Sqrt(GameProperties.DRONE_MAX_SPEED * GameProperties.DRONE_MAX_SPEED - dir.Y * dir.Y);
@@ -64,7 +64,7 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 
             if (fishPosition.Equals(drone.Position)) fishPosition -= new Vector(fromDirectionX, 0);
             var newPosition = GameUtils.GetAroundMonsterTo(state, drone.Position, fishPosition);
-            return new GameActionMove(newPosition, NeedLight(state));
+            return new GameActionMove(newPosition, NeedLight(state, drone, newPosition));
         }
     }
 }

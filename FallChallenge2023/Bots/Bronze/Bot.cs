@@ -147,16 +147,17 @@ namespace FallChallenge2023.Bots.Bronze
 
         public IGameAction GetAction(IGameState gameState)
         {
-            var state = gameState as GameState;
-
             StopWatch.Start();
 
-            // Correct fish positions
-            CorrectFishPositions(state);
+            // Update fish position
+            var referee = new GameReferee(gameState as GameState);
+            referee.UpdatePositions(fish => !referee.State.VisibleFishes.Contains(fish.Id));
 
-            // Update fish position and speed
-            var referee = new GameReferee(state);
-            referee.UpdateFishs(fish => !state.VisibleFishes.Contains(fish.Id));
+            // Correct fish positions
+            CorrectFishPositions(referee.State);
+
+            // Update speed
+            referee.UpdateSpeeds(fish => !referee.State.VisibleFishes.Contains(fish.Id));
 
             // Simulation
             Simultation.FindBestAction(referee.State);
