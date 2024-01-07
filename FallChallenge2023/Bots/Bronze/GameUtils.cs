@@ -61,7 +61,7 @@ namespace FallChallenge2023.Bots.Bronze
             return true;
         }
 
-        private static bool CheckCollisionWithMonsters(GameState state, Vector from, Vector moveTo, out Vector speed, bool turbo = false, int forMoves = 0, double epsilon = 0.1)
+        public static bool CheckCollisionWithMonsters(GameState state, Vector from, Vector moveTo, out Vector speed, bool turbo = false, int forMoves = 0, double epsilon = 0.1)
         {
             epsilon *= Math.PI / 180;
             speed = moveTo - from;

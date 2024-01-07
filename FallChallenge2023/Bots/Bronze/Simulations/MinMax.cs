@@ -28,14 +28,15 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
             };
 
             // For process unvisible fishes, set speed = 0
-            state = (GameState)state.Clone();
-            foreach (var fish in state.SwimmingFishes.Where(_ => _.Speed == null))
+            Referee.State = state = (GameState)state.Clone();
+            foreach (var fish in Referee.State.SwimmingFishes.Where(_ => _.Speed == null))
                 fish.Speed = new Vector();
+            Referee.RemoveLostedFish();
 
             // Simulate
             try
             {
-                Simulation(state, Depth);
+                Simulation(Referee.State, Depth);
             }
             catch (TimeoutException) { }
 

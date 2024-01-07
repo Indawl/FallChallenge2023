@@ -30,6 +30,11 @@ namespace FallChallenge2023.Bots.Bronze.GameMath
 
         public static double Skew(Vector a, Vector b) => a.X * b.Y - b.X * a.Y;
         public static double Dot(Vector a, Vector b) => a.X * b.X + a.Y * b.Y;
+        public static Vector Project(Vector from, Vector to)
+        {
+            var normalize = to.Normalize();
+            return normalize * Dot(normalize, from);
+        }
 
         public override string ToString() => string.Format("({0}, {1})", X, Y);
         public string ToIntString() => string.Format("({0}, {1})", (int)X, (int)Y);

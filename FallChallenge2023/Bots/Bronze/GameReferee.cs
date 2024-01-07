@@ -19,48 +19,50 @@ namespace FallChallenge2023.Bots.Bronze
             State = state;
         }
 
-        public void UpdateFishs(bool losted = false)
+        public void UpdateFishs()
         {
-            UpdateFishs(State.SwimmingFishes, losted);
+            UpdateFishs(State.SwimmingFishes);
         }
 
-        public void UpdateFishs(Func<Fish, bool> predicate, bool losted = false)
+        public void UpdateFishs(Func<Fish, bool> predicate)
         {
-            UpdateFishs(State.SwimmingFishes.Where(predicate), losted);
+            UpdateFishs(State.SwimmingFishes.Where(predicate));
         }
 
         public Vector GetFishSpeed(Fish fish) => fish.Type == FishType.ANGLER ?
             GetUglySpeed(fish.Id, fish.Position, fish.Speed) :
             GetFishSpeed(fish.Id, fish.Type, fish.Position, fish.Speed);
 
-        public void UpdatePositions(bool losted = false)
+        public void UpdatePositions()
         {
-            UpdatePositions(State.SwimmingFishes, losted);
+            UpdatePositions(State.SwimmingFishes);
         }
 
-        private void UpdateFishs(IEnumerable<Fish> fishes, bool losted = false)
+        private void UpdateFishs(IEnumerable<Fish> fishes)
         {
             // New Position
-            UpdatePositions(fishes, losted);
+            UpdatePositions(fishes);
 
             // New Speed
             UpdateSpeeds(fishes);
         }
 
-        private void UpdatePositions(IEnumerable<Fish> fishes, bool losted = false)
+        private void UpdatePositions(IEnumerable<Fish> fishes)
         {
-            foreach (var fish in fishes.Where(_ => _.Speed != null).ToList())
-            {
-                fish.Position = fish.Position + fish.Speed;
+            foreach (var fish in fishes.Where(_ => _.Speed != null))
+                fish.Position = GameUtils.SnapToFishZone(fish.Type, fish.Position + fish.Speed);
+        }
 
-                if (losted && fish.Type != FishType.ANGLER && (fish.Position.X < 0 || fish.Position.X > GameProperties.MAP_SIZE - 1))
+        public void RemoveLostedFish()
+        {
+            foreach (var fish in State.Fishes.Where(_ => _.Speed != null).ToList())
+                if ((fish.Position.X + fish.Speed.X < 0 || fish.Position.X + fish.Speed.X > GameProperties.MAP_SIZE - 1))
                 {
                     State.FishLosted(fish);
                     State.NewEvent = true;
                 }
-                else fish.Position = GameUtils.SnapToFishZone(fish.Type, fish.Position);
-            }
         }
+
         private void UpdateSpeeds()
         {
             UpdateSpeeds(State.SwimmingFishes);
@@ -257,10 +259,11 @@ namespace FallChallenge2023.Bots.Bronze
                     throw new TimeoutException();
 
                 // Update state
-                UpdatePositions(true);
+                UpdatePositions();
                 DoScans();
                 DoReports();
                 UpdateSpeeds();
+                RemoveLostedFish();
 
                 State.RefreshBuffer();
                 State.Turn++;

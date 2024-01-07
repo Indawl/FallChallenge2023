@@ -1,6 +1,7 @@
 ﻿using FallChallenge2023.Bots.Bronze.Actions;
+using FallChallenge2023.Bots.Bronze.GameMath;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
@@ -35,7 +36,36 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             if (!turbo)
             {
                 fishPosition += fish.Speed;
-                if (fishPosition.InRange(drone.Position))
+
+                if (Fishs.Count > 1)
+                {
+                    var distSqr = fishPosition.DistanceSqr(drone.Position);
+                    if (distSqr < (GameProperties.LIGHT_SCAN_RADIUS + GameProperties.DRONE_MAX_SPEED) * (GameProperties.LIGHT_SCAN_RADIUS + GameProperties.DRONE_MAX_SPEED))
+                    {
+                        var dist = drone.Position - fishPosition;
+                        var radf = GameProperties.LIGHT_SCAN_RADIUS * GameProperties.LIGHT_SCAN_RADIUS / distSqr;
+                        var cent = radf - GameProperties.DRONE_MAX_SPEED * GameProperties.DRONE_MAX_SPEED / distSqr + 0.5;
+                        var toCent = dist * Math.Sqrt(cent);
+                        var toCross = toCent.Cross() * Math.Sqrt(radf - cent);
+
+                        var nextDist = state.GetFish(Fishs[1]).Position - fishPosition;
+                        if (Vector.Skew(toCross, nextDist - toCent) < 0)
+                        {
+                            var nextPos = nextDist.Normalize() * GameProperties.LIGHT_SCAN_RADIUS;
+                            if (!nextPos.InRange(drone.Position, GameProperties.DRONE_MAX_SPEED))
+                                fishPosition += toCent + toCross * Math.Sign(Vector.Skew(dist, nextDist));
+                            else fishPosition += nextPos;
+                        }
+                        else
+                        {
+                            nextDist = state.GetFish(Fishs[1]).Position - drone.Position;
+                            var nextPos = nextDist.Normalize() * GameProperties.DRONE_MAX_SPEED;
+                            if (!nextPos.InRange(fishPosition, GameProperties.LIGHT_SCAN_RADIUS))
+                                fishPosition += toCent + toCross * Math.Sign(Vector.Skew(dist, nextDist));
+                            else fishPosition += nextPos;
+                        }
+                    }
+                }
             }
 
             var newPosition = GameUtils.GetAroundMonsterTo(state, drone.Position, fishPosition, turbo);
