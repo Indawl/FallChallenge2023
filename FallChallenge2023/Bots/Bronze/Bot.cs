@@ -1,9 +1,7 @@
 ﻿using DevLib.Game;
-using FallChallenge2023.Bots.Bronze.Actions;
-using FallChallenge2023.Bots.Bronze.Agents;
 using FallChallenge2023.Bots.Bronze.GameMath;
+using FallChallenge2023.Bots.Bronze.Simulations;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -14,7 +12,16 @@ namespace FallChallenge2023.Bots.Bronze
         private readonly Stopwatch _stopwatch = new Stopwatch();
         public Stopwatch StopWatch => _stopwatch;
 
-        public List<DroneAgent> Agents { get; protected set; } = new List<DroneAgent>();
+        protected MinMax Simultation { get; private set; } = new MinMax()
+        {            
+            TimeOutTime = 49,
+            Depth = 5
+        };
+
+        public Bot()
+        {
+            Simultation.StopWatch = StopWatch;
+        }
 
         #region Read from console
         private GameState State { get; set; }
@@ -41,6 +48,7 @@ namespace FallChallenge2023.Bots.Bronze
             StopWatch.Restart();
 
             // Read new state
+            var previousState = State;
             State = (GameState)State.Clone();
             State.Turn++;
 
@@ -65,7 +73,7 @@ namespace FallChallenge2023.Bots.Bronze
 
                     var droneId = int.Parse(inputs[0]);
                     var drone = State.GetDrone(playerId, droneId) ?? State.GetNewDrone(playerId, droneId);
-                    var lastDrone = State.Parent?.GetDrone(playerId, droneId);
+                    var lastDrone = previousState.GetDrone(playerId, droneId);
 
                     drone.Position = new Vector(int.Parse(inputs[1]), int.Parse(inputs[2]));
                     drone.Speed = lastDrone == null ? new Vector() : (drone.Position - lastDrone.Position);
@@ -88,9 +96,11 @@ namespace FallChallenge2023.Bots.Bronze
             }
 
             // Drone's new scans
-            if (State.Parent != null)
-                foreach (var drone in State.Drones)
-                    drone.NewScans = drone.Scans.Except(State.Parent.GetDrone(drone.PlayerId, drone.Id).Scans).ToHashSet();
+            foreach (var drone in State.Drones)
+            {
+                var lastDrone = previousState.GetDrone(drone.PlayerId, drone.Id);
+                if (lastDrone != null) drone.NewScans = drone.Scans.Except(lastDrone.Scans).ToHashSet();
+            }
 
             // Visible fishs
             State.VisibleFishes.Clear();
@@ -148,16 +158,15 @@ namespace FallChallenge2023.Bots.Bronze
             var referee = new GameReferee(state);
             referee.UpdateFishs(fish => !state.VisibleFishes.Contains(fish.Id));
 
-            // Initialize agents
-            InitializeAgents(state);
-
-            // Determinate actions for agents
-            foreach (var agent in Agents)
-                agent.FindAction();
-
+            // Simulation
+            Simultation.FindBestAction(referee.State);
+            
+            // Write working time
             StopWatch.Stop();
+            Console.Error.WriteLine(string.Format("Time: {0} ms"), StopWatch.ElapsedMilliseconds);
 
-            return new GameActionList(Agents.Select(_ => (IGameAction)_.Action).ToList());
+            // Return action
+            return Simultation.GetStateDetails(Simultation.Referee.State).BestVariant.Action;
         }
 
         private void FindStartPositions(GameState state)
@@ -310,19 +319,6 @@ namespace FallChallenge2023.Bots.Bronze
                     fish.Speed = null;
                 }
             }
-        }
-
-        private void InitializeAgents(GameState state)
-        {
-            if (!Agents.Any())
-                foreach (var drone in state.MyDrones)
-                    Agents.Add(new DroneAgent(drone.Id));
-
-            // We wont to know feature
-            var referee = new GameReferee((GameState)state.Clone());
-            referee.UpdatePositions(true);
-
-            Agents.ForEach(agent => agent.Initialize(referee.State));
         }
     }
 }

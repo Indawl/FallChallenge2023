@@ -2,17 +2,18 @@
 
 namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
 {
-    public class Decision
+    public abstract class Decision
     {
-        public virtual DecisionType Type => DecisionType.Decision;
-        protected DroneAgent Agent { get; }
+        public int DroneId { get; }
+        public GameAction Action { get; private set; }
 
-        public Decision(DroneAgent agent)
+        public Decision(int droneId)
         {
-            Agent = agent;
+            DroneId = droneId;
         }
-        public virtual bool Check() => true;
-        public virtual bool CheckGoal(DroneAgentGoal goal) => true;
-        public virtual GameAction GetAction() => null;
+        public GameAction GetAction(GameState state) => Action == null ? Action = CalculateAction(state) : CalculateAction(state);
+        public abstract bool Finished(GameState state);
+
+        protected abstract GameAction CalculateAction(GameState state);
     }
 }

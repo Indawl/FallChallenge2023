@@ -52,13 +52,6 @@
     <Compile Include="Bots\Bronze\Actions\GameActionType.cs" />
     <Compile Include="Bots\Bronze\Actions\GameActionWait.cs" />
     <Compile Include="Bots\Bronze\Agents\Decisions\Decision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\DecisionType.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\EmergencyDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\KickAwayDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\EarlySaveDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\SaveDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\Decisions\SearchDecision.cs" />
-    <Compile Include="Bots\Bronze\Agents\DroneAgentGoal.cs" />
     <Compile Include="Bots\Bronze\Bot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugBot.cs" />
     <Compile Include="Bots\Bronze\Debug\DebugAction.cs" />
@@ -73,8 +66,8 @@
       <DependentUpon>DebugRes.resx</DependentUpon>
     </Compile>
     <Compile Include="Bots\Bronze\Debug\GameManager.cs" />
+    <Compile Include="Bots\Bronze\Debug\SimulationDebugState.cs" />
     <Compile Include="Bots\Bronze\Drone.cs" />
-    <Compile Include="Bots\Bronze\Agents\DroneAgent.cs" />
     <Compile Include="Bots\Bronze\Fish.cs" />
     <Compile Include="Bots\Bronze\FishColor.cs" />
     <Compile Include="Bots\Bronze\FishType.cs" />

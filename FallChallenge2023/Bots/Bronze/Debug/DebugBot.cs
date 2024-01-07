@@ -18,23 +18,26 @@ namespace FallChallenge2023.Bots.Bronze.Debug
         {
             var gameState = (GameState)(state as GameState).Clone();
 
-            // Init
-            Agents.Clear();
-
             // Get actions
             GetAction(gameState);
 
             // State
             debugObject = Manager.GetObjectFromState(gameState);
 
+            // Simulation
+            var simulationObject = new DebugObject("Simulation", debugObject);
+            debugObject.Childs.Add(simulationObject);
+
+            simulationObject.Properties.Add(string.Format("Depth: {0}", Simultation.Depth), new SimulationDebugState(Simultation));
+
             // Ocean
             var oceanFloor = debugObject.Childs.First(_ => _.Name == "Ocean Floor");
 
             // Actions
-            foreach (var agent in Agents)
+            foreach (var decision in Simultation.GetStateDetails(Simultation.Referee.State).BestVariant.Decisions)
             {
-                var debugDrone = oceanFloor.Childs.Where(_ => _ is DebugDrone).First(_ => (_ as DebugDrone).Drone.Id == agent.Drone.Id);
-                debugDrone.Childs.Add(new DebugAction(agent.Action, debugDrone));
+                var debugDrone = oceanFloor.Childs.Where(_ => _ is DebugDrone).First(_ => (_ as DebugDrone).Drone.Id == decision.DroneId);
+                debugDrone.Childs.Add(new DebugAction(decision.Action, debugDrone));
             }
         }
     }

@@ -6,7 +6,7 @@ namespace FallChallenge2023.Bots.Bronze
     public static class GameProperties
     {
         public const int SERIAL_FROM_TURN = 0;
-        public const int LAST_TURN = 201;
+        public const int LAST_TURN = 200;
 
         public const int MAP_SIZE = 10000;
         public const int SURFACE = 500;

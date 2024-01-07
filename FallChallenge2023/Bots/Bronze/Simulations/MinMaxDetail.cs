@@ -7,5 +7,7 @@
         public MinMaxVariant[] Variants { get; set; }
 
         public MinMaxVariant BestVariant { get; set; }
+
+        public override string ToString() => string.Format("Evaluation({0}): {1}", Depth, Evaluation);
     }
 }
