@@ -35,7 +35,7 @@ namespace FallChallenge2023.Bots.Bronze
 
         public static Vector GetAroundMonsterTo(GameState state, Vector from, Vector to, bool turbo = false, int forMoves = GameProperties.MONSTER_TRAVERSAL_TURNS, double epsilon = GameProperties.MONSTER_TRAVERSAL_ANGLE)
         {
-            CheckCollisionWithMonsters(state, from, to, out var speed, turbo, forMoves, epsilon);
+            CheckCollisionWithMonsters(state, from, to, out var speed, turbo, forMoves, epsilon);            
             return from + speed;
         }
 
@@ -64,7 +64,7 @@ namespace FallChallenge2023.Bots.Bronze
         }
 
         public static bool CheckCollisionWithMonsters(GameState state, Vector from, Vector moveTo, out Vector speed, bool turbo = false, int forMoves = 0, double epsilon = 0.1)
-        {
+        {            
             epsilon *= Math.PI / 180;
             speed = moveTo - from;
             if (turbo || speed.LengthSqr() > GameProperties.DRONE_MAX_SPEED * GameProperties.DRONE_MAX_SPEED)
@@ -157,26 +157,28 @@ namespace FallChallenge2023.Bots.Bronze
                 referee.UpdateSpeeds();
                 referee.State.RefreshBuffer();
             }
-            
+
             return distance;
         }
 
         public static int GetDistance(GameState state, Vector from, int top = GameProperties.SURFACE)
         {
-            var to = new Vector(0, top);
-            var drone = new Drone() { Position = from };
-            var referee = new GameReferee(new GameState());
-            GameState.CloneFishes(state.Monsters, referee.State.Monsters);
-            referee.State.MyDrones.Add(drone);
+            return (int)Math.Ceiling((from.Y - top) / GameProperties.DRONE_MAX_SPEED);
 
-            int distance;
-            for (distance = 0; drone.Position.Y > top && distance < 30; distance++)
-            {
-                drone.Position = GetAroundMonsterTo(state, from, to, true, 0);
-                referee.UpdateFishs();
-            }
+            //var to = new Vector(0, top);
+            //var drone = new Drone() { Position = from };
+            //var referee = new GameReferee(new GameState());
+            //GameState.CloneFishes(state.Monsters, referee.State.Monsters);
+            //referee.State.MyDrones.Add(drone);
 
-            return distance;
+            //int distance;
+            //for (distance = 0; drone.Position.Y > top && distance < 30; distance++)
+            //{
+            //    drone.Position = GetAroundMonsterTo(state, from, to, true, 0);
+            //    referee.UpdateFishs();
+            //}
+
+            //return distance;
         }
     }
 }

@@ -149,7 +149,7 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
                     else decisions[i] = decision;
                 }
             if (decisions[0] != null && decisions[1] != null)
-            {
+            {                
                 decisionsList.Add(decisions);
                 return decisionsList.ToArray();
             }
@@ -200,14 +200,17 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
                 {
                     if (decisions[i] == null && state.GetUnscannedFish(1 - playerId).Contains(fish.Id))
                     {
-                        var dec = new List<Decision>()
-                        {
-                            new SearchDecision(enemyDrones[0].Id, fish.Id),
-                            new SearchDecision(enemyDrones[1].Id, fish.Id),
-                            new KickAwayDecision(drones[i].Id, fish.Id)
-                        };
-                        GameUtils.GetDistance(state, dec, out var dIds);
-                        if (dIds.Count == 1 && dIds[0] == drones[i].Id)
+                        //var dec = new List<Decision>()
+                        //{
+                        //    new SearchDecision(enemyDrones[0].Id, fish.Id),
+                        //    new SearchDecision(enemyDrones[1].Id, fish.Id),
+                        //    new KickAwayDecision(drones[i].Id, fish.Id)
+                        //};
+                        //GameUtils.GetDistance(state, dec, out var dIds);
+                        //if (dIds.Count == 1 && dIds[0] == drones[i].Id)
+                        var dist = drones[i].Position.DistanceSqr(fish.Position) + 1200 * 1200;
+                        if (dist > enemyDrones[0].Position.DistanceSqr(fish.Position) &&
+                            dist > enemyDrones[1].Position.DistanceSqr(fish.Position))
                         {
                             decisions[i] = new KickAwayDecision(drones[i].Id, fish.Id);
                             break;
@@ -217,14 +220,14 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
                     {
                         if (decisions[i] == null)
                         {
-                            var dec = new List<Decision>()
-                            {
-                                new KickAwayDecision(enemyDrones[0].Id, fish.Id),
-                                new KickAwayDecision(enemyDrones[1].Id, fish.Id),
-                                new SearchDecision(drones[i].Id, fish.Id)
-                            };
-                            GameUtils.GetDistance(state, dec, out var dIds);
-                            if (dIds.Contains(drones[i].Id))
+                            //var dec = new List<Decision>()
+                            //{
+                            //    new KickAwayDecision(enemyDrones[0].Id, fish.Id),
+                            //    new KickAwayDecision(enemyDrones[1].Id, fish.Id),
+                            //    new SearchDecision(drones[i].Id, fish.Id)
+                            //};
+                            //GameUtils.GetDistance(state, dec, out var dIds);
+                            //if (dIds.Contains(drones[i].Id))
                                 decisions[i] = new SearchDecision(drones[i].Id, fish.Id);
                         }
                         else

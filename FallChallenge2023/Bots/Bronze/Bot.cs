@@ -146,7 +146,7 @@ namespace FallChallenge2023.Bots.Bronze
         #endregion
 
         public IGameAction GetAction(IGameState gameState)
-        {
+        {            
             StopWatch.Start();
 
             // Update fish position
@@ -158,7 +158,7 @@ namespace FallChallenge2023.Bots.Bronze
 
             // Update speed
             referee.UpdateSpeeds(fish => !referee.State.VisibleFishes.Contains(fish.Id));
-
+            
             // Simulation
             Simultation.FindBestAction(referee.State);
             
@@ -222,7 +222,7 @@ namespace FallChallenge2023.Bots.Bronze
         private void CorrectFishPositions(GameState state)
         {
             var referee = new GameReferee(state);
-
+            
             // Symmetric Fish
             foreach (var fish in state.VisibleFishes.Select(_ => state.GetSwimmingFish(_)))
             {
