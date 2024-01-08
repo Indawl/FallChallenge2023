@@ -109,7 +109,7 @@ namespace FallChallenge2023.Bots.Bronze
             for (int i = 0; i < fishesCount; i++)
             {
                 var inputs = Console.ReadLine().Split(' ');
-                var fish = State.GetFish(int.Parse(inputs[0]));
+                var fish = State.GetSwimmingFish(int.Parse(inputs[0]));
 
                 fish.Position = new Vector(int.Parse(inputs[1]), int.Parse(inputs[2]));
                 fish.Speed = new Vector(int.Parse(inputs[3]), int.Parse(inputs[4]));
@@ -224,7 +224,7 @@ namespace FallChallenge2023.Bots.Bronze
             var referee = new GameReferee(state);
 
             // Symmetric Fish
-            foreach (var fish in state.VisibleFishes.Select(_ => state.GetFish(_)))
+            foreach (var fish in state.VisibleFishes.Select(_ => state.GetSwimmingFish(_)))
             {
                 var sFish = state.GetSymmetricFish(fish);
                 if (sFish != null && sFish.Speed == null)
