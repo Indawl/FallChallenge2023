@@ -7,7 +7,8 @@ namespace FallChallenge2023.Bots.Bronze
 {
     public class GameState : GameStateBase, ICloneable
     {
-        public List<Decision> DefferedDecisions { get; set; }
+        public List<Decision> DefferedDecisions { get; set; } = new List<Decision>();
+        public HashSet<int> SavedDroneId { get; set; } = new HashSet<int>();
         public bool NewEvent { get; set; }
 
         public int Score => MyScore - EnemyScore;
@@ -43,6 +44,7 @@ namespace FallChallenge2023.Bots.Bronze
             state.VisibleFishes = new HashSet<int>(VisibleFishes);
 
             state.DefferedDecisions = new List<Decision>(DefferedDecisions);
+            state.SavedDroneId = new HashSet<int>(SavedDroneId);
 
             state.RefreshBuffer();
             return state;

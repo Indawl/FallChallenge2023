@@ -254,6 +254,9 @@ namespace FallChallenge2023.Bots.Bronze
             var processDecisions = State.DefferedDecisions.Union(decisions).ToList();
             State.DefferedDecisions = null;
 
+            foreach (var decision in processDecisions.Where(d => d is SaveDecision))
+                State.SavedDroneId.Add(decision.DroneId);
+
             while (!State.NewEvent && !IsOver(State))
             {
                 // Check, maybe all done

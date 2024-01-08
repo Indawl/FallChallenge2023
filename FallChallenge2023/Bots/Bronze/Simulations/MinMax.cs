@@ -135,14 +135,140 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
 
         private Decision[][] GetDecisions(GameState state, int playerId)
         {
-            var decisions = new List<Decision[]>();
+            var decisionsList = new List<Decision[]>();
 
-            var fishes = state.GetUnscannedFish(playerId).Union(state.GetUnscannedFish(1 - playerId)).ToList();
-            fishes.Sort((a, b)=>state.GetRewards(b).CompareTo(state.GetRewards(a)));
+            var decisions = new Decision[2];
 
-            decisions.Add(new Decision[] { new SaveDecision(), new SaveDecision() });
+            // Check saved decisions
+            var drones = state.GetDrones(playerId);
+            for (int i = 0; i < 2; i++)
+                if (state.SavedDroneId.Contains(drones[i].Id))
+                {
+                    var decision = new SaveDecision(drones[i].Id);
+                    if (decisions[i].Finished(state)) state.SavedDroneId.Remove(decision.DroneId);
+                    else decisions[i] = decision;
+                }
+            if (decisions[0] != null && decisions[1] != null)
+            {
+                decisionsList.Add(decisions);
+                return decisionsList.ToArray();
+            }
 
-            return decisions.ToArray();
+            // Find interesting fishes
+            var pairs = state.GetUnscannedFish(playerId)
+                             .Union(state.GetUnscannedFish(1 - playerId))
+                             .Select(fishId => state.GetFish(fishId))
+                             .Select(fish => new
+                             {
+                                 Fish = fish,
+                                 Prio = GetReward(state, fish),
+                                 Dist = Math.Min(drones[0].Position.DistanceSqr(fish.Position),
+                                                 drones[1].Position.DistanceSqr(fish.Position))
+                             })
+                             .ToList();
+            pairs.Sort((a, b) => b.Prio == a.Prio ? a.Dist.CompareTo(b.Dist) : b.Prio.CompareTo(a.Prio));
+
+            // Distribute tasks
+            var fishes = new List<Fish>[] { new List<Fish>(), new List<Fish>() };
+            var positions = new Vector[] { drones[0].Position, drones[1].Position };
+            var distance = new double[2];
+
+            foreach (var pair in pairs)
+            {
+                var dist0 = distance[0] + positions[0].DistanceSqr(pair.Fish.Position);
+                var dist1 = distance[1] + positions[1].DistanceSqr(pair.Fish.Position);
+                if (decisions[0] == null && dist0 < dist1 || decisions[1] != null)
+                {
+                    fishes[0].Add(pair.Fish);
+                    distance[0] = dist0;
+                    positions[0] = pair.Fish.Position;
+                }
+                else
+                {
+                    fishes[1].Add(pair.Fish);
+                    distance[1] = dist1;
+                    positions[1] = pair.Fish.Position;
+                }
+            }
+
+            // Get decisions
+            var enemyDrones = state.GetDrones(1 - playerId);
+
+            for (int i = 0; i < 2; i++)
+            {
+                foreach (var fish in fishes[i])
+                {
+                    if (decisions[i] == null && state.GetUnscannedFish(1 - playerId).Contains(fish.Id))
+                    {
+                        var dec = new List<Decision>()
+                        {
+                            new SearchDecision(enemyDrones[0].Id, fish.Id),
+                            new SearchDecision(enemyDrones[1].Id, fish.Id),
+                            new KickAwayDecision(drones[i].Id, fish.Id)
+                        };
+                        GameUtils.GetDistance(state, dec, out var dIds);
+                        if (dIds.Count == 1 && dIds[0] == drones[i].Id)
+                        {
+                            decisions[i] = new KickAwayDecision(drones[i].Id, fish.Id);
+                            break;
+                        }
+                    }
+                    if (state.GetUnscannedFish(playerId).Contains(fish.Id))
+                    {
+                        if (decisions[i] == null)
+                        {
+                            var dec = new List<Decision>()
+                            {
+                                new KickAwayDecision(enemyDrones[0].Id, fish.Id),
+                                new KickAwayDecision(enemyDrones[1].Id, fish.Id),
+                                new SearchDecision(drones[i].Id, fish.Id)
+                            };
+                            GameUtils.GetDistance(state, dec, out var dIds);
+                            if (dIds.Contains(drones[i].Id))
+                                decisions[i] = new SearchDecision(drones[i].Id, fish.Id);
+                        }
+                        else
+                        {
+                            (decisions[i] as SearchDecision).NextFishId = fish.Id;
+                            break;
+                        }
+                    }
+                }
+                if (decisions[i] == null)
+                    foreach (var fish in fishes[i])
+                        if (state.GetUnscannedFish(playerId).Contains(fish.Id))
+                            decisions[i] = new SearchDecision(drones[i].Id, fish.Id);
+                if (decisions[i] == null) decisions[i] = new SaveDecision(drones[i].Id);
+            }
+
+            // Get variants
+            decisionsList.Add(decisions);
+            if (drones[0].Scans.Any() && drones[1].Scans.Any())
+                decisionsList.Add(new Decision[] { new SaveDecision(drones[0].Id), new SaveDecision(drones[1].Id) });
+            if (!(decisions[0] is SaveDecision || decisions[1] is SaveDecision))
+            {
+                if (drones[0].Scans.Any()) decisionsList.Add(new Decision[] { new SaveDecision(drones[0].Id), decisions[1] });
+                if (drones[1].Scans.Any()) decisionsList.Add(new Decision[] { decisions[0], new SaveDecision(drones[1].Id) });
+            }
+
+            return decisionsList.ToArray();
+        }
+
+        private int GetReward(GameState state, Fish fish)
+        {
+            var score = 0;
+
+            for (int playerId = 0; playerId < 2; playerId++)
+                if (state.GetUnscannedFish(playerId).Contains(fish.Id))
+                {
+                    score += GameProperties.REWARDS[fish.Type];
+
+                    var fishes = state.LostedFishes.Where(f => !state.GetScannedFish(playerId).Contains(f.Id));
+                    if (!fishes.Any(f => f.Type == fish.Type)) score += GameProperties.REWARDS_TYPE;
+                    if (!fishes.Any(f => f.Color == fish.Color)) score += GameProperties.REWARDS_COLOR;
+                }
+
+            return score;
         }
     }
 }

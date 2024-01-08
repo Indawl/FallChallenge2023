@@ -127,7 +127,7 @@ namespace FallChallenge2023.Bots.Bronze
             return false;
         }
 
-        public static int GetDistanceDroneId(GameState state, List<Decision> decisions)
+        public static int GetDistance(GameState state, List<Decision> decisions, out List<int> droneIds)
         {
             var referee = new GameReferee(new GameState());
             GameState.CloneFishes(state.Fishes, referee.State.Fishes);
@@ -137,11 +137,14 @@ namespace FallChallenge2023.Bots.Bronze
                 var drone = state.GetDrone(decision.DroneId);
                 referee.State.GetDrones(drone.PlayerId).Add((Drone)drone.Clone());
             }
+            droneIds = new List<int>();
 
-            for (int distance = 0; distance < 30; distance++)
+            int distance;
+            for (distance = 0; distance < 30; distance++)
             {
                 foreach (var decision in decisions)
-                    if (decision.Finished(referee.State)) return decision.DroneId;
+                    if (decision.Finished(referee.State)) droneIds.Add(decision.DroneId);
+                if (droneIds.Any()) break;
 
                 // Do now
                 foreach (var decision in decisions)
@@ -154,7 +157,7 @@ namespace FallChallenge2023.Bots.Bronze
                 referee.UpdateSpeeds();
             }
 
-            return -1;
+            return distance;
         }
 
         public static int GetDistance(GameState state, Vector from, int top = GameProperties.SURFACE)
@@ -168,7 +171,7 @@ namespace FallChallenge2023.Bots.Bronze
             int distance;
             for (distance = 0; drone.Position.Y > top && distance < 30; distance++)
             {
-                drone.Position = GetAroundMonsterTo(state, from, to, 0);
+                drone.Position = GetAroundMonsterTo(state, from, to, true, 0);
                 referee.UpdateFishs();
             }
 

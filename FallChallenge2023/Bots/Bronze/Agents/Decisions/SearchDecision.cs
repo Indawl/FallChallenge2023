@@ -7,9 +7,9 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
     public class SearchDecision : Decision
     {
         public int FishId { get; }
-        public int? NextFishId { get; }
+        public int? NextFishId { get; set; }
 
-        public SearchDecision(int droneId, int fishId, int? nextFishId) : base(droneId)
+        public SearchDecision(int droneId, int fishId, int? nextFishId = null) : base(droneId)
         {
             FishId = fishId;
             NextFishId = nextFishId;
