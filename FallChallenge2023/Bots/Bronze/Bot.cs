@@ -14,8 +14,8 @@ namespace FallChallenge2023.Bots.Bronze
 
         protected MinMax Simultation { get; private set; } = new MinMax()
         {            
-            TimeOutTime = 0,//49,
-            Depth = 10
+            TimeOutTime = 49,
+            Depth = 1
         };
 
         public Bot()

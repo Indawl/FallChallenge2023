@@ -248,11 +248,11 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
             decisionsList.Add(decisions);
             if (drones[0].Scans.Any() && drones[1].Scans.Any())
                 decisionsList.Add(new Decision[] { new SaveDecision(drones[0].Id), new SaveDecision(drones[1].Id) });
-            if (!(decisions[0] is SaveDecision || decisions[1] is SaveDecision))
-            {
-                if (drones[0].Scans.Any()) decisionsList.Add(new Decision[] { new SaveDecision(drones[0].Id), decisions[1] });
-                if (drones[1].Scans.Any()) decisionsList.Add(new Decision[] { decisions[0], new SaveDecision(drones[1].Id) });
-            }
+            //if (!(decisions[0] is SaveDecision || decisions[1] is SaveDecision))
+            //{
+            //    if (drones[0].Scans.Any()) decisionsList.Add(new Decision[] { new SaveDecision(drones[0].Id), decisions[1] });
+            //    if (drones[1].Scans.Any()) decisionsList.Add(new Decision[] { decisions[0], new SaveDecision(drones[1].Id) });
+            //}
 
             return decisionsList.ToArray();
         }
