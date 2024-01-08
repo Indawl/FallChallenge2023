@@ -83,7 +83,7 @@ namespace FallChallenge2023.Bots.Bronze
                                                             .Union(GetScans(playerId))
                                                             .Distinct().ToHashSet());
         public HashSet<int> GetUnscannedFish(int playerId) => _unscannedFish[playerId]
-                                                             ?? (_unscannedFish[playerId] = SwimmingFishes
+                                                             ?? (_unscannedFish[playerId] = Fishes
                                                             .Select(fish => fish.Id)
                                                             .Except(GetScannedFish(playerId)).ToHashSet());
 

@@ -15,7 +15,7 @@ namespace FallChallenge2023.Bots.Bronze
         protected MinMax Simultation { get; private set; } = new MinMax()
         {            
             TimeOutTime = 49,
-            Depth = 5
+            Depth = 10
         };
 
         public Bot()
@@ -164,7 +164,7 @@ namespace FallChallenge2023.Bots.Bronze
             
             // Write working time
             StopWatch.Stop();
-            Console.Error.WriteLine(string.Format("Time: {0} ms"), StopWatch.ElapsedMilliseconds);
+            Console.Error.WriteLine(string.Format("Time: {0} ms", StopWatch.ElapsedMilliseconds));
 
             // Return action
             return Simultation.GetStateDetails(Simultation.Referee.State).BestVariant.Action;

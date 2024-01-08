@@ -155,6 +155,7 @@ namespace FallChallenge2023.Bots.Bronze
                 referee.UpdatePositions();
                 referee.DoScans();
                 referee.UpdateSpeeds();
+                referee.State.RefreshBuffer();
             }
 
             return distance;
