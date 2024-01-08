@@ -145,7 +145,7 @@ namespace FallChallenge2023.Bots.Bronze.Simulations
                 if (state.SavedDroneId.Contains(drones[i].Id))
                 {
                     var decision = new SaveDecision(drones[i].Id);
-                    if (decisions[i].Finished(state)) state.SavedDroneId.Remove(decision.DroneId);
+                    if (decision.Finished(state)) state.SavedDroneId.Remove(decision.DroneId);
                     else decisions[i] = decision;
                 }
             if (decisions[0] != null && decisions[1] != null)

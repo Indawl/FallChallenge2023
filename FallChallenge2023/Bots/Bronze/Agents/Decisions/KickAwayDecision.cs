@@ -26,10 +26,10 @@ namespace FallChallenge2023.Bots.Bronze.Agents.Decisions
             var fromDirectionY = (drone.Position.Y < fishPosition.Y - GameProperties.MOTOR_RANGE) ? - 1 
                                : (drone.Position.Y > fishPosition.Y + GameProperties.MOTOR_RANGE) ? 1 : 0;
 
-            var fromDirectionX = Math.Sign(drone.Position.X - fishPosition.X);
+            var fromDirectionX = Math.Sign((int)(drone.Position.X - fishPosition.X));
             if (fishPosition.X < GameProperties.CENTER.X - GameProperties.MOTOR_RANGE / 2) fromDirectionX = 1;
             else if (fishPosition.X > GameProperties.CENTER.X + GameProperties.MOTOR_RANGE / 2) fromDirectionX = -1;
-            else if (fromDirectionX == 0) fromDirectionX = Math.Sign(GameProperties.CENTER.X - fishPosition.X);
+            else if (fromDirectionX == 0) fromDirectionX = GameProperties.CENTER.X > fishPosition.X ? 1 : -1;
 
             if (fromDirectionX * drone.Position.X > fromDirectionX * fishPosition.X + GameProperties.MOTOR_RANGE) fromDirectionY = 0;
 

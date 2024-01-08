@@ -178,10 +178,10 @@ namespace FallChallenge2023.Bots.Bronze
 
                 if (!allScans.Contains(fish.Id))
                 {
-                    var myMinDistance = state.GetDrones(playerId).Where(drone => drone.Scans.Contains(fish.Id))
-                                                                 .Min(drone => GameUtils.GetDistance(state, drone.Position));
-                    var enemyMinDistance = state.GetDrones(1 - playerId).Where(drone => drone.Scans.Contains(fish.Id))
-                                                                        .Min(drone => GameUtils.GetDistance(state, drone.Position));
+                    var drones = state.GetDrones(playerId).Where(drone => drone.Scans.Contains(fish.Id));
+                    var myMinDistance = drones.Any() ? drones.Min(drone => GameUtils.GetDistance(state, drone.Position)) : 0;
+                    drones = state.GetDrones(1 - playerId).Where(drone => drone.Scans.Contains(fish.Id));
+                    var enemyMinDistance = drones.Any()? drones.Min(drone => GameUtils.GetDistance(state, drone.Position)) : 0;
                     if (myMinDistance < enemyMinDistance)
                     {
                         score += GameProperties.REWARDS[fish.Type];
@@ -252,7 +252,7 @@ namespace FallChallenge2023.Bots.Bronze
             State.NewEvent = false;
 
             var processDecisions = State.DefferedDecisions.Union(decisions).ToList();
-            State.DefferedDecisions = null;
+            State.DefferedDecisions = new List<Decision>();
 
             foreach (var decision in processDecisions.Where(d => d is SaveDecision))
                 State.SavedDroneId.Add(decision.DroneId);

@@ -37,7 +37,7 @@ namespace FallChallenge2023.Bots.Bronze
         public const int MIN_DISTANCE_BT_MONSTER = 600;        
         public const int MONSTER_MIN_START_Y = 5000;
 
-        public const double MONSTER_TRAVERSAL_ANGLE = 5.0;
+        public const double MONSTER_TRAVERSAL_ANGLE = 15.0;
         public const double MONSTER_TRAVERSAL_ANGLE_FAST = 15.0;
         public const int MONSTER_TRAVERSAL_TURNS = 1;
 
